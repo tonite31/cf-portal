@@ -1,0 +1,141 @@
+.marketplace-header {
+	background-color: #01aee2;
+	padding: 10px 40px;
+	color: #fff;
+}
+
+.marketplace-header + div {
+	padding: 40px;
+}
+
+.marketplace-filter {
+	position: absolute;
+	
+	right: 2%;
+	bottom: 5%;
+	width: 30%;
+}
+
+.marketplace-filter input, .marketplace-filter input:FOCUS {
+	border-bottom: 1px solid #4ec6eb !important;
+	box-shadow: none !important;
+	color: #fff;
+}
+
+.marketplace-filter input::-webkit-input-placeholder {
+   color: #fff;
+}
+
+.marketplace-service {
+	padding-bottom: 40px;
+	border-bottom: 1px dashed #ddd;
+}
+
+.marketplace-service img {
+	width: 35%;
+}
+
+.service-icon {
+	position: relative;
+	top: 45px;
+}
+
+.marketplace-service table {
+	margin-top: 20px;
+}
+
+.marketplace-service table tr {
+	border:0;
+}
+
+.marketplace-service-name {
+	font-size: 25px;
+}
+
+.marketplace-service-name+p small {
+	font-size: 15px;
+	color: #777;
+	margin: 0 10px;
+}
+
+.marketplace-service-description {
+	color: #777;
+	margin: 30px 0;
+}
+
+.service-plans {
+	display: inline-block !important;
+	width: auto;
+}
+
+.service-plans+span {
+	margin: 0 15px;
+}
+
+.service-plans+span+a {
+	float: right;
+}
+
+.view-plans {
+	cursor: pointer;
+}
+
+.view-plans:HOVER {
+	text-decoration: underline;
+}
+
+.marketplace-service-plan-name {
+	font-size: 20px;
+}
+
+.marketplace-service-detail {
+	position: relative;
+	overflow: hidden;
+	padding: 25px 0 !important;
+	padding-top: 0 !important;
+	margin: 20px 20px 0 20px;
+}
+
+.marketplace-service-detail-wrapper {
+	width: 200%;
+	
+	transition: margin-left 0.5s;
+}
+
+.marketplace-service-detail-wrapper th, .marketplace-service-detail-wrapper td {
+	text-align: center;
+}
+
+.service-plan-name {
+	font-size: 17px;
+}
+
+.marketplace-service-detail table, .marketplace-service-selected {
+	float:left;
+	width: 50%;
+}
+
+.marketplace-service-selected {
+	padding: 50px 25px 0 25px;
+}
+
+.advance-option .key {
+	width: 40%;
+	margin-right: 5px;
+	vertical-align: middle;
+}
+
+.advance-option .value {
+	width: 53%;
+	margin-left: 5px;
+	vertical-align: middle;
+}
+
+.cancel-bind-service {
+	margin-right: 10px;
+	cursor: pointer;
+}
+
+.add-parameter {
+	cursor: pointer;
+}

@@ -1,0 +1,257 @@
+<link href="@{css}/service_instance.css" rel="stylesheet">
+
+<script type="text/template" id="BoundAppRow">
+<tr data-app-guid="{guid}">
+	<td>{name}</td>
+	<td>
+		<div class="confirm-button">
+			<span class="target-button">Unbind</span>
+			<span class="confirm">Unbind</span>
+		</div>
+	</td>
+</tr>
+</script>
+
+<script>
+$(document).ready(function()
+{
+	var url = _global.url;
+	var serviceInstanceGuid = url[5];
+	
+	CF.async({url : '/v2/service_instances/' + serviceInstanceGuid}, function(result)
+	{
+		if(result)
+		{
+			var serviceInstance = result;
+			$('#serviceInstanceName').val(serviceInstance.entity.name);
+			$('#serviceInstanceName').next().addClass('active');
+			
+			CF.async({url : serviceInstance.entity.service_plan_url}, function(result)
+			{
+				if(result)
+				{
+					var selectedPlan = result;
+					CF.async({url : selectedPlan.entity.service_url}, function(result)
+					{
+						if(result)
+						{
+							var service = result;
+							
+							var extra = JSON.parse(service.entity.extra);
+							
+							$('#serviceInstanceImg').attr('src', extra.imageUrl);
+							$('#serviceName').text(extra.displayName);
+							
+							$('.service-instance-info .manage').attr('href', serviceInstance.entity.dashboard_url);
+							$('.service-instance-info .support').attr('href', extra.supportUrl);
+							$('.service-instance-info .docs').attr('href', extra.documentationUrl);
+							
+							CF.async({url : service.entity.service_plans_url}, function(result)
+							{
+								if(result)
+								{
+									var nameRow = null;
+									var descriptionRow = null;
+									
+									var planList = result.resources;
+									
+									for(var i=0; i<planList.length; i++)
+									{
+										if(i%5 == 0)
+										{
+											nameRow = $('<tr></tr>');
+											descriptionRow = $('<tr></tr>');
+											$('.service-instance-plans tbody').append(nameRow).append(descriptionRow);
+										}
+										
+										var extra = JSON.parse(planList[i].entity.extra);
+										planList[i].entity.extra = extra;
+
+										var amount = '';
+										var unit = '';
+										if(extra.costs)
+										{
+											var costs = extra.costs[0];
+											amount = costs.amount;
+											for(var key in amount)
+											{
+												if(key == 'usd')
+												{
+													amount = "$" + amount[key];
+													break;
+												}
+											}
+											
+											unit = costs.unit;
+										}
+										
+										if(amount && unit)
+											amount = amount + '/' + unit;
+										
+										var description = '<div>';
+										for(var j=0; j<extra.bullets.length; j++)
+											description += extra.bullets[j] + '<br>';
+										description += '</div>';
+										
+										planList[i].entity.textAmount = amount + '/' + unit;
+										planList[i].entity.description = description;
+
+										var td = $('<th><p class="service-plan-name">' + extra.displayName + '</p><p>' + amount + '</p><p><a class="waves-effect waves-light btn action-button select-plan">Select this plan</a> <span class="selected-plan" style="display: none;">Selected plan</span></p></th>');
+										nameRow.append(td);
+										descriptionRow.append('<td>' + description + '</td>');
+										
+										if(selectedPlan.metadata.guid == planList[i].metadata.guid)
+										{
+											td.find('a').hide().next().show();
+										}
+										
+										td.find('a').get(0).item = planList[i];
+										td.find('a').on('click', function()
+										{
+											var that = this;
+											var plan = $(this).get(0).item;
+											CF.async({url : '/v2/service_instances/' + serviceInstanceGuid, method : 'PUT', headers : {'Content-Type' : 'application/x-www-form-urlencoded'}, form : {service_plan_guid : plan.metadata.guid}}, function(result)
+											{
+												if(result)
+												{
+													if(result.entity)
+													{
+														$('.service-instance-plans th a').show().next().hide();
+														$(that).hide().next().show();
+													}
+													else
+													{
+														common_error(result.description);
+													}
+												}
+											});
+										});
+									}
+								}
+							});
+						}
+					}, common_error);
+				}
+				
+			}, common_error);
+		}
+	});
+	
+	CF.async({url : '/v2/service_instances/' + serviceInstanceGuid + '/service_bindings'}, function(result)
+	{
+		if(result)
+		{
+			if(result.resources)
+			{
+				var bindingList = result.resources;
+				for(var i=0; i<bindingList.length; i++)
+				{
+					(function(binding)
+					{
+						CF.async({url : binding.entity.app_url}, function(result)
+						{
+							if(result)
+							{
+								var html = $('#BoundAppRow').html();
+								html = html.replace('{name}', result.entity.name).replace('{guid}', result.metadata.guid);
+								var tr = $(html);
+
+								confirmButton(tr, function()
+								{
+									CF.async({url : '/v2/service_bindings/' + binding.metadata.guid, method : 'DELETE'}, function()
+									{
+										$(tr).remove();	
+									}, common_error);
+								});
+								
+								$('.service-instance-bound-apps tbody').append(tr);
+							}
+						}, common_error);
+					})(bindingList[i]);
+				}
+				
+				if(bindingList.length == 0)
+				{
+					$('.service-instance-bound-apps tbody').html('<tr><td colspan="2" class="center-align">No bounded app.</td></tr>');
+				}
+			}
+			else
+			{
+				common_error(result.description);
+			}
+		}
+		
+	}, common_error);
+	
+	$('#saveInstanceName').on('click', function()
+	{
+		var name = $('.service-instance-name input').val();
+		
+		CF.async({url : '/v2/service_instances/' + serviceInstanceGuid, method : 'PUT', headers : {'Content-Type' : 'application/x-www-form-urlencoded'}, form : {name : name}}, function(result)
+		{
+			if(result && result.entity.name == name)
+			{
+				common_alert('Service instance name is changed.');
+			}
+		}, common_error);
+	});
+	
+	confirmButton($('#deleteServiceInstance'), function()
+	{
+		CF.async({url : '/v2/service_instances/' + serviceInstanceGuid, method : 'DELETE'}, function(result)
+		{
+			location.href = '/organization/space/' + url[3] + '/services';	
+		});
+	});
+});
+</script>
+
+<div class="card margin-top-20 row padding-40 service-instance">
+	<div class="row">
+		<div class="service-instance-info">
+			<img src="" id="serviceInstanceImg">
+		</div>
+		<div class="service-instance-info name">
+			<h5 id="serviceName"></h5>
+		</div>
+		<div class="service-instance-info">
+			<a class="textlink manage" href="">Manage  <img src="@{imgs}/icon_arrow_rt.png"></a>
+			<a class="textlink docs" href="">Docs  <img src="@{imgs}/icon_arrow_rt.png"></a>
+			<a class="textlink support" href="">Support  <img src="@{imgs}/icon_arrow_rt.png"></a>
+		</div>
+		<hr>
+	</div>
+	<div class="row">
+		<div class="input-field for-central">
+          	<input id="serviceInstanceName" type="text">
+          	<label for="serviceInstanceName" class="active">Service instance name</label>
+        </div>
+        <a class="waves-effect waves-light btn action-button" id="saveInstanceName">save</a>
+        <div class="service-instance-info">
+			<div class="confirm-button" id="deleteServiceInstance">
+				<span class="target-button">Delete service instance.</span>
+				<span class="confirm">Delete</span>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="service-instance-detail">
+	<div class="row">
+		<h5 class="service-instance-accordion">Bound Apps</h5>
+		<table class="service-instance-bound-apps">
+			<colgroup>
+				<col style="width: 80%;">
+				<col style="width: 20%;">
+			</colgroup>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		<h5 class="service-instance-accordion">Plans</h5>
+		<table class="service-instance-plans">
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</div>

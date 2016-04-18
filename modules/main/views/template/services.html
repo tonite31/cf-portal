@@ -1,0 +1,126 @@
+<link href="@{css}/services.css" rel="stylesheet">
+
+<script type="text/template" id="ServiceRow">
+<tr>
+	<td></td>
+	<td>{name}</td>
+	<td></td>
+	<td></td>
+</tr>
+</script>
+
+<script>
+_ee.on('space_selected', function(space)
+{
+	CF.async({url : space.item.entity.service_instances_url}, function(result)
+	{
+		if(result)
+		{
+			var serviceList = result.resources;
+			for(var i=0; i<serviceList.length; i++)
+			{
+				var html = $('#ServiceRow').html();
+				html = html.replace('{name}', serviceList[i].entity.name);
+				$('.services .service-instance-table tbody').append(html);
+				
+				var target = $('.services .service-instance-table tbody tr:last');
+				
+				_ee.emit('setServiceRow_done', target, serviceList[i]);
+			}
+		}
+	}, common_error);
+});
+
+_ee.on('setServiceRow_done', function(target, serviceInstance)
+{
+	$('.services').attr('data-guid', serviceInstance.metadata.guid);
+	var option = 0;
+	var bindings = null;
+	var service = null;
+	var servicePlan = null;
+	CF.async({url : serviceInstance.entity.service_plan_url}, function(result)
+	{
+		if(result)
+		{
+			servicePlan = result;
+			
+			var extra = JSON.parse(result.entity.extra);
+			
+			var amount = '';
+			var unit = '';
+			if(extra.costs)
+			{
+				var costs = extra.costs[0];
+				amount = costs.amount;
+				for(var key in amount)
+				{
+					if(key == 'usd')
+					{
+						amount = "$" + amount[key];
+						break;
+					}
+				}
+				
+				unit = costs.unit;
+			}
+			
+			if(amount && unit)
+				amount = ' - (' + amount + '/' + unit + ')';
+			
+			target.children('td:nth-child(4)').text(extra.displayName + amount);
+			
+			CF.async({url : result.entity.service_url}, function(result)
+			{
+				if(result)
+				{
+					service = result;
+					var extra = JSON.parse(result.entity.extra);
+					target.children('td:nth-child(1)').html('<img src="' + extra.imageUrl + '"> <span>' + extra.displayName + '</span>');
+					
+					option++;
+				}
+			}, common_error);
+		}
+		
+	}, common_error);
+	
+	CF.async({url : serviceInstance.entity.service_bindings_url}, function(result)
+	{
+		if(result)
+		{
+			bindings = result;
+			target.children('td:nth-child(3)').text(result.resources.length);
+			option++;
+		}
+		
+	}, common_error);
+	
+	target.on('click', function()
+	{
+		var url = _global.url;
+		
+		location.href = '/organization/' + url[1] + '/space/' + url[3] + '/service_instance/' + serviceInstance.metadata.guid;
+	});
+});
+</script>
+
+<div class="card margin-top-20 row padding-40 services">
+	<h4>Services</h4>
+	<table class="service-instance-table">
+		<colgroup>
+			<col style="width: 35%;">
+			<col style="width: 25%;">
+			<col style="width: 20%;">
+			<col style="width: 20%;">
+		</colgroup>
+		<thead>
+			<tr>
+				<th>Service</th>
+				<th>Name</th>
+				<th>Bound Apps</th>
+				<th>Plan</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+</div>

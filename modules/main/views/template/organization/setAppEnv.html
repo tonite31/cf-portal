@@ -1,0 +1,143 @@
+<script type="text/template" id="AppEnv">
+<table class="app-env-user-provided">
+	<colgroup>
+		<col style="width: 90%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th colspan="2">User Provided</th>
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+<div class="margin-top-40 margin-bottom-40">
+	<div class="text-input app-env-key">
+		<input type="text" placeholder="Key" id="userEnvKey" required>
+		<label></label>
+	</div>
+	<textarea class="text-area app-env-value" placeholder="Value" id="userEnvValue"></textarea>
+	<a class="waves-effect waves-light btn action-button" id="addUserEnv">Add</a>
+	<a class="waves-effect waves-light btn action-button grey darken-4" id="cancelUserEnv">Cancel</a>
+</div>
+<table class="app-env-system-provided">
+	<colgroup>
+		<col style="width: 90%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th colspan="2">System Provided</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				<pre></pre>
+			</td>
+		</tr>
+	</tbody>
+</table>
+</script>
+
+<script>
+(function()
+{
+	_ee.on('setAppEnv', function(target, app)
+	{
+		var loading = $(target).find('.loading');
+		var html = $('#AppEnv').html();
+		$(target).html(html).find('.app-env-system-provided td').css('position', 'relative').append(loading);
+		
+		var userProvided = app.item.entity.environment_json;
+		var tbody = $(target).find('.app-env-user-provided tbody');
+		
+		var update = function(environment)
+		{
+			try
+			{
+				var param = {};
+				param.url = '/v2/apps/' + app.item.metadata.guid;
+				param.method = 'PUT';
+				param.headers = {'Content-Type' : 'application/x-www-form-urlencoded'};
+				param.form = {};
+				param.form['environment_json'] = environment;
+				
+				CF.async(param, function(result)
+				{
+					if(result)
+					{
+						if(result.code == 1001)
+						{
+							tbody.append('<tr><td colspan="2">' + result.description + '</td></tr>');
+						}
+						else if(result.entity)
+						{
+							tbody.html('');
+							setUserProvided(result.entity.environment_json);
+						}
+					}
+				}, common_error);
+			}
+			catch(error)
+			{
+				common_error(error);
+			}
+		};
+		
+		var setUserProvided = function(environment)
+		{
+			for(var key in environment)
+			{
+				var tr = document.createElement('tr');
+				var td = document.createElement('td');
+				td.innerHTML = '<p class="paragraph">' + key + '</p><p class="paragraph">' + environment[key] + '</p>';
+				tr.appendChild(td);
+				
+				td = document.createElement("td");
+				td.innerHTML = '<div class="confirm-button"><span class="target-button"><img src="/modules/main/views/imgs/icon_delete.png"></span><span class="confirm">Delete</span></div>';
+				tr.appendChild(td);
+				
+				(function(key)
+				{
+					confirmButton(td, function()
+					{
+						delete userProvided[key];
+						update(userProvided);
+					});
+				})(key);
+				
+				tbody.append(tr);
+			}
+		};
+		
+		setUserProvided(userProvided);
+		
+		$('#addUserEnv').on('click', function()
+		{
+			if(requiredValidation($(target)))
+			{
+				var key = $('#userEnvKey').val();
+				var value = $('#userEnvValue').val();
+				
+				userProvided[key] = value;
+				
+				update(userProvided);
+			}
+		});
+		
+		$('#cancelUserEnv').on('click', function()
+		{
+			$('#userEnvKey').val('');
+			$('#userEnvValue').val('');
+		});
+		
+		CF.async({url: '/v2/apps/' + app.item.metadata.guid + '/env'}, function(systemProvided)
+		{
+			$(target).find('.app-env-system-provided tbody pre').html(JSON.stringify(systemProvided, null, 4));
+			loading.remove();
+		}, common_error);
+	});
+})();
+</script>

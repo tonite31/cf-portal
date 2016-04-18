@@ -1,0 +1,26 @@
+{
+  "name": "cf-portal",
+  "version": "0.1.0",
+  "description": "CloudFoundry Web UI",
+  "main": "app.js",
+  "dependencies": {
+    "async-foreach": "^0.1.3",
+    "body-parser": "*",
+    "cf-nodejs-client": "^0.13.0",
+    "express": "*",
+    "express-session": "^1.13.0",
+    "method-override": "*",
+    "nodejs-imp": "0.0.5",
+    "request": "^2.69.0"
+  },
+  "keywords": [
+    "Cloud Foundry"
+  ],
+  "devDependencies": {},
+  "author": {
+    "name": "Alprensia"
+  },
+  "engines": {
+    "node": "4.2.2"
+  }
+}

@@ -1,0 +1,41 @@
+body {
+	min-width: 1200px;
+}
+
+h3 {
+	font-size: 30px;
+}
+
+h4 {
+	font-size: 25px;
+}
+
+h5 {
+	font-size: 20px;
+}
+
+hr {
+	border: 0;
+	border-top: 1px solid #aaa;
+}
+
+.relative {
+	position: relative;
+}
+
+table thead {
+	border-top: 1px solid #c2c9cb;
+	border-bottom: 1px solid #c2c9cb;
+}
+
+table tbody tr {
+	border-bottom: 1px solid #dce2e3;
+}
+
+table th, table td {
+	font-size: 13px;
+}
+
+input[required], select[required] {
+	transition: box-shadow 1s;
+}

@@ -1,0 +1,68 @@
+<script type="text/template" id="AppLogs">
+<div>
+<div class="row center-align">
+	<a class="waves-effect waves-light btn action-button refresh">Refresh</a>
+	<a class="waves-effect waves-light btn grey darken-4 tail">&lt;/&gt;Tail Logs</a>
+</div>
+<div class="row">
+	<div class="card grey darken-4">
+	<div class="card-content white-text">
+		<pre style="width: 100%; max-height: 800px;"></pre>
+	</div>
+</div>
+</div>
+</script>
+
+<script>
+(function()
+{
+	var getLogs = function(target, app)
+	{
+		CF.async({url : "/recent?app=" + app.item.metadata.guid, headers : {'Content-type' : 'text/plain; charset=utf-8'}}, function(logsData)
+		{
+			$(target).find('pre').html(logsData);
+		}, common_error, true);
+	};
+	
+	_ee.on('setAppLogs', function(target, app)
+	{
+		$(target).html($("#AppLogs").html());
+		$(target).find('.refresh').on('click', function()
+		{
+			getLogs(target, app);
+		});
+		
+		CF.async({url : "/recent?app=" + app.item.metadata.guid, headers : {'Content-type' : 'text/plain; charset=utf-8'}}, function(logsData)
+		{
+			getLogs(target, app);
+		}, common_error, true);
+		
+		$(target).find('.tail').on('click', function()
+		{
+			if ('WebSocket' in window)
+			{  
+			    var oSocket = new WebSocket('wss://loggregator.dev.ghama.io:443/tail/?app=' + app.item.metadata.guid);
+
+			    oSocket.onmessage = function (e) { 
+			        console.log('온다 : ', e.data); 
+			    };
+
+			    oSocket.onopen = function (e) {
+			        console.log('오픈');
+			    };
+
+			    oSocket.onclose = function (e) {
+			        console.log('클로즈');
+			    };
+			}
+			else
+			{
+				common_error('This browser does not support WebSocker.');
+			}
+// 			wss://loggregator.dev.ghama.io:443
+			
+			console.log("서버 : ", $("#tailLogServer").val());
+		});
+	});
+})();
+</script>

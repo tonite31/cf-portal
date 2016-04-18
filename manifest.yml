@@ -1,0 +1,8 @@
+---
+applications:
+- name: cf-portal
+  command: node app.js
+  buildpack: nodejs_buildpack
+  env:
+    CF_STAGING_TIMEOUT: 25
+    CF_STARTUP_TIMEOUT: 15

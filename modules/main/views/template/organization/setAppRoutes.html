@@ -1,0 +1,181 @@
+<script type="text/template" id="AppRouteRow">
+<tr>
+	<td>
+		<p class="paragraph">{url}</p>
+	</td>
+	<td class="center-align">
+		<div class="confirm-button">
+			<span class="target-button">Unmap</span>
+			<span class="confirm">Delete</span>
+		</div>
+	</td>
+</tr>
+</script>
+
+<script type="text/template" id="AppRoutes">
+<div>
+	<table class="app-route-table">
+		<colgroup>
+			<col style="width: 90%;">
+			<col style="width: 10%;">
+		</colgroup>
+		<tbody>
+		</tbody>
+	</table>
+	<div class="margin-top-40 margin-bottom-40">
+		<div class="text-input app-route-hostname">
+			<input type="text" placeholder="Hostname" required>
+			<label></label>
+		</div>
+		<select class="browser-default app-route-select" required disabled></select>
+		<a class="waves-effect waves-light btn action-button mapRoute">Map</a>
+		<a class="waves-effect waves-light btn action-button grey darken-4 cancelMapRoute">Cancel</a>
+	</div>
+</div>
+</script>
+
+<script>
+(function()
+{
+	var Routes = function(target, app)
+	{
+		this.target = target;
+		this.app = app;
+	};
+	
+	Routes.prototype.setRouteList = function()
+	{
+		var target = this.target;
+		var app = this.app;
+		
+		var routeList = $(target).parent().parent().find('.app-routes').get(0).item;
+		if(routeList)
+		{
+			if(routeList.length == 0)
+			{
+				$(target).find('tbody').html('<tr><td colspan="2" class="center-align">No routes mapped to this app.</td></tr>');
+			}
+			else
+			{
+				for(var i=0; i<routeList.length; i++)
+				{
+					var row = $('#AppRouteRow').html().replace('{url}', routeList[i].text);
+					var tr = $(row);
+					$(target).find('tbody').append(tr);
+					var td = $(tr).find('td:last');
+					
+					(function(td, route)
+					{
+						confirmButton(td, function()
+						{
+							CF.async({url : route.route_mappings_url + "?q=app_guid:" + app.item.metadata.guid + "&q=route_guid:" + route.route_guid}, function(result)
+							{
+								if(result)
+								{
+									var mappingList = result.resources;
+									for(var i=0; i<mappingList.length; i++)
+									{
+										CF.async({url : '/v2/route_mappings/' + mappingList[i].metadata.guid, method : 'DELETE'}, function(result)
+										{
+											if($(td).parent().parent().children("tr").length == 1)
+												$(target).find('tbody').html('<tr><td colspan="2" class="center-align">No routes mapped to this app.</td></tr>');
+											else
+												$(td).parent().remove();
+										}, common_error);
+									}
+								}
+							}, common_error);
+						});					
+					})(td, routeList[i]);
+				}
+			}
+			
+			var select = $(target).find('select');
+			var input = $(target).find('input');
+			
+			select.html('<option value="" disalbed selected>Loading domains.</option>');
+			CF.async({url : app.item.space.organization.entity.domains_url}, function(result)
+			{
+				if(result)
+				{
+					var domainList = result.resources;
+					for(var i=0; i<domainList.length; i++)
+					{
+						select.append('<option value="' + domainList[i].metadata.guid + '">' + domainList[i].entity.name + '</option>');
+					}
+					
+					select.removeAttr('disabled').children('option:first').text('Choose your option');
+				}
+			}, common_error);
+			
+			$(target).find('.mapRoute').on('click', function()
+			{
+				if(requiredValidation($(target)))
+				{
+					var hostname = input.val();
+					var domain = select.val();
+					
+					if(!hostname)
+					{
+						common_alert("Enter a hostname");
+						return;
+					}
+					
+					if(domain)
+					{
+						CF.async({url : "/v2/routes", method : "POST", form : {host : hostname, space_guid : app.item.space.metadata.guid, domain_guid : domain}}, function(result)
+						{
+							if(result)
+							{
+								if(result.code == 210003)
+								{
+									common_error(result.description);		
+								}
+								else if(result.entity)
+								{
+									CF.async({url : "/v2/route_mappings", method : "POST", form : {app_guid : app.item.metadata.guid, route_guid : result.metadata.guid}}, function(result)
+									{
+									}, common_error);
+								}
+							}
+							
+							///v2/route_mappings
+						}, common_error);
+					}
+					else
+					{
+						common_alert("Select a domain");
+					}
+				}
+			});
+			
+			$(target).find(".cancelMapRoute").on("click", function()
+			{
+				select.val("");
+				input.val("");
+			});
+		}
+		else
+		{
+			$(target).find('tbody').html('<tr><td colspan="2" class="center-align">No routes mapped to this app.</td></tr>');
+		}
+	};
+	
+	var routes = null;
+	
+	_ee.on('setRoutes_done', function()
+	{
+		if(routes)
+			routes.setRouteList();
+	});
+	
+	_ee.on('setAppRoutes', function(target, app)
+	{
+		var html = $('#AppRoutes').html();
+		$(target).html(html);
+		
+		routes = new Routes(target, app);
+		routes.setRouteList();
+	});
+})();
+</script>

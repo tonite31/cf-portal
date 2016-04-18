@@ -1,0 +1,337 @@
+<link href="@{css}/subpages.css" rel="stylesheet">
+
+<script type="text/template" id="MemberRow">
+<tr>
+	<td>{email}</td>
+	<td class="center-align">
+		<div>
+			<input type="checkbox" id="managers-{type}-{guid}">
+			<label for="managers-{type}-{guid}"></label>
+		</div>
+	</td>
+	<td class="center-align">
+		<input type="checkbox" id="billing_managers-{type}-{guid}">
+		<label for="billing_managers-{type}-{guid}"></label>
+	</td>
+	<td class="center-align">
+		<input type="checkbox" id="auditors-{type}-{guid}">
+		<label for="auditors-{type}-{guid}"></label>
+	</td>
+	<td class="center-align">
+	</td>
+</tr>
+</script>
+
+<script>
+
+var getManagerList = function(item, selector)
+{
+	CF.async({url : item.entity.managers_url}, function(result)
+	{
+		_ee.emit('getManagetList_done', item, {managers : (result ? result.resources : null)}, selector);
+	}, common_error);
+};
+
+_ee.on('getManagetList_done', function(item, list, selector)
+{
+	CF.async({url : (item.entity.billing_managers_url ? item.entity.billing_managers_url : item.entity.developers_url)}, function(result)
+	{
+		list.billing_managers = result ? result.resources : null;
+		_ee.emit('getBillingManagerList_done', item, list, selector);
+	}, common_error);
+});
+
+_ee.on('getBillingManagerList_done', function(item, list, selector)
+{
+	CF.async({url : item.entity.auditors_url}, function(result)
+	{
+		list.auditors = result ? result.resources : null;
+		_ee.emit('getManagers_done', item, list, selector);
+	}, common_error);
+});
+
+var checkManager = function(type, list, selector)
+{
+	$(selector + ' tbody tr input[id^="' + type + '"]').each(function()
+	{
+		this.checked = false;
+		for(var i=0; i<list[type].length; i++)
+		{
+			if(list[type][i].metadata.guid == this.id.replace(type + "-org-", '').replace(type + "-space-", ''))
+			{
+				this.checked = true;
+				break;
+			}
+		}
+	});
+};
+
+_ee.on('getManagers_done', function(item, list, selector)
+{
+	checkManager('managers', list, selector);
+	checkManager('billing_managers', list, selector);
+	checkManager('auditors', list, selector);
+	
+	$('#memberLoading').hide();
+});
+
+var addMemberRow = function(item)
+{
+	var html = $('#MemberRow').html();
+	
+	var orgTr = $(html.replace(/{type}/gi, 'org').replace(/{email}/gi, item.entity.username ? item.entity.username : '').replace(/{guid}/gi, item.metadata.guid));
+	var spaceTr = $(html.replace(/{type}/gi, 'space').replace(/{email}/gi, item.entity.username ? item.entity.username : '').replace(/{guid}/gi, item.metadata.guid));
+	
+	(function(orgTr, spaceTr)
+	{
+// 		confirmButton(orgTr.find('.confirm-button'), function()
+// 		{
+// 			CF.users('delete', {id : this.metadata.guid}, function(result)
+// 			{
+// 				orgTr.remove();
+// 				spaceTr.remove();
+// 			});
+// 		}.bind(item));
+		
+// 		confirmButton(spaceTr.find('.confirm-button'), function()
+// 		{
+// 			CF.users('delete', {id : this.metadata.guid}, function(result)
+// 			{
+// 				orgTr.remove();
+// 				spaceTr.remove();
+// 			});
+// 		}.bind(item));
+	})(orgTr, spaceTr);
+	
+	$('#membersTableForOrg tbody').append(orgTr);
+	$('#membersTableForSpace tbody').append(spaceTr);
+	
+	orgTr.get(0).item = item;
+	spaceTr.get(0).item = item;
+	
+	return {orgTr : orgTr, spaceTr : spaceTr};
+};
+
+var setMemberForOrg = function(organization)
+{
+	$('#membersTableForOrg tbody').html('');
+	$('#membersTableForSpace tbody').html('');
+	
+	var list = {managers : [], billing_managers : [], auditors : []};
+	CF.async({url : organization.entity.managers_url}, function(result)
+ 	{
+		var memberList = result.resources;
+		for(var i=0; i<memberList.length; i++)
+		{
+			list.managers.push(memberList[i]);
+			addMemberRow(memberList[i]);
+		}
+		
+		CF.async({url : organization.entity.billing_managers_url ? organization.entity.billing_managers_url : organization.entity.developers_url}, function(result)
+	 	{
+			var memberList = result.resources;
+			for(var i=0; i<memberList.length; i++)
+			{
+				list.billing_managers.push(memberList[i]);
+				addMemberRow(memberList[i]);
+			}
+			
+			CF.async({url : organization.entity.auditors_url}, function(result)
+		 	{
+				var memberList = result.resources;
+				for(var i=0; i<memberList.length; i++)
+				{
+					list.auditors.push(memberList[i]);
+					addMemberRow(memberList[i]);
+				}
+				
+				$('#membersTableForSpace tbody tr td input[type="checkbox"]').on('change', function()
+	 			{
+	 				var item = $(this).parent().parent().parent().get(0).item;
+					
+	 				var type = this.id.split("-")[0];
+					
+	 				var method = 'PUT';
+	 				if(!this.checked)
+	 					method = 'DELETE';
+					
+	 				var space = $('#typeSelect option:selected').get(0).item;
+					
+	 				if(type == 'billing_managers')
+	 					type = 'developers';
+					
+	 				CF.async({url : '/v2/spaces/' + space.metadata.guid + '/' + type, method : method, form : {username : item.entity.username}}, function(result)
+	 				{
+	 				}, common_error);
+	 			});
+				
+	 			$('#typeSelect option:first').get(0).item = organization;
+				
+	 			checkManager('managers', list, "#membersTableForOrg");
+	 		 	checkManager('billing_managers', list, "#membersTableForOrg");
+	 		 	checkManager('auditors', list, "#membersTableForOrg");
+	 		 	$('#memberLoading').hide();
+		 	});
+	 	});
+ 	});
+};
+
+_ee.on('setOrganization_done', function(organization)
+{
+	if(organization)
+	{
+		var option = $('<option selected data-type="org" value="' + organization.metadata.guid + '">' + organization.entity.name + '</option>');
+		option.get(0).item = organization;
+		$('#typeSelect').prepend(option);
+		
+		$('#membersTableForOrg').show();
+		$('#membersTableForSpace').hide();
+		
+		setMemberForOrg(organization);
+	}
+});
+_ee.on('setSpaceList_done', function(spaceList)
+{
+	if(spaceList)
+	{
+		$('#typeSelect').append('<option value="" disabled>Space</option>');
+		for(var i=0; i<spaceList.length; i++)
+		{
+			var option = $('<option data-type="space" value="' + spaceList[i].metadata.guid + '">&nbsp;&nbsp;' + spaceList[i].entity.name + '</option>');
+			option.get(0).item = spaceList[i];
+			$('#typeSelect').append(option);
+		}
+	}
+});
+
+$(document).ready(function()
+{
+	$('#cancelInvite').on('click', function()
+	{
+		$("#email").val("");
+	});
+	
+	$('#invite').on('click', function()
+	{
+		var target = $('#email').val();
+		$.ajax({
+			url : '/mail',
+			type : 'post',
+			data : {orgGuid : _global.url[1], target : target},
+			success : function(result)
+			{
+				if(result)
+				{
+					var list = result.resources;
+					for(var i=0; i<list.length; i++)
+					{
+						var added = addMemberRow(list[i]);
+						$(added.orgTr).find('input[id^=auditors]').get(0).checked = true;
+					}
+				}
+				
+				$('#email').val('');
+			},
+			error : common_error
+		});
+	});
+	
+	$('#typeSelect').on('change', function()
+	{
+		$('#memberLoading').show();
+		
+		var option = $(this).find('option:selected');
+		var type = option.attr('data-type');
+		if(type == 'space')
+		{
+			$("#membersTableForOrg").hide();
+			$("#membersTableForSpace").show();
+			
+			getManagerList(option.get(0).item, "#membersTableForSpace");
+		}
+		else
+		{
+			getManagerList(option.get(0).item, "#membersTableForOrg");
+			
+			$('#membersTableForOrg').show();
+			$('#membersTableForSpace').hide();
+		}
+	});
+});
+</script>
+
+<div class="sub-container">
+	<div class="card margin-top-20 row padding-40">
+		<h4>Members</h4>
+		<div>
+			<select class="browser-default type-select" id="typeSelect"></select>
+		</div>
+		<div>
+			<table id="membersTableForOrg">
+				<colgroup>
+					<col style="width: 20%;">
+					<col style="width: 25%;">
+					<col style="width: 25%;">
+					<col style="width: 25%;">
+					<col style="width: 5%;">
+				</colgroup>
+				<thead>
+					<tr>
+						<th class="center-align">Member</th>
+						<th class="center-align">Org Manager</th>
+						<th class="center-align">Org Billing Manager</th>
+						<th class="center-align">Org Auditor</th>
+						<th class="center-align"></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+			<table class="members-table" id="membersTableForSpace" style="display: none;">
+				<colgroup>
+					<col style="width: 20%;">
+					<col style="width: 25%;">
+					<col style="width: 25%;">
+					<col style="width: 25%;">
+					<col style="width: 5%;">
+				</colgroup>
+				<thead>
+					<tr>
+						<th>Member</th>
+						<th>Space Manager</th>
+						<th>Space Billing Manager</th>
+						<th>Space Auditor</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		<div class="margin-top-40 margin-bottom-40">
+			<div class="text-input members-emails">
+				<input type="text" id="email" placeholder="Emails(use commas to separate emails)">
+				<label></label>
+			</div>
+			<a class="waves-effect waves-light btn action-button" id="invite">Invite</a>
+			<a class="waves-effect waves-light btn action-button grey darken-4" id="cancelInvite">Cancel</a>
+		</div>
+	</div>
+	<div class="valign-wrapper loading" id="memberLoading">
+		<div class="valign">
+			<div class="preloader-wrapper big active">
+				<div class="spinner-layer spinner-blue-only">
+					<div class="circle-clipper left">
+						<div class="circle"></div>
+					</div>
+					<div class="gap-patch">
+						<div class="circle"></div>
+					</div>
+					<div class="circle-clipper right">
+						<div class="circle"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

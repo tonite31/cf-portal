@@ -1,0 +1,20 @@
+.services .service-instance-table tr {
+	cursor: pointer;
+}
+
+.services .service-instance-table tr:HOVER {
+	background-color: #F8F8F8;
+}
+
+.services .service-instance-table td {
+	font-size: 15px;
+	color: #666;
+}
+
+.services .service-instance-table td img, .services .service-instance-table td span {
+	vertical-align: middle;
+}
+
+.services .service-instance-table td span {
+	margin-left: 10px;
+}

@@ -1,0 +1,44 @@
+body {
+	background-color: #fff;
+}
+
+.body-container {
+	padding: 0;
+}
+
+.section {
+	padding: 0;
+}
+
+#topbar {
+	display: none;
+}
+
+.body-container {
+	display: block !important;
+}
+
+#orgLoading {
+	display: none;
+}
+
+.background {
+	background-image: url(../imgs/index_top_bg.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 442px;
+}
+
+.action-button {
+	background-color: #4c5152;
+	color: #fff;
+	border-radius: 30px;
+	margin: 0 10px;
+	text-transform: none;
+	padding: 10px 60px;
+	height: 55px;
+}
+
+.action-button:HOVER {
+	background-color: #4c5152;
+}

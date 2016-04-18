@@ -1,0 +1,63 @@
+<link href="@{css}/sign.css" rel="stylesheet">
+
+<script>
+$(document).ready(function()
+{
+	$('#signup').on('click', function(e)
+	{
+		if(requiredValidation($('#createForm')))
+		{
+			var email = $('#email').val();
+			var password = $('#password').val();
+			var passwordConfirm = $('#passwordConfirm').val();
+			
+			if(password != passwordConfirm)
+			{
+				common_warning('Password is not accord each other.');
+			}
+			else
+			{
+				CF.users('createUser', {email : email, password : password}, function(result)
+				{
+					if(result && result.error_description)
+					{
+						common_error(result.error_description);
+					}
+					else if(result.userName == email)
+					{
+						location.href = '/signin';
+					}
+				});
+			}
+		}
+	});
+});
+</script>
+
+<div class="section sign-container">
+	<div class="container">
+		<div class="center-align">
+			<img src="@{imgs}/user_smile.png">
+		</div>
+		<h1 class="header center">Create Your Account</h1>
+		<div class="row center">
+			<div id="createForm">
+				<div class="input-field for-central">
+		          	<input id="email" type="text" class="validate" autocomplete="off" required>
+		          	<label for="email">Email Address</label>
+		        </div>
+		        <div class="input-field for-central">
+		          	<input id="password" type="password" class="validate" required>
+		          	<label for="password">Password</label>
+		        </div>
+		        <div class="input-field for-central">
+		          	<input id="passwordConfirm" type="password" class="validate" required>
+		          	<label for="passwordConfirm">Password Confirm</label>
+		        </div>
+				<div class="center margin-top-20">
+					<a class="waves-effect waves-light btn action-button" id="signup">Create</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

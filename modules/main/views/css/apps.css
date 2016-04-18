@@ -1,0 +1,233 @@
+.app {
+	opacity: 0;
+	transition: opacity 3s;
+}
+
+.app-info {
+	padding: 20px 30px;
+	background-color: #cae2e5;
+}
+
+.app-name {
+	font-weight: 400;
+	color: #000;
+	font-size: 18px;
+}
+
+.app-routes {
+	font-size: 14px;
+}
+
+.app-functions a {
+	border-radius: 2px;
+	padding: 0 10px;
+	margin: 0 5px;
+}
+
+.app-functions a:FIRST-CHILD {
+	margin-left: 0;
+}
+
+.app-functions a.red:HOVER {
+	background-color: #E57373 !important;
+}
+
+.app-functions .purple:HOVER {
+	background-color: #ba68c8 !important;
+}
+
+.app-functions .confirm-button span {
+	margin:0;
+}
+
+.app-info-label {
+	display: inline-block;
+	font-weight: bold;
+	font-size: 14px;
+	width: 100px;
+	vertical-align: middle;
+}
+
+.app-info-label + span {
+	display: inline-block;
+	width: 70%;
+	font-size: 14px;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+	vertical-align: middle;
+}
+
+.save-app-info {
+	padding-top: 45px !important;
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+.save-app-info .btn {
+	margin-right: 10px;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 15px !important;
+	font-size: 13px;
+}
+
+.save-app-info a {
+	cursor: pointer;
+}
+
+.app-service-table {
+	border-bottom: 1px solid #dce2e3;
+}
+
+.app-service-table:nth-child(even) {
+	border-top: 0;
+}
+
+.app-service-table td, .app-service-table th {
+	padding: 5px 0;
+}
+
+.app-service-table tr {
+	border:0;
+}
+
+.app-service-name {
+	font-size: 18px;
+	font-weight: bold;
+	margin: 5px 0 0 0;
+}
+
+.app-service-credentials {
+	color: #0190e2;
+	margin:0;
+}
+
+.app-service {
+	border-top: 1px solid #dce2e3 !important;
+}
+
+.app-env-key, .app-route-hostname {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.app-env-key input, .app-route-hostname input {
+	width: 300px;
+	margin:0;
+	margin-right: 10px;
+}
+
+.app-env-value {
+	width: 400px;
+	height: 100px;
+	vertical-align: top;
+	margin-right: 10px;
+}
+
+#addUserEnv {
+	margin-right: 10px;
+}
+
+.app-route-table {
+	border-top: 1px solid #dce2e3;
+}
+
+.app-route-select, .app-service-select {
+	display: inline-block !important;
+	width: 400px;
+	margin-right: 10px;
+}
+
+.app-event {
+	border-top: 1px solid #ddd;
+	padding: 20px 0;
+	margin: 0;
+}
+
+.app-event-more span {
+	cursor: pointer;
+}
+
+.app-event-more:HOVER {
+	text-decoration: underline;
+}
+
+.credentials p {
+	margin: 10px 0 5px 0;
+	color: #686868;
+	font-weight: bold;
+}
+
+.credentials pre{
+	white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+    
+    border: 1px solid #dce2e3;
+    border-radius: 3px;
+    background-color: #eee;
+    
+    padding: 10px;
+    margin: 0;
+}
+
+.app-service-credentials {
+	cursor: pointer;
+}
+
+.app-service-add-from-marketplace {
+	margin-bottom: 40px;
+	margin-top: 10px;
+	width: 400px;
+	text-align: right;
+}
+
+.app-env-user-provided .confirm-button span {
+	cursor: pointer;
+}
+
+.tab-button {
+	position: relative;
+	text-transform: none !important;
+	margin: 0 2.5px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	background-color: #fff !important;
+	color: #000;
+	box-shadow: none;
+	border: 1px solid #c2c9cb;
+}
+
+.tab-button img {
+	position: absolute;
+	right: 10px;
+	top: 48%;
+}
+
+.tab-button.selected {
+	background-color: #0190e2 !important;
+	color: #fff !important;
+}
+
+.tab-content {
+	display: none;
+	position: relative;
+	padding: 40px;
+}
+
+.loading {
+	top: 45px;
+}
+
+pre {
+	width: 100%;
+	max-height: 800px;
+	white-space: pre-wrap; /* CSS3 */
+    white-space: -moz-pre-wrap; /* Mozilla, post millennium */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+}

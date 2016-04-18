@@ -1,0 +1,87 @@
+.service-instance-name {
+	margin: 30px 0;
+}
+
+.service-instance-name input {
+	width: 30%;
+	margin-right: 10px;
+}
+
+.service-instance-name .save {
+	margin: 0 10px;
+}
+
+.service-instance-info .confirm-button .target-button {
+	color: #666;
+	cursor: pointer;
+}
+
+.service-instance-info .confirm-button .target-button:HOVER {
+	color: #EF2922;
+}
+
+.service-instance-info.right {
+	position: relative;
+	top: 30px;
+}
+
+.service-instance-info {
+	vertical-align: middle;
+	display: inline-block;
+}
+
+.service-instance-info.name {
+	margin: 0 20px;
+}
+
+.service-instance-plans, .service-instance-bound-apps {
+	border-top: 1px solid #dce2e3;
+}
+
+.service-instance-plans tr, .service-instance-bound-apps tr {
+	border: 0;
+}
+
+.service-instance-plans td, .service-instance-plans th {
+	text-align: center;
+	border:0;
+}
+
+.service-instance-plans tr:nth-child(2) td {
+	vertical-align: top;
+}
+
+.service-instance-plans tr:nth-child(2) td div {
+	display: inline-block;
+	text-align: left;
+}
+
+.service-instance-plans td, .service-instance-plans th p {
+	margin: 5px 0;
+}
+
+.service-instance-plans td, .service-instance-plans th p:last-child {
+	margin-top: 10px;
+}
+
+.service-plan-name {
+	font-size: 17px;
+}
+
+.selected-plan {
+	color: #0190E2;
+}
+
+.service-instance-accordion {
+	cursor: pointer;
+}
+
+.service-instance-detail > div {
+	padding: 40px;
+	background-color: #fff;
+	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+#saveInstanceName {
+	margin-left: 10px;
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta charset="UTF-8" />
+<title>Cloud Foundry Web Service</title>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="@{libs}/materialize/css/materialize.css" rel="stylesheet" media="screen,projection">
+<link href="@{libs}/materialize/css/style.css" rel="stylesheet" media="screen,projection">
+
+<link href="@{css}/common.css" rel="stylesheet">
+<link href="@{css}/measurement.css" rel="stylesheet">
+<link href="@{css}/component.css" rel="stylesheet">
+
+<link href="@{css}/layout.css" rel="stylesheet">
+
+<script src="@{libs}/jquery-2.2.3.min.js"></script>
+<script src="@{libs}/materialize/js/materialize.min.js"></script>
+<script src="@{libs}/event_emitter.js"></script>
+<script src="@{libs}/cf/cf-client.js"></script>
+<script src="@{js}/common.js"></script>
+<script src="@{js}/messages.js"></script>
+
+<script type="text/template" id="PreLoading">
+<div class="valign-wrapper loading">
+	<div class="valign">
+		<div class="preloader-wrapper big active">
+			<div class="spinner-layer spinner-blue-only">
+				<div class="circle-clipper left">
+					<div class="circle"></div>
+				</div>
+				<div class="gap-patch">
+					<div class="circle"></div>
+				</div>
+				<div class="circle-clipper right">
+					<div class="circle"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+<script>
+$(document).ready(function()
+{
+	$('#signout').on('click', function()
+	{
+		CF.signout(function()
+		{
+			location.href = '/';	
+		});
+	});
+});
+</script>
+</head>
+
+<body>
+<input type="hidden" value="#{tailLogServer}" id="tailLogServer">
+<nav id="topbar">
+    <div class="nav-wrapper">
+		<a href="/organization" class="brand-logo black-text">
+			<img src="@{imgs}/logo_sk.png">
+			<img src="@{imgs}/logo_black.png">
+		</a>
+		<ul class="left hide-on-med-and-down" style="padding-left: 250px;">
+       		<li><a href="/marketplace" class="black-text">Marketplace</a></li>
+       	</ul>
+		<ul class="right hide-on-med-and-down">
+		  <li><a id="username" class="black-text" href="/profile" data-username="#{username}"><img src="@{imgs}/icon_user_id.png"> #{username}</a></li>
+		  <li><a class="black-text" href="#" id="signout"><img src="@{imgs}/icon_signout.png"> Sign out</a></li>
+		</ul>
+    </div>
+</nav>
+<div class="body-container" style="display: none;">
+${#{1}}
+</div>
+<div class="valign-wrapper loading" id="orgLoading">
+	<div class="valign">
+  		<div class="preloader-wrapper big active">
+			<div class="spinner-layer spinner-blue-only">
+				<div class="circle-clipper left">
+					<div class="circle"></div>
+				</div>
+				<div class="gap-patch">
+					<div class="circle"></div>
+				</div>
+				<div class="circle-clipper right">
+					<div class="circle"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="common-board center-align"></div>
+</body>
+
+</html>
