@@ -411,12 +411,12 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 							}
 						});
 					}.bind(this), error);
-				}
-				else
-				{
-					done(body);
+					
+					return;
 				}
 			}
+			
+			done(body);
 		}
 	}.bind(this));
 };

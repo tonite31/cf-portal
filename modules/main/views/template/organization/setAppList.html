@@ -312,9 +312,33 @@
 					
 					confirmButton($(this).parent().next(), function()
 					{
-						CF.async({url : '/v2/apps/' + item.metadata.guid, method : 'DELETE'}, function(result)
+						CF.async({url : '/v2/apps/' + item.metadata.guid + '/service_bindings', method : 'GET'}, function(result)
 						{
-							$(app).remove();
+							if(result)
+							{
+								var deleteServiceBinding = function(index, list, done)
+								{
+									if(list.length == index)
+									{
+										done();
+										return;
+									}
+									
+									CF.async({url : '/v2/service_bindings/' + list[index].metadata.guid, method : 'DELETE'}, function(result)
+									{
+										deleteServiceBinding(index+1, list, done);
+									});
+								};
+								var list = result.resources;
+								
+								deleteServiceBinding(0, list, function()
+								{
+									CF.async({url : '/v2/apps/' + item.metadata.guid, method : 'DELETE'}, function(result)
+									{
+										$(app).remove();
+									});
+								});
+							}
 						});
 					});
 				});
@@ -324,7 +348,6 @@
 					var app = $(this).parent().parent().parent().parent();
 					var item = app.get(0).item;
 					
-					console.log("흠 : ", $(this).val(), item.entity.instances);
 					if($(this).val() != item.entity.instances)
 					{
 						$(this).parent().parent().next().css('opacity', 1);
