@@ -10,6 +10,7 @@
     "express": "*",
     "express-session": "^1.13.0",
     "method-override": "*",
+    "node-uuid": "^1.4.7",
     "nodejs-imp": "0.0.5",
     "request": "^2.69.0"
   },
