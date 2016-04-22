@@ -2,29 +2,16 @@ var request = require('request');
 
 var uuid = require('node-uuid');
 
+var CFClient = require('../../lib/CFClient');
+
 module.exports = function(app)
 {
-	app.post('/signout', function(req, res, next)
+	app.get('/signout.do', function(req, res, next)
 	{
-		req.session.loginInfo = {};
-		cf.logout();
+		if(req.session.cfdata)
+			req.session.cfdata = null;
 		
-		res.end();
-	});
-	
-	app.get('/signin', function(req, res, next)
-	{
-		if(cf.isLogin())
-		{
-			if(req.session.redirect)
-				res.redirect(req.session.redirect);
-			else
-				res.redirect('/organization');
-		}
-		else
-		{
-			next();
-		}
+		res.send(req.session.cfdata);
 	});
 	
 	app.get('/registration/:id', function(req, res, next)
@@ -33,10 +20,7 @@ module.exports = function(app)
 		
 		if(req.session && req.session.registration)
 		{
-			if(!req.session.loginInfo)
-				req.session.loginInfo = {};
-			
-			req.session.loginInfo.oldPassword = password;
+			cf.oldPassword = password;
 			var data = req.session.registration[password];
 			if(data)
 				res.render('layout', {1 : 'signup_for_invite', id : data.id, username : data.username});
@@ -49,13 +33,35 @@ module.exports = function(app)
 		}
 	});
 	
+	app.get('/:type(signin|signup)', function(req, res, next)
+	{
+		if(!req.session)
+			req.session = {};
+		
+		if(!req.session.cfdata)
+			req.session.cfdata = {};
+
+		var cf = new CFClient(req.session.cfdata);
+		if(cf.isLogin())
+		{
+			res.redirect('/organization');
+		}
+		else
+		{
+			rendering(req, res);
+		}
+	});
+	
 	app.get('/*', function(req, res, next)
 	{
 		if(!req.session)
 			req.session = {};
 		
-		var path = req.path;
+		if(!req.session.cfdata)
+			req.session.cfdata = {};
 		
+		var cf = new CFClient(req.session.cfdata);
+		var path = req.path;
 		if(path == '/')
 		{
 			if(cf.isLogin())
@@ -67,7 +73,15 @@ module.exports = function(app)
 		
 		if(path.match(/^\/[a-z0-9\-\_\/]*$/))
 		{
-			rendering(req, res);
+			if(cf.isLogin())
+			{
+				rendering(req, res);
+			}
+			else
+			{
+				res.redirect('/signin');
+				return;
+			}
 		}
 		else
 		{
@@ -102,40 +116,26 @@ module.exports = function(app)
 		});
 	});
 	
-	app.get('/signout.do', function(req, res, next)
-	{
-		cf.logout();
-	});
-	
 	app.post('/cf/signin', function(req, res, next)
 	{
+		var cf = new CFClient(req.session.cfdata);
 		if(cf.isLogin())
 		{
-			if(req.session.redirect)
-				res.redirect(req.session.redirect);
-			else
-				res.redirect('/organization');
+			res.redirect('/organization');
 		}
 		else
 		{
 			var username = req.body.id;
 			var password = req.body.password;
 			
-			if(!req.session.loginInfo)
-				req.session.loginInfo = {};
-			
-			req.session.loginInfo.oldPassword = password;
+			cf.oldPassword = password;
 			
 			cf.setUserInfo(username, password);
 			
 			var done = function(result)
 			{
-				if(!req.session)
-					req.session = {};
-				
-				req.session.username = username;
-				
-				res.send({redirect : req.session.redirect});
+				req.session.cfdata = cf.getData();
+				res.send({});
 			};
 			
 			var err = function(err)
@@ -150,13 +150,9 @@ module.exports = function(app)
 	
 	app.post('/cf', function(req, res, next)
 	{
+		var cf = new CFClient(req.session.cfdata);
 		if(!cf.isLogin())
 		{
-			if(!req.session)
-				req.session = {};
-			
-			req.session.redirect = req.headers.referer;
-			
 			res.statusCode = 302;
 			res.end('signin');
 			return;
@@ -189,13 +185,9 @@ module.exports = function(app)
 	
 	app.post('/mail', function(req, res, next)
 	{
+		var cf = new CFClient(req.session.cfdata);
 		if(!cf.isLogin())
 		{
-			if(!req.session)
-				req.session = {};
-			
-			req.session.redirect = req.headers.referer;
-			
 			res.statusCode = 302;
 			res.end('signin');
 			return;
@@ -283,13 +275,9 @@ module.exports = function(app)
 	
 	app.post('/users/password', function(req, res, next)
 	{
+		var cf = new CFClient(req.session.cfdata);
 		if(!cf.isLogin())
 		{
-			if(!req.session)
-				req.session = {};
-			
-			req.session.redirect = req.headers.referer;
-			
 			res.statusCode = 302;
 			res.end('signin');
 			return;
@@ -303,11 +291,6 @@ module.exports = function(app)
 		cf.setUserInfo(username, oldPassword);
 		cf.login(function(result)
 		{
-			if(!req.session)
-				req.session = {};
-			
-			req.session.username = username;
-			
 			cf.changePassword(id, password, function(result)
 			{
 				if(result)
@@ -332,12 +315,9 @@ module.exports = function(app)
 	
 	app.post('/users/getUser', function(req, res, next)
 	{
+		var cf = new CFClient(req.session.cfdata);
 		if(!cf.isLogin())
 		{
-			if(!req.session)
-				req.session = {};
-			
-			req.session.redirect = req.headers.referer;
 			
 			res.statusCode = 302;
 			res.end('signin');
@@ -391,13 +371,9 @@ module.exports = function(app)
 	
 	app.post('/users/updateUser', function(req, res, next)
 	{
+		var cf = new CFClient(req.session.cfdata);
 		if(!cf.isLogin())
 		{
-			if(!req.session)
-				req.session = {};
-			
-			req.session.redirect = req.headers.referer;
-			
 			res.statusCode = 302;
 			res.end('signin');
 			return;
@@ -427,13 +403,9 @@ module.exports = function(app)
 	
 	app.post('/users/delete', function(req, res, next)
 	{
+		var cf = new CFClient(req.session.cfdata);
 		if(!cf.isLogin())
 		{
-			if(!req.session)
-				req.session = {};
-			
-			req.session.redirect = req.headers.referer;
-			
 			res.statusCode = 302;
 			res.end('signin');
 			return;
@@ -469,8 +441,9 @@ var rendering = function(req, res)
 	param['1'] = 'index';
 	param['3'] = 'space';
 	param['5'] = 'apps';
-	param.username = req.session.username;
-	param.tailLogServer = cf.endpoint.logging_socket;
+	param.username = req.session.cfdata.username;
+	if(req.session.cfdata.endpoint)
+		param.tailLogServer = req.session.cfdata.endpoint.logging_socket;
 	
 	for(var i=1; i<split.length; i++)
 	{

@@ -118,9 +118,6 @@ imp.setBinderModules(BinderLoader.modules);
 var routerLoader = require(_path.libs + "/RouterLoader");
 routerLoader(_path.modules);
 
-global.CFClient = require('./modules/main/lib/CFClient');
-global.cf = new CFClient();
-
 //var typeList = ['get', 'post', 'put', 'delete'];
 //for(var i=0; i<typeList.length; i++)
 //{

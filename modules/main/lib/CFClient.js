@@ -1,11 +1,21 @@
 var request = require('request');
 
-var CFClient = function()
+var CFClient = function(data)
 {
-	this.endpoint = {api : _config.endpoint};
-	this.uaaToken = null;
-	this.username = null;
-	this.password = null;
+	if(!data.endpoint)
+		this.endpoint = {api : _config.endpoint};
+	else
+		this.endpoint = data.endpoint;
+	
+	this.uaaToken = data.uaaToken;
+	this.username = data.username;
+	this.oldPassword = data.oldPassword;
+	this.password = data.password;
+};
+
+CFClient.prototype.getData = function()
+{
+	return {endpoint : this.endpoint, uaaToken : this.uaaToken, username : this.username, oldPassword : this.oldPassword, password : this.password};
 };
 
 CFClient.prototype.setUaaToken = function(token)
@@ -20,8 +30,9 @@ CFClient.prototype.isLogin = function()
 
 CFClient.prototype.logout = function()
 {
-	this.username = '';
-	this.password = '';
+	this.username = null;
+	this.oldPassword = null;
+	this.password = null;
 	this.uaaToken = null;
 };
 
