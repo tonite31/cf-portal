@@ -288,6 +288,7 @@ CFClient.prototype.createUser = function(email, password, done, error)
 	{
 		if(err)
 		{
+			console.log(err);
 			if(error)
 				error(err);
 		}

@@ -51,6 +51,9 @@ module.exports = function(app)
 	
 	app.get('/*', function(req, res, next)
 	{
+		if(!req.session)
+			req.session = {};
+		
 		var path = req.path;
 		
 		if(path == '/')
@@ -60,7 +63,6 @@ module.exports = function(app)
 				res.redirect('/organization');
 				return;
 			}
-			
 		}
 		
 		if(path.match(/^\/[a-z0-9\-\_\/]*$/))

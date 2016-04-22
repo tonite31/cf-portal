@@ -6,3 +6,5 @@ applications:
   env:
     CF_STAGING_TIMEOUT: 25
     CF_STARTUP_TIMEOUT: 15
+  services:
+    - cf-portal-redis

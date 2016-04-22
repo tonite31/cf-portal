@@ -64,80 +64,82 @@
 		if(tr.text().indexOf('No services') != -1)
 			tr.remove();
 		
-		CF.async({url : '/v2/service_plans/' + data.servicePlanGuid}, function(result)
+		if(data.servicePlanGuid)
 		{
-			if(result)
+			CF.async({url : '/v2/service_plans/' + data.servicePlanGuid}, function(result)
 			{
-				var servicePlan = result;
-				
-				CF.async({url : servicePlan.entity.service_url}, function(result)
+				if(result)
 				{
-					if(result)
+					var servicePlan = result;
+					CF.async({url : servicePlan.entity.service_url}, function(result)
 					{
-						var service = result;
-						
-						var extra = JSON.parse(service.entity.extra);
-						var html = $('#AppServiceRow').html().replace('{img}', extra.imageUrl).replace('{name}', data.name).replace('{description}', extra.displayName).replace('{manageUrl}', data.manageUrl).replace('{supportUrl}', extra.supportUrl).replace('{docsUrl}', extra.documentationUrl);
-						
-						var lastTr = $(html);
-						$(target).find('tbody').append(lastTr);
-						
-						lastTr = $(lastTr[lastTr.length-1]);
-						
-						confirmButton(lastTr.find('.confirm-button'), function()
+						if(result)
 						{
-							CF.async({url : '/v2/service_bindings/' + data.guid, method : 'DELETE'}, function(result)
-							{
-								var prev = lastTr.prev();
-								prev.prev().remove();
-								prev.remove();
-								lastTr.remove();
-								
-								$(target).find('.app-service-select').append('<option value="' + data.instanceGuid + '/' + data.servicePlanGuid + '">' + data.name + '</option>');
-								
-								if($(target).find('tbody tr').length == 0)
-								{
-									$(target).find('tbody').html('<tr><td colspan="3" class="center-align">No services bound to this app</td></tr>');
-								}
-							}, common_error);
-						});
-						
-						try
-						{
-							var credentials = data.credentials;
-							var html = '';
-							for(var key in credentials)
-							{
-								html += '<p>' + key + '</p>';
-								html += '<pre>' + credentials[key] + '</pre>';
-							}
+							var service = result;
 							
-							html += '<p>JSON</p>';
-							html += '<pre>' + JSON.stringify(credentials, null, 4) + '</pre>';
+							var extra = JSON.parse(service.entity.extra);
+							var html = $('#AppServiceRow').html().replace('{img}', extra.imageUrl).replace('{name}', data.name).replace('{description}', extra.displayName).replace('{manageUrl}', data.manageUrl).replace('{supportUrl}', extra.supportUrl).replace('{docsUrl}', extra.documentationUrl);
 							
-							$(target).find('tbody tr:last .credentials > div').prepend(html);
+							var lastTr = $(html);
+							$(target).find('tbody').append(lastTr);
 							
-							$(target).find('tbody tr:last .credentials > a').on('click', function()
+							lastTr = $(lastTr[lastTr.length-1]);
+							
+							confirmButton(lastTr.find('.confirm-button'), function()
 							{
-								if($(this).next().is(':visible'))
+								CF.async({url : '/v2/service_bindings/' + data.guid, method : 'DELETE'}, function(result)
 								{
-									$(this).next().hide();
-									$(this).children('span').text('Show credentials');
-								}
-								else
-								{
-									$(this).next().show();
-									$(this).children('span').text('Hide credentials');
-								}
+									var prev = lastTr.prev();
+									prev.prev().remove();
+									prev.remove();
+									lastTr.remove();
+									
+									$(target).find('.app-service-select').append('<option value="' + data.instanceGuid + '/' + data.servicePlanGuid + '">' + data.name + '</option>');
+									
+									if($(target).find('tbody tr').length == 0)
+									{
+										$(target).find('tbody').html('<tr><td colspan="3" class="center-align">No services bound to this app</td></tr>');
+									}
+								}, common_error);
 							});
+							
+							try
+							{
+								var credentials = data.credentials;
+								var html = '';
+								for(var key in credentials)
+								{
+									html += '<p>' + key + '</p>';
+									html += '<pre>' + credentials[key] + '</pre>';
+								}
+								
+								html += '<p>JSON</p>';
+								html += '<pre>' + JSON.stringify(credentials, null, 4) + '</pre>';
+								
+								$(target).find('tbody tr:last .credentials > div').prepend(html);
+								
+								$(target).find('tbody tr:last .credentials > a').on('click', function()
+								{
+									if($(this).next().is(':visible'))
+									{
+										$(this).next().hide();
+										$(this).children('span').text('Show credentials');
+									}
+									else
+									{
+										$(this).next().show();
+										$(this).children('span').text('Hide credentials');
+									}
+								});
+							}
+							catch(err)
+							{
+							}
 						}
-						catch(err)
-						{
-						}
-					}
-				});
-			}
-		});
+					});
+				}
+			});
+		}
 	};
 	
 	var getOptions = function(check, services)

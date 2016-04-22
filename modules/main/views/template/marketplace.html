@@ -121,18 +121,26 @@ _ee.on('setService_done', function(target, service)
 					tbody.append(nameRow).append(descriptionRow);
 				}
 				
-				var costs = extra.costs[0];
-				var amount = costs.amount;
-				for(var key in amount)
+				var amount = '';
+				var unit = '';
+				if(extra.costs)
 				{
-					if(key == 'usd')
+					var costs = extra.costs[0];
+					amount = costs.amount;
+					for(var key in amount)
 					{
-						amount = "$" + amount[key];
-						break;
+						if(key == 'usd')
+						{
+							amount = "$" + amount[key];
+							break;
+						}
 					}
+					
+					unit = costs.unit;
 				}
 				
-				var unit = costs.unit;
+				if(amount && unit)
+					amount = ' - (' + amount + '/' + unit + ')';
 				
 				var description = '<ul>';
 				for(var j=0; j<extra.bullets.length; j++)
@@ -143,7 +151,7 @@ _ee.on('setService_done', function(target, service)
 				planList[i].entity.textAmount = amount + '/' + unit;
 				planList[i].entity.description = description;
 				
-				var td = $('<th><p class="service-plan-name">' + extra.displayName + '</p><p>' + amount + '/' + unit + '</p><p><a class="waves-effect waves-light btn action-button select-plan">Select this plan</a> <span class="selected-plan" style="display: none;">Selected plan</span></p></th>');
+				var td = $('<th><p class="service-plan-name">' + extra.displayName + '</p><p>' + amount + '</p><p><a class="waves-effect waves-light btn action-button select-plan">Select this plan</a> <span class="selected-plan" style="display: none;">Selected plan</span></p></th>');
 				nameRow.append(td);
 				descriptionRow.append('<td>' + description + '</td>');
 				

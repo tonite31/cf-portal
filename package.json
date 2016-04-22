@@ -7,11 +7,13 @@
     "async-foreach": "^0.1.3",
     "body-parser": "*",
     "cf-nodejs-client": "^0.13.0",
+    "connect-redis": "^3.0.2",
     "express": "*",
     "express-session": "^1.13.0",
     "method-override": "*",
     "node-uuid": "^1.4.7",
     "nodejs-imp": "0.0.5",
+    "redis": "^2.6.0-1",
     "request": "^2.69.0"
   },
   "keywords": [

@@ -35,6 +35,9 @@ var server = app.listen(process.env.PORT || 3000, function()
 	console.log('Listening on port %d', server.address().port);
 });
 
+/**
+ * set template engine.
+ */
 var imp = require('nodejs-imp');
 imp.setPattern(_path.modules + "/main/views/template/{{name}}.html");
 imp.setPattern(_path.modules + "/{{prefix}}/views/template/{{name}}.html", "[a-z0-9\-\_]*");
@@ -52,7 +55,31 @@ app.use('/modules', express.static(_path.modules));
  */
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(session({ secret: 'halloween', resave: true, saveUninitialized: true}));
+/**
+ * set RedisStore
+ */
+if(_config.redis.host && _config.redis.port)
+{
+	var RedisStore = require('connect-redis')(session);
+	//var redis = require("redis").createClient({host : '10.250.64.199', port : 6379});
+	var redis = require("redis").createClient(_config.redis);
+	redis.on('connect', function()
+	{
+		console.log('connected to redis!!');
+	});
+	
+	app.use(session({
+	    store: new RedisStore({client: redis}),
+	    secret: 'cf portal',
+	    saveUninitialized: true,
+	    resave: false
+	}));
+}
+else
+{
+	app.use(session({ secret: 'halloween', resave: true, saveUninitialized: true}));
+}
+
 app.use(methodOverride());
 app.use(imp.render);
 

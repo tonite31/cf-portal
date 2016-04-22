@@ -196,11 +196,36 @@ $(document).ready(function()
 		}, common_error);
 	});
 	
+	var deleteServiceBinding = function(index, list, done)
+	{
+		if(index == list.length)
+		{
+			done();
+		}
+		else
+		{
+			CF.async({url : '/v2/service_bindings/' + list[index].metadata.guid, method : 'DELETE'}, function(result)
+			{
+				deleteServiceBinding(index + 1, list, done);
+			});		
+		}
+	};
+	
 	confirmButton($('#deleteServiceInstance'), function()
 	{
-		CF.async({url : '/v2/service_instances/' + serviceInstanceGuid, method : 'DELETE'}, function(result)
+		CF.async({url : '/v2/service_instances/' + serviceInstanceGuid + '/service_bindings'}, function(result)
 		{
-			location.href = '/organization/space/' + url[3] + '/services';	
+			if(result)
+			{
+				var list = result.resources;
+				deleteServiceBinding(0, list, function()
+				{
+					CF.async({url : '/v2/service_instances/' + serviceInstanceGuid, method : 'DELETE'}, function(result)
+					{
+						location.href = '/organization/' + url[1] + '/space/' + url[3] + '/services';	
+					});
+				});
+			}
 		});
 	});
 });

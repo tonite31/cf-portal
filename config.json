@@ -3,5 +3,10 @@
 	"admin" : {
 		"username" : "",
 		"password" : ""
+	},
+	"redis" : {
+		"host" : "",
+		"port" : "",
+		"password" : ""
 	}
 }

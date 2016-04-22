@@ -62,7 +62,12 @@ _ee.on('setOrgList_done', function(orgList)
 		if(url.length == 2)
 			$('.organization-content').show();
 
-		_ee.emit('select_org', $('#' + url[1]).get(0));
+		var element = $('#' + url[1]).get(0);
+		
+		if(element)
+			_ee.emit('select_org', element);
+		else
+			common_error('Organization is not found.');
 	}
 	else
 	{
