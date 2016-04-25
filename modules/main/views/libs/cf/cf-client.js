@@ -140,7 +140,7 @@ var CF = {};
 	this.signout = function(success)
 	{
 		$.ajax({
-			url : '/signout',
+			url : '/signout.do',
 			type : 'post',
 			success : success,
 			error : common_error

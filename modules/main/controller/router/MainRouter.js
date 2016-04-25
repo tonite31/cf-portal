@@ -6,12 +6,12 @@ var CFClient = require('../../lib/CFClient');
 
 module.exports = function(app)
 {
-	app.get('/signout.do', function(req, res, next)
+	app.post('/signout.do', function(req, res, next)
 	{
 		if(req.session.cfdata)
 			req.session.cfdata = null;
 		
-		res.send(req.session.cfdata);
+		res.end();
 	});
 	
 	app.get('/registration/:id', function(req, res, next)
@@ -96,7 +96,7 @@ module.exports = function(app)
 		var headers = req.body.headers;
 		var data = req.body.data;
 		
-		var client = new CFClient();
+		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
 		client.setUserInfo(_config.admin.username, _config.admin.password);
 		client.login(function()
 		{
@@ -318,7 +318,6 @@ module.exports = function(app)
 		var cf = new CFClient(req.session.cfdata);
 		if(!cf.isLogin())
 		{
-			
 			res.statusCode = 302;
 			res.end('signin');
 			return;
@@ -326,7 +325,7 @@ module.exports = function(app)
 		
 		var username = req.body.username;
 		
-		var client = new CFClient();
+		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
 		client.setUserInfo(_config.admin.username, _config.admin.password);
 		client.login(function()
 		{
@@ -350,7 +349,7 @@ module.exports = function(app)
 		var email = req.body.email;
 		var password = req.body.password;
 		
-		var client = new CFClient();
+		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
 		client.setUserInfo(_config.admin.username, _config.admin.password);
 		client.login(function()
 		{
@@ -382,7 +381,7 @@ module.exports = function(app)
 		var id = req.body.id;
 		var name = req.body.name;
 		
-		var client = new CFClient();
+		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
 		client.setUserInfo(_config.admin.username, _config.admin.password);
 		client.login(function()
 		{
@@ -413,7 +412,7 @@ module.exports = function(app)
 		
 		var id = req.body.id;
 		
-		var client = new CFClient();
+		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
 		client.setUserInfo(_config.admin.username, _config.admin.password);
 		client.login(function()
 		{

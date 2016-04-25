@@ -2,6 +2,9 @@ var request = require('request');
 
 var CFClient = function(data)
 {
+	if(!data)
+		data = {};
+	
 	if(!data.endpoint)
 		this.endpoint = {api : _config.endpoint};
 	else
