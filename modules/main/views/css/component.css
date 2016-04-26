@@ -11,7 +11,7 @@
 	background-color: #0190e2;
 }
 
-.action-button:HOVER {
+.action-button:HOVER, .action-button:FOCUS {
     background-color: #30B0F9;
 }
 
@@ -133,7 +133,8 @@
 
 .is-required {
 /* 	outline: 1px solid #EF2922 !important; */
-	box-shadow: 0px 0px 30px -10px #d50000 !important;
+/* 	box-shadow: 0px 0px 30px -10px #d50000 !important; */
+	border-bottom: 1px solid #d50000 !important;
 }
 
 .loading {

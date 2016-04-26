@@ -69,6 +69,11 @@ module.exports = function(app)
 				res.redirect('/organization');
 				return;
 			}
+			else
+			{
+				rendering(req, res);
+				return;
+			}
 		}
 		
 		if(path.match(/^\/[a-z0-9\-\_\/]*$/))

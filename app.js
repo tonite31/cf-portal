@@ -83,6 +83,13 @@ else
 app.use(methodOverride());
 app.use(imp.render);
 
+app.use(function(req, res, next)
+{
+	if(!req.session)
+		req.session = {cfdata : {}};
+	next();
+});
+
 /**
  * error handling
  */

@@ -47,6 +47,36 @@ $(document).ready(function()
 			});
 		}
 	});
+	
+	$('#createFirstOrganization').on('click', function()
+	{
+		var text = $(this).text();
+		if(text == 'Create')
+		{
+			var name = $(this).prev().val();
+			if(requiredValidation($(this).parent()))
+			{
+				CF.async({url : '/v2/organizations', method : 'POST', form : {name : name}}, function(result)
+				{
+					if(result)
+					{
+						if(result.entity)
+						{
+							location.reload();				
+						}
+						else
+						{
+							common_error(result.description);
+						}
+					}
+				});
+			}
+		}
+		else
+		{
+			$(this).prev().css('display', 'block').focus().end().text('Create');
+		}
+	});
 });
 
 _ee.on('setOrgList_done', function(orgList)
@@ -78,6 +108,18 @@ _ee.on('setOrgList_done', function(orgList)
 </script>
 
 <div class="row">
+	<div id="firsttime" style="display: none;">
+		<div class="container">
+			<div class="center-align">
+				<img src="@{imgs}/user_firsttime.png">
+			</div>
+			<h1 class="header center">Are you <span>first time</span> here?</h1>
+			<div class="center-align margin-top-60">
+				<input type="text" placeholder="Organization name" class="first-organization-name" required>
+				<button type="button" class="waves-effect waves-light btn action-button" id="createFirstOrganization">Create your first organization</button>
+			</div>
+		</div>
+	</div>
 	<div class="col s2 org-list">
 		<div id="orgList"></div>
 		<div class="center create-organization">

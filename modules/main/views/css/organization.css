@@ -224,3 +224,22 @@
 	margin: 0 10px;
 	cursor: pointer;
 }
+
+#firsttime {
+	padding-top: 50px;
+}
+
+#firsttime span {
+	color: #0190e2;
+}
+
+.first-organization-name {
+	display: none;
+	width: 40% !important;
+	margin: 30px auto !important;
+}
+
+.first-organization-name:FOCUS {
+	border-bottom: 1px solid #30B0F9 !important;
+    box-shadow: 0 1px 0 0 #30B0F9 !important;
+}

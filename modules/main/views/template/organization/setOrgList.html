@@ -28,77 +28,86 @@ $(document).ready(function()
 			var orgList = result.resources;
 			if(orgList)
 			{
-				for(var i=0; i<orgList.length; i++)
+				if(orgList.length == 0)
 				{
-					var html = $('#OrgItem').html();
-					html = html.replace('{guid}', orgList[i].metadata.guid).replace('{name}', orgList[i].entity.name);
-					
-					var ul = $(html);
-					ul.attr('id', orgList[i].metadata.guid);
-					$('#orgList').append(ul);
-					
-					var element = ul.get(0);
-					element.item = orgList[i];
-					
-					_ee.emit('setOrg_done', element);
+					$('#orgLoading').hide();
+					$('.body-container').show();
+					$('#firsttime').show().next().hide().next().hide();
 				}
-				
-				_ee.emit('setOrgList_done', orgList);
-				
-				$('.collection-header').on('click', function()
+				else
 				{
-					$('#orgList .collection.selected').removeClass('selected');
-					$(this).parent().addClass('selected');
-					
-					_ee.emit('select_org', $(this).parent().get(0));
-				});
-				
-				$('#orgList .create-space > a').on('click', function()
-				{
-					$(this).hide();
-					var input = $(this).next().show().end().next().find('input');
-					input.val('');
-					input.focus();
-				});
-				
-				$('.create-space-button').on('click', function()
-				{
-					var target = $(this).parent().parent();
-					var organization = $(this).parent().parent().parent().get(0).item;
-					
-					var input = $(this).prev().children('input');
-					var name = input.val();
-					
-					if(requiredValidation($(this).prev()))
+					for(var i=0; i<orgList.length; i++)
 					{
-						CF.async({url : '/v2/spaces', method : 'POST', form : {organization_guid : organization.metadata.guid, name : name}}, function(result)
-						{
-							if(result)
-							{
-								if(result.entity)
-								{
-									result.organization = organization;
-									_ee.emit('space_created', result, function(li)
-									{
-										$(li).insertBefore(target);
-										
-										input.val();
-										input.parent().parent().hide().prev().show();
-									});
-								}
-								else
-								{
-									common_error(result.description);
-								}
-							}
-						});
+						var html = $('#OrgItem').html();
+						html = html.replace('{guid}', orgList[i].metadata.guid).replace('{name}', orgList[i].entity.name);
+						
+						var ul = $(html);
+						ul.attr('id', orgList[i].metadata.guid);
+						$('#orgList').append(ul);
+						
+						var element = ul.get(0);
+						element.item = orgList[i];
+						
+						_ee.emit('setOrg_done', element);
 					}
-				});
-				
-				$('.cancel-space-button').on('click', function()
-				{
-					$(this).parent().hide().prev().show();
-				});
+					
+					_ee.emit('setOrgList_done', orgList);
+					
+					$('.collection-header').on('click', function()
+					{
+						$('#orgList .collection.selected').removeClass('selected');
+						$(this).parent().addClass('selected');
+						
+						_ee.emit('select_org', $(this).parent().get(0));
+					});
+					
+					$('#orgList .create-space > a').on('click', function()
+					{
+						$(this).hide();
+						var input = $(this).next().show().end().next().find('input');
+						input.val('');
+						input.focus();
+					});
+					
+					$('.create-space-button').on('click', function()
+					{
+						var target = $(this).parent().parent();
+						var organization = $(this).parent().parent().parent().get(0).item;
+						
+						var input = $(this).prev().children('input');
+						var name = input.val();
+						
+						if(requiredValidation($(this).prev()))
+						{
+							CF.async({url : '/v2/spaces', method : 'POST', form : {organization_guid : organization.metadata.guid, name : name}}, function(result)
+							{
+								if(result)
+								{
+									if(result.entity)
+									{
+										result.organization = organization;
+										_ee.emit('space_created', result, function(li)
+										{
+											$(li).insertBefore(target);
+											
+											input.val();
+											input.parent().parent().hide().prev().show();
+										});
+									}
+									else
+									{
+										common_error(result.description);
+									}
+								}
+							});
+						}
+					});
+					
+					$('.cancel-space-button').on('click', function()
+					{
+						$(this).parent().hide().prev().show();
+					});
+				}
 			}
 			else
 			{
