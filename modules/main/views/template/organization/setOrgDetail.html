@@ -9,7 +9,7 @@
 		$(element).addClass('selected');
 		
 		var organization = element.item;
-		if(!_global.url[1])
+		if(_global.url[1] != organization.metadata.guid)
 		{
 			window.history.replaceState({}, null, '/organization/' + organization.metadata.guid);
 			_global.url[1] = organization.metadata.guid;
@@ -17,7 +17,7 @@
 		
 		$('#orgName').text(organization.entity.name).get(0).item = organization;
 		_ee.emit('setOrganization_done', organization);
-	
+		
 		var f = function()
 		{
 			CF.async({url : organization.entity.quota_definition_url, method : 'GET'}, function(orgQuota)
@@ -46,6 +46,9 @@
 	
 	_ee.on('space_selected', function(space)
 	{
+		$('#appsQuota').text('');
+		$('#orgQuotaProgressBar').css('width', '0%');
+		
 		var f = function(space)
 		{
 			CF.async({url : space.item.entity.apps_url, method : 'GET'}, function(result)
@@ -72,14 +75,14 @@
 			}, common_error);
 		};
 		
-		if(appsQuotaInterval)
+		if($('#appsQuota').get(0).appsQuotaInterval)
 		{
-			clearInterval(appsQuotaInterval);
-			appsQuotaInterval = null;
+			clearInterval($('#appsQuota').get(0).appsQuotaInterval);
+			$('#appsQuota').get(0).appsQuotaInterval = null;
 		}
 		
 		f(space);
-		appsQuotaInterval = setInterval(function(){
+		$('#appsQuota').get(0).appsQuotaInterval = setInterval(function(){
 			f(space);
 		}, 5000);
 	});

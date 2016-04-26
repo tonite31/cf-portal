@@ -1,6 +1,6 @@
 var request = require('request');
-
 var uuid = require('node-uuid');
+var Promise = require("bluebird");
 
 var CFClient = require('../../lib/CFClient');
 
@@ -20,6 +20,7 @@ module.exports = function(app)
 		
 		if(req.session && req.session.registration)
 		{
+			var cf = new CFClient(req.session.cfdata);
 			cf.oldPassword = password;
 			var data = req.session.registration[password];
 			if(data)
@@ -33,7 +34,7 @@ module.exports = function(app)
 		}
 	});
 	
-	app.get('/:type(signin|signup)', function(req, res, next)
+	app.get('/:type(signin|signup|expired)', function(req, res, next)
 	{
 		if(!req.session)
 			req.session = {};
@@ -180,6 +181,7 @@ module.exports = function(app)
 			catch(err)
 			{
 				console.log(err);
+				res.status(500).send({error : err});
 			}
 		},
 		function(error)
@@ -202,7 +204,9 @@ module.exports = function(app)
 		var nodemailer = require('nodemailer');
 
 		//create reusable transporter object using the default SMTP transport
-		var transporter = nodemailer.createTransport('smtps://' + _config.mail.username + ':' + _config.mail.password + '@smtp.gmail.com');
+		var transporter = nodemailer.createTransport('smtps://' + _config.smtps.username + ':' + _config.smtps.password + '@' + _config.smtps.host);
+		
+		console.log("홉 : ", 'smtps://' + _config.smtps.username + ':' + _config.smtps.password + '@' + _config.smtps.host);
 
 		var target = req.body.target;
 		var orgGuid = req.body.orgGuid;
@@ -220,49 +224,118 @@ module.exports = function(app)
 			{
 				var done = this.async();
 				
-				var tempId = uuid.v4();
+				var password = '1111';
+				email = email.trim();
+				
 				client.getUser(email.trim(), function(result)
 				{
 					if(result && result.totalResults == 0)
 					{
-						client.createUser(email.trim(), tempId, function(result)
+						client.createUser(email.trim(), password, function(result)
 						{
-							req.session.registration = {};
-							req.session.registration[tempId] = {username : email, id : result.id};
-							
-							var mailOptions = {
-							 from: '"Administrator@ghama.io"', // sender address
-							 to: email.trim(), // list of receivers
-							 subject: 'Invite to ghama', // Subject line
-							 html: '<a target="_blank" href="' + hostname + '/registration/' + tempId + '">Sign up to ghama.</a>' // html body
-							};
-							
-							var url = '/v2/organizations/' + orgGuid + '/auditors';
-							var method = 'put';
-							
-							cf.request(url, method, {}, {username : email}, function(data)
+							client.request('/v2/quota_definitions', 'GET', null, null, function(data)
 							{
-								if(data && data.entity)
+								if(typeof data == 'string')
+									data = JSON.parse(data);
+								
+								var quota_guid = null;
+								var quotaList = data.resources;
+								for(var i=0; i<quotaList.length; i++)
 								{
-									data.entity.username = email;
-									data.entity.id = result.id;
-									
-									resultMappingList.push(data);
-									
-									transporter.sendMail(mailOptions, function(error, info)
+									if(quotaList[i].entity.name == 'personal')
 									{
-									    if(error){
-									        res.status(500).send({error : error});
-									    }
-									    
-									    done();
-									});
+										quota_guid = quotaList[i].metadata.guid;
+										break;
+									}
 								}
-							},
-							function(error)
-							{
-								 res.status(500).send({error : error});
+								
+								client.request('/v2/organizations', 'POST', null, {name : email + "_Org", quota_definition_guid : quota_guid}, function(data)
+								{
+									try
+									{
+										if(typeof data == 'string')
+											data = JSON.parse(data);
+										
+										var orgId = data.metadata.guid;
+										client.request('/v2/organizations/' + orgId + '/managers/' + result.id, 'PUT', null, null, function()
+										{
+											var mailOptions = {
+											 from: '"Administrator@ghama.io"', // sender address
+											 to: email.trim(), // list of receivers
+											 subject: 'Invite to ghama', // Subject line
+											 html: '<p>Invite you to ghama. Your first password is "1111". </p><p><a target="_blank" href="' + hostname + '/signin">Sign in to ghama.</a></p><p>To decline this invitation ignore this message.</p>' // html body
+											};
+											
+											var url = '/v2/organizations/' + orgGuid + '/auditors';
+											var method = 'put';
+											
+											cf.request(url, method, {}, {username : email}, function(data)
+											{
+												if(typeof data == 'string')
+													data = JSON.parse(data);
+												
+												if(data && data.entity)
+												{
+													data.entity.username = email;
+													data.entity.id = result.id;
+													
+													resultMappingList.push(data);
+													
+													console.log("메일옵션 : ", mailOptions);
+													transporter.sendMail(mailOptions, function(error, info)
+													{
+													    if(error){
+													    	console.log("에러다 : ", error);
+													    }
+													    else
+													   {
+													    	console.log("메일 보냈다 : ", info);
+													   }
+													    
+													    done();
+													});
+												}
+											},
+											function(error)
+											{
+												 res.status(500).send({error : error});
+											});
+										});
+									}
+									catch(err)
+									{
+										console.log(err);
+										res.status(500).send({error : err});
+									}
+								},
+								function(error)
+								{
+									res.send({error : error});
+								});
 							});
+						});
+					}
+					else
+					{
+						result = result.resources[0];
+						var url = '/v2/organizations/' + orgGuid + '/auditors';
+						var method = 'put';
+						
+						cf.request(url, method, {}, {username : email}, function(data)
+						{
+							if(data && data.entity)
+							{
+								data.entity.username = email;
+								data.entity.id = result.id;
+								
+								resultMappingList.push(data);
+								
+								done();
+							}
+						},
+						function(error)
+						{
+							 res.status(500).send({error : error});
 						});
 					}
 				});
@@ -428,6 +501,86 @@ module.exports = function(app)
 			function(err)
 			{
 				res.status(500).send({error : err});
+			});
+		},
+		function(err)
+		{
+			res.status(500).send({error : err});
+		});
+	});
+	
+	app.post('/users/createFirstOrg', function(req, res, next)
+	{
+		var cf = new CFClient(req.session.cfdata);
+		if(!cf.isLogin())
+		{
+			res.statusCode = 302;
+			res.end('signin');
+			return;
+		}
+		
+		var username = req.session.cfdata.username;
+		var quota_definition_guid = req.body.quota_definition_guid;
+		
+		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
+		client.setUserInfo(_config.admin.username, _config.admin.password);
+		client.login(function()
+		{
+			client.getUser(username, function(data)
+			{
+				var user = data.resources[0];
+				client.request('/v2/organizations?q=user_guid:' + user.id, 'GET', null, null, function(data)
+				{
+					if(typeof data == 'string')
+						data = JSON.parse(data);
+					
+					if(data.resources.length == 0)
+					{
+						client.request('/v2/organizations', 'POST', null, {name : username + "_Org", quota_definition_guid : quota_definition_guid}, function(data)
+						{
+							try
+							{
+								if(typeof data == 'string')
+									data = JSON.parse(data);
+								
+								var orgId = data.metadata.guid;
+								client.request('/v2/organizations/' + orgId + '/managers/' + user.id, 'PUT', null, null, function()
+								{
+									client.request('/v2/spaces', 'POST', null, {organization_guid : orgId, name : 'dev'}, function(result)
+									{
+										if(typeof result == 'string')
+											result = JSON.parse(result);
+										
+										client.request('/v2/users/' + user.id + '/managed_spaces/' + result.metadata.guid, 'PUT', null, {}, function(result)
+										{
+											if(typeof data == 'object')
+												result = JSON.stringify(result);
+												
+											res.end(result);
+										}, function(error){
+											res.status(500).send({error : error});
+										});
+									});
+								});
+							}
+							catch(err)
+							{
+								console.log(err);
+								res.status(500).send({error : err});
+							}
+						},
+						function(error)
+						{
+							res.send({error : error});
+						});
+					}
+					else
+					{
+						res.status(500).end('Not first user.');
+					}
+				});
+			}, function(error){
+				
 			});
 		},
 		function(err)

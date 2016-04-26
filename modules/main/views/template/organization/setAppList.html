@@ -63,6 +63,7 @@
 <script>
 (function()
 {
+	var setAppsInterval = null;
 	var updateApp = function(param, state, callback)
 	{
 		var that = this;
@@ -120,7 +121,14 @@
 		var loading = $('#appList .loading');
 		$('#appList').html('').append(loading).addClass('padding-40');
 		
-		setInterval(function()
+		if(setAppsInterval)
+		{
+			clearInterval(setAppsInterval);
+			setAppsInterval = null;
+		}
+		
+		$('#appsLoading').show();
+		setAppsInterval = setInterval(function()
 		{
 			CF.async({url : space.item.entity.apps_url}, function(result)
 			{

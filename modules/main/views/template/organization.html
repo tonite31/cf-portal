@@ -15,15 +15,16 @@ $(document).ready(function()
 		input.focus();
 	});
 	
-	confirmButton($('#deleteOrg'), function()
-	{
-		CF.async({url : '/v2/organizations/' + item.metadata.guid, method : 'DELETE'}, function(result)
-		{
-			$('#' + item.metadata.guid).remove();
-			$('#orgList > ul:first li').show();
-			_ee.emit('select_org', $('#orgList > ul:first').get(0));
-		});
-	});
+// 	confirmButton($('#deleteOrg'), function()
+// 	{
+// 		var item = $('#orgName').get(0).item;	
+// 		CF.async({url : '/v2/organizations/' + item.metadata.guid, method : 'DELETE'}, function(result)
+// 		{
+// 			$('#' + item.metadata.guid).remove();
+// 			$('#orgList > ul:first li').show();
+// 			_ee.emit('select_org', $('#orgList > ul:first').get(0));
+// 		});
+// 	});
 	
 	editableText($('#orgName'), function(value)
 	{
@@ -48,35 +49,25 @@ $(document).ready(function()
 		}
 	});
 	
-	$('#createFirstOrganization').on('click', function()
-	{
-		var text = $(this).text();
-		if(text == 'Create')
-		{
-			var name = $(this).prev().val();
-			if(requiredValidation($(this).parent()))
-			{
-				CF.async({url : '/v2/organizations', method : 'POST', form : {name : name}}, function(result)
-				{
-					if(result)
-					{
-						if(result.entity)
-						{
-							location.reload();				
-						}
-						else
-						{
-							common_error(result.description);
-						}
-					}
-				});
-			}
-		}
-		else
-		{
-			$(this).prev().css('display', 'block').focus().end().text('Create');
-		}
-	});
+// 	$('#createFirstOrganization').on('click', function()
+// 	{
+// 		var text = $(this).text();
+// 		if(text == 'Create')
+// 		{
+// 			var name = $(this).prev().val();
+// 			if(requiredValidation($(this).parent()))
+// 			{
+// 				CF.users('createFirstOrg', {name : name, quota_definition_guid : ''}}, function(result)
+// 				{
+// 					console.log("호잇 : ", result);
+// 				});
+// 			}
+// 		}
+// 		else
+// 		{
+// 			$(this).prev().css('display', 'block').focus().end().text('Create');
+// 		}
+// 	});
 });
 
 _ee.on('setOrgList_done', function(orgList)
@@ -139,10 +130,10 @@ _ee.on('setOrgList_done', function(orgList)
 				<h3 class="white-text">
 					<span id="orgName"></span>
 				</h3>
- 				<div class="confirm-button" id="deleteOrg">
-					<span class="target-button"><img src="@{imgs}/icon_delete_white.png"></span>
-					<span class="confirm">Delete</span>
-				</div>
+<!--  				<div class="confirm-button" id="deleteOrg"> -->
+<!-- 					<span class="target-button"><img src="@{imgs}/icon_delete_white.png"></span> -->
+<!-- 					<span class="confirm">Are you sure?</span> -->
+<!-- 				</div> -->
 				<p class="center white-text margin-0 organization-quota"><span id="appsQuota" style="display:none;">0</span><span style="display:none;">GB /</span> <span id="orgQuota">0</span>GB</p>
 				<div class="organization-functions">
 					<a class="textlink hover-white" href="/organization/#{2}/domains"><span>Domains</span> <img src="@{imgs}/icon_arrow_rt.png"></a>

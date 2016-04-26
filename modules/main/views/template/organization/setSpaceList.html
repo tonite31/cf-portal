@@ -22,6 +22,33 @@
 		callback(createSpace(space));	
 	});
 	
+	_ee.on('select_org_by_click', function(element)
+	{
+		var item = element.item;
+		
+		var url = _global.url;
+		
+		if($('#appsQuota').get(0).appsQuotaInterval)
+		{
+			clearInterval($('#appsQuota').get(0).appsQuotaInterval);
+			$('#appsQuota').get(0).appsQuotaInterval = null;
+		}
+		
+		$('#appsQuota').text('0').hide().next().hide();
+		$('#orgQuotaProgressBar').css('width', '0%');
+		$('.space').hide();
+		$('#spaceStatusRunning').text(0);
+		$('#spaceStatusStopped').text(0);
+		$('#spaceStatusDown').text(0);
+		
+		//org다음에 아무것도 없는경우 space 첫번째꺼 셀렉트
+		var firstSpace = $('#' + item.metadata.guid).find('.collection-item:first').get(0);
+		if(firstSpace.className.indexOf('create-space') == -1)
+		{
+			_ee.emit('select_space', firstSpace);
+		}
+	});
+	
 	_ee.on('setOrg_done', function(element)
 	{
 		var url = _global.url;
@@ -62,7 +89,9 @@
 				
 				if(!selected && item.metadata.guid == url[1])
 				{
-					_ee.emit('select_space', $(element).find('.collection-item:first').get(0));
+					var space = $(element).find('.collection-item:first').get(0);
+					if(space.className.indexOf('create-space') == -1)
+						_ee.emit('select_space', space);
 				}
 				
 				_ee.emit('setSpaceList_done', spaceList);

@@ -19,7 +19,7 @@
 </script>
 
 <script>
-$(document).ready(function()
+var setOrgList = function()
 {
 	CF.async({url : '/v2/organizations', method : 'get'}, function(result)
 	{
@@ -30,9 +30,72 @@ $(document).ready(function()
 			{
 				if(orgList.length == 0)
 				{
-					$('#orgLoading').hide();
-					$('.body-container').show();
-					$('#firsttime').show().next().hide().next().hide();
+					CF.async({url : '/v2/quota_definitions'}, function(result)
+					{
+						if(result)
+						{
+							var quota_guid = null;
+							var quotaList = result.resources;
+							for(var i=0; i<quotaList.length; i++)
+							{
+								if(quotaList[i].entity.name == 'personal')
+								{
+									quota_guid = quotaList[i].metadata.guid;
+									break;
+								}
+							}
+							
+							CF.users('createFirstOrg', {quota_definition_guid : quota_guid, username : $('#username').attr('data-username')}, function(result)
+							{
+								if(result)
+								{
+									if(result)
+									{
+										result = JSON.parse(result);
+										if(result.entity)
+										{
+											setOrgList();
+										}
+										else
+ 										{
+ 											common_error(result.description);
+ 										}
+									}
+									
+// 									try
+// 									{
+// 										result = JSON.parse(result);
+// 										if(result.entity)
+// 										{
+// 											console.log(result);
+// 											CF.async({url : '/v2/spaces', method : 'POST', form : {name : 'dev', organization_guid : result.metadata.guid}}, function(result)
+// 											{
+// 												if(result.entity)
+// 												{
+// 													setOrgList();
+// 												}
+// 											});
+											
+// 											return;
+// 										}
+// 										else
+// 										{
+// 											common_error(result.description);
+// 										}
+// 									}
+// 									catch(err)
+// 									{
+// 										common_error(err);
+// 										return;
+// 									}
+								}
+								else
+								{
+									common_error();
+								}
+							});
+						}
+					});
 				}
 				else
 				{
@@ -59,6 +122,7 @@ $(document).ready(function()
 						$(this).parent().addClass('selected');
 						
 						_ee.emit('select_org', $(this).parent().get(0));
+						_ee.emit('select_org_by_click', $(this).parent().get(0));
 					});
 					
 					$('#orgList .create-space > a').on('click', function()
@@ -120,5 +184,6 @@ $(document).ready(function()
 			$('#orgList').append('<span class="center-align">Emtpy Organizations</span>');
 		}
 	}, common_error);
-});
+};
+$(document).ready(setOrgList);
 </script>

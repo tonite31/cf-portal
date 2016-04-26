@@ -147,7 +147,7 @@ var setMemberForOrg = function(organization)
 				
 				$('#membersTableForSpace tbody tr td input[type="checkbox"]').on('change', function()
 	 			{
-	 				var item = $(this).parent().parent().parent().get(0).item;
+	 				var item = $(this).parent().parent().get(0).item;
 					
 	 				var type = this.id.split("-")[0];
 					
@@ -159,9 +159,11 @@ var setMemberForOrg = function(organization)
 					
 	 				if(type == 'billing_managers')
 	 					type = 'developers';
-					
+	 				
+					console.log(item);
 	 				CF.async({url : '/v2/spaces/' + space.metadata.guid + '/' + type, method : method, form : {username : item.entity.username}}, function(result)
 	 				{
+	 					console.log(result);
 	 				}, common_error);
 	 			});
 				

@@ -8,5 +8,10 @@
 		"host" : "",
 		"port" : "",
 		"password" : ""
+	},
+	"smtps" : {
+		"username" : "",
+		"password" : "",
+		"host" : ""
 	}
 }
