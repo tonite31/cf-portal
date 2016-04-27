@@ -103,13 +103,20 @@ var addMemberRow = function(item)
 // 		}.bind(item));
 	})(orgTr, spaceTr);
 	
-	$('#membersTableForOrg tbody').append(orgTr);
-	$('#membersTableForSpace tbody').append(spaceTr);
-	
-	orgTr.get(0).item = item;
-	spaceTr.get(0).item = item;
-	
-	return {orgTr : orgTr, spaceTr : spaceTr};
+	if(!$('#membersTableForOrg td:contains(' + item.entity.username + ')').get(0))
+	{
+		$('#membersTableForOrg tbody').append(orgTr);
+		$('#membersTableForSpace tbody').append(spaceTr);
+		
+		orgTr.get(0).item = item;
+		spaceTr.get(0).item = item;
+		
+		return {orgTr : orgTr, spaceTr : spaceTr};
+	}
+	else
+	{
+		return null;
+	}
 };
 
 var setMemberForOrg = function(organization)
@@ -145,9 +152,9 @@ var setMemberForOrg = function(organization)
 					addMemberRow(memberList[i]);
 				}
 				
-				$('#membersTableForSpace tbody tr td input[type="checkbox"]').on('change', function()
+				$('table[id^=membersTableFor] tbody tr td input[type="checkbox"]').on('change', function()
 	 			{
-	 				var item = $(this).parent().parent().get(0).item;
+	 				var item = $(this).parent().parent().parent().get(0).item;
 					
 	 				var type = this.id.split("-")[0];
 					
@@ -160,8 +167,11 @@ var setMemberForOrg = function(organization)
 	 				if(type == 'billing_managers')
 	 					type = 'developers';
 	 				
-					console.log(item);
-	 				CF.async({url : '/v2/spaces/' + space.metadata.guid + '/' + type, method : method, form : {username : item.entity.username}}, function(result)
+	 				var name = 'organizations';
+	 				if($(this).parent().parent().parent().parent().attr('id') == 'membersTableForSpace')
+	 					name = 'space';
+	 				
+	 				CF.async({url : '/v2/' + name + '/' + space.metadata.guid + '/' + type, method : method, form : {username : item.entity.username}}, function(result)
 	 				{
 	 					console.log(result);
 	 				}, common_error);
@@ -228,7 +238,8 @@ $(document).ready(function()
 					for(var i=0; i<list.length; i++)
 					{
 						var added = addMemberRow(list[i]);
-						$(added.orgTr).find('input[id^=auditors]').get(0).checked = true;
+						if(added)
+							$(added.orgTr).find('input[id^=auditors]').get(0).checked = true;
 					}
 				}
 				
