@@ -110,8 +110,41 @@ _ee.on('setService_done', function(target, service)
 			var planList = result.resources;
 			for(var i=0; i<planList.length; i++)
 			{
-				var extra = JSON.parse(planList[i].entity.extra);
-				planList[i].entity.extra = extra;
+				var amount = '';
+				var unit = '';
+				var extra = planList[i].entity.extra;
+				var description = '';
+				var displayName = planList[i].entity.name;
+				
+				if(extra)
+				{
+					extra = JSON.parse(extra);
+					if(extra.displayName)
+						displayName = extra.displayName;
+					planList[i].entity.extra = extra;
+					if(extra.costs)
+					{
+						var costs = extra.costs[0];
+						amount = costs.amount;
+						for(var key in amount)
+						{
+							if(key == 'usd')
+							{
+								amount = "$" + amount[key];
+								break;
+							}
+						}
+						
+						unit = costs.unit;
+					}
+					
+					description = '<ul>';
+					for(var j=0; j<extra.bullets.length; j++)
+						description += '<li>' + extra.bullets[j] + '</li>';
+						
+					description += '</ul>';
+				}
+				
 				planList[i].service = service;
 				
 				if(i%5 == 0)
@@ -121,37 +154,13 @@ _ee.on('setService_done', function(target, service)
 					tbody.append(nameRow).append(descriptionRow);
 				}
 				
-				var amount = '';
-				var unit = '';
-				if(extra.costs)
-				{
-					var costs = extra.costs[0];
-					amount = costs.amount;
-					for(var key in amount)
-					{
-						if(key == 'usd')
-						{
-							amount = "$" + amount[key];
-							break;
-						}
-					}
-					
-					unit = costs.unit;
-				}
-				
 				if(amount && unit)
 					amount = ' - (' + amount + '/' + unit + ')';
-				
-				var description = '<ul>';
-				for(var j=0; j<extra.bullets.length; j++)
-					description += '<li>' + extra.bullets[j] + '</li>';
-					
-				description += '</ul>';
 				
 				planList[i].entity.textAmount = amount + '/' + unit;
 				planList[i].entity.description = description;
 				
-				var td = $('<th><p class="service-plan-name">' + extra.displayName + '</p><p>' + amount + '</p><p><a class="waves-effect waves-light btn action-button select-plan">Select this plan</a> <span class="selected-plan" style="display: none;">Selected plan</span></p></th>');
+				var td = $('<th><p class="service-plan-name">' + displayName + '</p><p>' + amount + '</p><p><a class="waves-effect waves-light btn action-button select-plan">Select this plan</a> <span class="selected-plan" style="display: none;">Selected plan</span></p></th>');
 				nameRow.append(td);
 				descriptionRow.append('<td>' + description + '</td>');
 				
@@ -173,7 +182,7 @@ _ee.on('setPlans_done', function(target, selectButton)
 		var plan = $(this).parent().parent().get(0).item;
 		
 		var html = $('#SelectedServicePlan').html();
-		html = html.replace(/{name}/gi, plan.entity.extra.displayName).replace(/{smallName}/gi, plan.service.entity.description).replace(/{amount}/gi, plan.entity.textAmount);
+		html = html.replace(/{name}/gi, plan.entity.name).replace(/{smallName}/gi, plan.service.entity.description).replace(/{amount}/gi, plan.entity.textAmount);
 		html = html.replace(/{description}/gi, plan.entity.description);
 		
 		var selectedTarget = $(target).find('.marketplace-service-selected').html(html).parent().css('margin-left', '-100%').end();
@@ -341,15 +350,23 @@ $(document).ready(function()
 			{
 				if(!serviceList[i].entity.active)
 					continue;
+
+				var extra = serviceList[i].entity.extra;
+				var img = '';
+				var name = serviceList[i].entity.label;
+				var longDescription = '';
 				
-				var extra = JSON.parse(serviceList[i].entity.extra);
-				serviceList[i].entity.extra = extra;
+				if(extra)
+				{
+					extra = JSON.parse(extra);
+					serviceList[i].entity.extra = extra;
+					
+					img = extra.imageUrl;
+					name = extra.displayName;
+					longDescription = extra.longDescription;
+				}
 				
-				var img = extra.imageUrl;
-				var name = extra.displayName;
 				var description = serviceList[i].entity.description;
-				var longDescription = extra.longDescription;
-				
 				var html = $('#ServiceList').html();
 				html = html.replace('{img}', img).replace('{name}', name).replace('{description}', description).replace('{longDescription}', longDescription);
 				

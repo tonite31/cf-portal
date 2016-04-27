@@ -1,5 +1,7 @@
 var Pumpkin = require('nodejs-pumpkin');
 
+var CFClient = require('../../lib/CFClient');
+
 module.exports = function(app)
 {
 	app.post('/users/password', function(req, res, next)

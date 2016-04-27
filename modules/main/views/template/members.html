@@ -168,8 +168,8 @@ var setMemberForOrg = function(organization)
 	 					type = 'developers';
 	 				
 	 				var name = 'organizations';
-	 				if($(this).parent().parent().parent().parent().attr('id') == 'membersTableForSpace')
-	 					name = 'space';
+	 				if($(this).parent().parent().parent().parent().parent().attr('id') == 'membersTableForSpace')
+	 					name = 'spaces';
 	 				
 	 				CF.async({url : '/v2/' + name + '/' + space.metadata.guid + '/' + type, method : method, form : {username : item.entity.username}}, function(result)
 	 				{
