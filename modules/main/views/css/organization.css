@@ -10,6 +10,7 @@
 
 .collection h4 {
 	cursor: pointer;
+	font-size: 20px;
 }
 
 .collection.with-header .collection-header {
