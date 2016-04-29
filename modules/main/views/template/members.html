@@ -220,32 +220,24 @@ $(document).ready(function()
 {
 	$('#cancelInvite').on('click', function()
 	{
-		$("#email").val("");
+		$('#email').val('');
 	});
 	
 	$('#invite').on('click', function()
 	{
-		var target = $('#email').val();
-		$.ajax({
-			url : '/mail',
-			type : 'post',
-			data : {orgGuid : _global.url[1], target : target},
-			success : function(result)
+		CF.users('invite', {target : $('#email').val(), orgId : _global.url[1]}, function(result)
+		{
+			if(result)
 			{
-				if(result)
+				for(var i=0; i<result.length; i++)
 				{
-					var list = result.resources;
-					for(var i=0; i<list.length; i++)
-					{
-						var added = addMemberRow(list[i]);
-						if(added)
-							$(added.orgTr).find('input[id^=auditors]').get(0).checked = true;
-					}
+					var added = addMemberRow(result[i]);
+					if(added)
+						$(added.orgTr).find('input[id^=auditors]').get(0).checked = true;
 				}
-				
-				$('#email').val('');
-			},
-			error : common_error
+			}
+			
+			$('#email').val('');
 		});
 	});
 	
@@ -257,14 +249,14 @@ $(document).ready(function()
 		var type = option.attr('data-type');
 		if(type == 'space')
 		{
-			$("#membersTableForOrg").hide();
-			$("#membersTableForSpace").show();
+			$('#membersTableForOrg').hide();
+			$('#membersTableForSpace').show();
 			
-			getManagerList(option.get(0).item, "#membersTableForSpace");
+			getManagerList(option.get(0).item, '#membersTableForSpace');
 		}
 		else
 		{
-			getManagerList(option.get(0).item, "#membersTableForOrg");
+			getManagerList(option.get(0).item, '#membersTableForOrg');
 			
 			$('#membersTableForOrg').show();
 			$('#membersTableForSpace').hide();
@@ -312,7 +304,7 @@ $(document).ready(function()
 					<tr>
 						<th>Member</th>
 						<th>Space Manager</th>
-						<th>Space Billing Manager</th>
+						<th>Space Developer</th>
 						<th>Space Auditor</th>
 						<th></th>
 					</tr>

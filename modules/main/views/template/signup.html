@@ -17,16 +17,12 @@ $(document).ready(function()
 			}
 			else
 			{
-				CF.users('createUser', {email : email, password : password}, function(result)
+				CF.users('signup', {email : email, password : password}, function(result)
 				{
-					if(result && result.error_description)
-					{
-						common_error(result.error_description);
-					}
-					else if(result.userName == email)
-					{
+					if(result && result.code == 201)
 						location.href = '/signin';
-					}
+					else
+						common_error(result);
 				});
 			}
 		}

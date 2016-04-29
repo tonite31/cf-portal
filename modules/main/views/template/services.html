@@ -44,30 +44,38 @@ _ee.on('setServiceRow_done', function(target, serviceInstance)
 		{
 			servicePlan = result;
 			
-			var extra = JSON.parse(result.entity.extra);
-			
 			var amount = '';
 			var unit = '';
-			if(extra.costs)
+			var imageUrl = '';
+			var name = servicePlan.entity.name;
+			var extra = result.entity.extra;
+			if(extra)
 			{
-				var costs = extra.costs[0];
-				amount = costs.amount;
-				for(var key in amount)
+				extra = JSON.parse(result.entity.extra);
+				if(extra.costs)
 				{
-					if(key == 'usd')
+					var costs = extra.costs[0];
+					amount = costs.amount;
+					for(var key in amount)
 					{
-						amount = "$" + amount[key];
-						break;
+						if(key == 'usd')
+						{
+							amount = "$" + amount[key];
+							break;
+						}
 					}
+					
+					unit = costs.unit;
 				}
 				
-				unit = costs.unit;
+				if(extra.imageUrl)
+					imageUrl = extra.imageUrl;
 			}
 			
 			if(amount && unit)
 				amount = ' - (' + amount + '/' + unit + ')';
 			
-			target.children('td:nth-child(4)').text(extra.displayName + amount);
+			target.children('td:nth-child(4)').text(name + amount);
 			
 			CF.async({url : result.entity.service_url}, function(result)
 			{
@@ -75,7 +83,7 @@ _ee.on('setServiceRow_done', function(target, serviceInstance)
 				{
 					service = result;
 					var extra = JSON.parse(result.entity.extra);
-					target.children('td:nth-child(1)').html('<img src="' + extra.imageUrl + '"> <span>' + extra.displayName + '</span>');
+					target.children('td:nth-child(1)').html('<img src="' + imageUrl + '"> <span>' + name + '</span>');
 					
 					option++;
 				}

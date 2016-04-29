@@ -47,7 +47,7 @@ var common_alert = function(msg)
 
 var common_error = function(error)
 {
-	common_board('error', error);
+	common_board('error', (typeof error == 'object' ? JSON.stringify(error) : error));
 	console.error(error);
 };
 

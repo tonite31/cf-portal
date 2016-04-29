@@ -70,7 +70,7 @@ $(document).ready(function()
 // 				}
 // 			}
 // 		});
-		CF.users('delete', {id : $('#id').val()}, function(result)
+		CF.users('withdrawal', {}, function(result)
 		{
 			if(result)
 			{
@@ -113,7 +113,7 @@ $(document).ready(function()
         	<span class="target-button waves-effect waves-light btn action-button" id="save">Save</span>
 			<div class="confirm-button">
 				<span class="target-button waves-effect waves-light btn red darken-3">Delete</span>
-				<span class="confirm">Delete</span>
+				<span class="confirm">Are you sure?</span>
 			</div>
 		</div>
 	</div>

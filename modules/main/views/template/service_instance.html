@@ -37,14 +37,19 @@ $(document).ready(function()
 						{
 							var service = result;
 							
-							var extra = JSON.parse(service.entity.extra);
+							var extra = service.entity.extra;
+							if(extra)
+							{
+								extra = JSON.parse(service.entity.extra);
+								
+								$('#serviceInstanceImg').attr('src', extra.imageUrl);
+								
+								$('.service-instance-info .support').attr('href', extra.supportUrl);
+								$('.service-instance-info .docs').attr('href', extra.documentationUrl);
+							}
 							
-							$('#serviceInstanceImg').attr('src', extra.imageUrl);
-							$('#serviceName').text(extra.displayName);
-							
+							$('#serviceName').text(serviceInstance.entity.name);
 							$('.service-instance-info .manage').attr('href', serviceInstance.entity.dashboard_url);
-							$('.service-instance-info .support').attr('href', extra.supportUrl);
-							$('.service-instance-info .docs').attr('href', extra.documentationUrl);
 							
 							CF.async({url : service.entity.service_plans_url}, function(result)
 							{
@@ -64,39 +69,47 @@ $(document).ready(function()
 											$('.service-instance-plans tbody').append(nameRow).append(descriptionRow);
 										}
 										
-										var extra = JSON.parse(planList[i].entity.extra);
-										planList[i].entity.extra = extra;
-
 										var amount = '';
 										var unit = '';
-										if(extra.costs)
+										var description = '';
+										var name = planList[i].entity.name;
+										
+										var extra = planList[i].entity.extra;
+										if(extra)
 										{
-											var costs = extra.costs[0];
-											amount = costs.amount;
-											for(var key in amount)
+											extra = JSON.parse(extra);
+											planList[i].entity.extra = extra;
+											
+											if(extra.costs)
 											{
-												if(key == 'usd')
+												var costs = extra.costs[0];
+												amount = costs.amount;
+												for(var key in amount)
 												{
-													amount = "$" + amount[key];
-													break;
+													if(key == 'usd')
+													{
+														amount = "$" + amount[key];
+														break;
+													}
 												}
+												
+												unit = costs.unit;
 											}
 											
-											unit = costs.unit;
+											description = '<div>';
+											for(var j=0; j<extra.bullets.length; j++)
+												description += extra.bullets[j] + '<br>';
+											description += '</div>';
 										}
 										
 										if(amount && unit)
 											amount = amount + '/' + unit;
 										
-										var description = '<div>';
-										for(var j=0; j<extra.bullets.length; j++)
-											description += extra.bullets[j] + '<br>';
-										description += '</div>';
 										
 										planList[i].entity.textAmount = amount + '/' + unit;
 										planList[i].entity.description = description;
 
-										var td = $('<th><p class="service-plan-name">' + extra.displayName + '</p><p>' + amount + '</p><p><a class="waves-effect waves-light btn action-button select-plan">Select this plan</a> <span class="selected-plan" style="display: none;">Selected plan</span></p></th>');
+										var td = $('<th><p class="service-plan-name">' + name + '</p><p>' + amount + '</p><p><a class="waves-effect waves-light btn action-button select-plan">Select this plan</a> <span class="selected-plan" style="display: none;">Selected plan</span></p></th>');
 										nameRow.append(td);
 										descriptionRow.append('<td>' + description + '</td>');
 										
@@ -222,7 +235,8 @@ $(document).ready(function()
 				{
 					CF.async({url : '/v2/service_instances/' + serviceInstanceGuid, method : 'DELETE'}, function(result)
 					{
-						location.href = '/organization/' + url[1] + '/space/' + url[3] + '/services';	
+						console.log(result);
+// 						location.href = '/organization/' + url[1] + '/space/' + url[3] + '/services';	
 					});
 				});
 			}

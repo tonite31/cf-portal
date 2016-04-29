@@ -77,8 +77,23 @@
 						{
 							var service = result;
 							
-							var extra = JSON.parse(service.entity.extra);
-							var html = $('#AppServiceRow').html().replace('{img}', extra.imageUrl).replace('{name}', data.name).replace('{description}', extra.displayName).replace('{manageUrl}', data.manageUrl).replace('{supportUrl}', extra.supportUrl).replace('{docsUrl}', extra.documentationUrl);
+							console.log(service);
+							var imageUrl = '';
+							var extra = service.entity.extra;
+							var supportUrl = '';
+							var docsUrl = '';
+							if(extra)
+							{
+								extra = JSON.parse(service.entity.extra);
+								
+								if(extra.imageUrl)
+									imageUrl = extra.imageUrl;
+								
+								supportUrl = extra.supportUrl;
+								docsUrl = extra.documentationUrl;
+							}
+							
+							var html = $('#AppServiceRow').html().replace('{img}', imageUrl).replace('{name}', data.name).replace('{description}', service.entity.label).replace('{manageUrl}', data.manageUrl).replace('{supportUrl}', supportUrl).replace('{docsUrl}', docsUrl);
 							
 							var lastTr = $(html);
 							$(target).find('tbody').append(lastTr);

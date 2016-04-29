@@ -121,7 +121,7 @@ var CF = {};
 				if(error.status == 302 && error.responseText == 'signin')
 					location.href = '/signin';
 				else
-					common_error(error);
+					common_error(JSON.parse(error.responseText).error);
 			}
 		});
 	};

@@ -112,43 +112,6 @@ CFClient.prototype.login = function(done, error)
 	}
 };
 
-CFClient.prototype.users = function(url, method, headers, data, done, error)
-{
-	var param = {};
-	param.method = method ? method : 'GET';
-	param.url = this.endpoint.authorization + url;
-	param.headers = {};
-	
-	if(headers)
-	{
-		for(var key in headers)
-			param.headers[key] = headers[key];
-	}
-	
-	param.headers.Authorization = this.uaaToken.token_type + ' ' + this.uaaToken.access_token;
-	if(data)
-		param.json = data;
-	
-	request(param, function(err, response, body)
-	{
-		if(err)
-		{
-			if(error)
-				error(err);
-		}
-		else
-		{
-			if(body)
-			{
-				if(typeof body == 'object')
-					done(body);
-				else if(typeof body == 'string')
-					done(JSON.parse(body));	
-			}
-		}
-	}.bind(this));
-};
-
 CFClient.prototype.getUsers = function(done, error)
 {
 	var param = {};
@@ -211,42 +174,25 @@ CFClient.prototype.getUser = function(email, done, error)
 
 CFClient.prototype.deleteUser = function(id, done, error)
 {
-//	var param = {};
-//	param.url = this.endpoint.api + '/v2/users/' + id + '/audited_organizations/' + orgId;
-//	param.method = 'DELETE';
-//	param.headers = {};
-//	param.headers.Authorization = this.uaaToken.token_type + ' ' + this.uaaToken.access_token;
-//	
-//	request(param, function()
-//	{
-//		param.url = this.endpoint.api + '/v2/users/' + id + '/billing_managed_organizations/' + orgId;
-//		request(param, function()
-//		{
-//			param.url = this.endpoint.api + '/v2/users/' + id + '/managed_organizations/' + orgId;
-//			request(param, function()
-//			{
-				var param = {};
-				param.url = this.endpoint.authorization + '/Users/' + id;
-				param.method = 'DELETE';
-				param.headers = {};
-				param.headers.Authorization = this.uaaToken.token_type + ' ' + this.uaaToken.access_token;
-				
-				request(param, function(err, response, body)
-				{
-					if(err)
-					{
-						console.log(err);
-						if(error)
-							error(err);
-					}
-					else
-					{
-						done(body);	
-					}
-				}.bind(this));
-//			}.bind(this));
-//		}.bind(this));
-//	}.bind(this));
+	var param = {};
+	param.url = this.endpoint.authorization + '/Users/' + id;
+	param.method = 'DELETE';
+	param.headers = {};
+	param.headers.Authorization = this.uaaToken.token_type + ' ' + this.uaaToken.access_token;
+	
+	request(param, function(err, response, body)
+	{
+		if(err)
+		{
+			console.log(err);
+			if(error)
+				error(err);
+		}
+		else
+		{
+			done(body);	
+		}
+	}.bind(this));
 };
 
 CFClient.prototype.changePassword = function(id, password, done, error)
@@ -353,12 +299,36 @@ CFClient.prototype.updateUser = function(data, done, error)
 
 CFClient.prototype.inviteUser = function(done, error)
 {
+//	var param = {};
+//	param.url = this.endpoint.authorization + '/invite_users?client_id=cf&redirect_uri=http://localhost:3000';
+//	param.method = 'post';
+//	param.headers = {};
+//	param.headers.Authorization = this.uaaToken.token_type + ' ' + this.uaaToken.access_token;
+//	param.json = {emails : [{value : 'tonite32@gmail.com'}]};
+//	
+//	request(param, function(err, response, body)
+//	{
+//		if(err)
+//		{
+//			console.log(err);
+//			if(error)
+//				error(err);
+//		}
+//		else
+//		{
+//			if(body)
+//			{
+//				console.log('바디 : ', body);
+//			}
+//		}
+//	}.bind(this));
+	
 	var param = {};
-	param.url = this.endpoint.authorization + '/invite_users';
+	param.url = this.endpoint.authorization + '/Groups';
 	param.method = 'post';
 	param.headers = {};
 	param.headers.Authorization = this.uaaToken.token_type + ' ' + this.uaaToken.access_token;
-	param.json = {emails : [{value : 'tonite31@sk.com'}]};
+	param.json = {'displayName' : 'scim.invite'};
 	
 	request(param, function(err, response, body)
 	{
@@ -422,7 +392,7 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 							}
 							else
 							{
-								done(JSON.parse(body));
+								done(body ? JSON.parse(body) : '');
 							}
 						});
 					}.bind(this), error);
@@ -431,28 +401,7 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 				}
 			}
 			
-			done(body);
-		}
-	}.bind(this));
-};
-
-CFClient.prototype.organizations = function()
-{
-	var param = {};
-	param.url = this.endpoint.api + '/v2/organizations';
-	param.method = 'get';
-	param.headers = {
-        Authorization: this.uaaToken.token_type + ' ' + this.uaaToken.access_token
-    }
-	request(param, function(error, response, body)
-	{
-		if(error)
-		{
-			console.log(error);
-		}
-		else
-		{
-			console.log('organizations : ', body);
+			done(body ? JSON.parse(body) : '');
 		}
 	}.bind(this));
 };
