@@ -269,7 +269,7 @@
 											{
 												var routeText = "http://" + host + "." + domain.entity.name;
 												routeList.push({text : routeText, route_guid : route.metadata.guid, domain_guid : domain.metadata.guid, route_mappings_url : route.entity.route_mappings_url});
-												routeElement.append(routeText + "<br>");
+												routeElement.append('<a target="_blank" href="' + routeText + '">' + routeText + '</a><br>');
 												
 												routeElement.get(0).item = routeList;
 												

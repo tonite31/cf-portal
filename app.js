@@ -55,6 +55,7 @@ app.use('/modules', express.static(_path.modules));
  */
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
 /**
  * set RedisStore
  */

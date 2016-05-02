@@ -61,33 +61,6 @@ var setOrgList = function()
  											common_error(result.description);
  										}
 									}
-									
-// 									try
-// 									{
-// 										result = JSON.parse(result);
-// 										if(result.entity)
-// 										{
-// 											console.log(result);
-// 											CF.async({url : '/v2/spaces', method : 'POST', form : {name : 'dev', organization_guid : result.metadata.guid}}, function(result)
-// 											{
-// 												if(result.entity)
-// 												{
-// 													setOrgList();
-// 												}
-// 											});
-											
-// 											return;
-// 										}
-// 										else
-// 										{
-// 											common_error(result.description);
-// 										}
-// 									}
-// 									catch(err)
-// 									{
-// 										common_error(err);
-// 										return;
-// 									}
 								}
 								else
 								{
