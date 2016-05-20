@@ -460,7 +460,7 @@ module.exports = function(app)
 		
 		var username = req.body.username;
 		var id = req.body.id;
-		var oldPassword = req.session.loginInfo.oldPassword;
+		var oldPassword = req.session.cfdata.password;
 		var password = req.body.password;
 		
 		cf.setUserInfo(username, oldPassword);

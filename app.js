@@ -59,7 +59,7 @@ app.use(bodyParser.json());
 /**
  * set RedisStore
  */
-if(_config.redis.host && _config.redis.port)
+if(_config.redis && _config.redis.host && _config.redis.port)
 {
 	var RedisStore = require('connect-redis')(session);
 	//var redis = require("redis").createClient({host : '10.250.64.199', port : 6379});
