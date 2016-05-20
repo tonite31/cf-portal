@@ -5,9 +5,6 @@
 		"password" : ""
 	},
 	"redis" : {
-		"host" : "",
-		"port" : "",
-		"password" : ""
 	},
 	"smtps" : {
 		"username" : "",
