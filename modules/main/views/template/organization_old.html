@@ -1,0 +1,150 @@
+<link href="@{css}/organization.css" rel="stylesheet">
+
+${organization/setOrgList}
+${organization/setSpaceList}
+${organization/setOrgDetail}
+
+<script>
+$(document).ready(function()
+{
+	$("#createOrg").on("click", function()
+	{
+		$(this).hide();
+		var input = $(this).next().show().end().next().find("input");
+		input.val("");
+		input.focus();
+	});
+	
+// 	confirmButton($('#deleteOrg'), function()
+// 	{
+// 		var item = $('#orgName').get(0).item;	
+// 		CF.async({url : '/v2/organizations/' + item.metadata.guid, method : 'DELETE'}, function(result)
+// 		{
+// 			$('#' + item.metadata.guid).remove();
+// 			$('#orgList > ul:first li').show();
+// 			_ee.emit('select_org', $('#orgList > ul:first').get(0));
+// 		});
+// 	});
+	
+	editableText($('#orgName'), function(value)
+	{
+		var item = $('#orgName').get(0).item;
+		if(item)
+		{
+			CF.async({url : '/v2/organizations/' + item.metadata.guid, method : 'PUT', form : {name : value} }, function(result)
+			{
+				if(result)
+				{
+					if(result.entity && result.entity.name == value)
+					{
+						$('#' + item.metadata.guid).text(value);
+						common_alert('Organization name is changed.');
+					}
+					else
+					{
+						common_error(result.description);
+					}
+				}
+			});
+		}
+	});
+	
+// 	$('#createFirstOrganization').on('click', function()
+// 	{
+// 		var text = $(this).text();
+// 		if(text == 'Create')
+// 		{
+// 			var name = $(this).prev().val();
+// 			if(requiredValidation($(this).parent()))
+// 			{
+// 				CF.users('createFirstOrg', {name : name, quota_definition_guid : ''}}, function(result)
+// 				{
+// 					console.log("호잇 : ", result);
+// 				});
+// 			}
+// 		}
+// 		else
+// 		{
+// 			$(this).prev().css('display', 'block').focus().end().text('Create');
+// 		}
+// 	});
+});
+
+_ee.on('setOrgList_done', function(orgList)
+{
+	var url = _global.url;
+	if(url.length == 1 && orgList.length > 0)
+	{
+		$('.organization-content').show();
+		_ee.emit('select_org', $('#' + orgList[0].metadata.guid).get(0));
+	}
+	else if(url.length >= 2 && orgList.length > 0)
+	{
+		if(url.length == 2)
+			$('.organization-content').show();
+
+		var element = $('#' + url[1]).get(0);
+		
+		if(element)
+			_ee.emit('select_org', element);
+		else
+			common_error('Organization is not found.');
+	}
+	else
+	{
+		$('#orgLoading').hide();
+		$('.body-container').show();
+	}
+});
+</script>
+
+<div class="row">
+	<div id="firsttime" style="display: none;">
+		<div class="container">
+			<div class="center-align">
+				<img src="@{imgs}/user_firsttime.png">
+			</div>
+			<h1 class="header center">Are you <span>first time</span> here?</h1>
+			<div class="center-align margin-top-60">
+				<input type="text" placeholder="Organization name" class="first-organization-name" required>
+				<button type="button" class="waves-effect waves-light btn action-button" id="createFirstOrganization">Create your first organization</button>
+			</div>
+		</div>
+	</div>
+	<div class="col s2 org-list">
+		<div id="orgList"></div>
+		<div class="center create-organization">
+			<a id="createOrg" class="waves-effect waves-light btn action-button"><img src="@{imgs}/icon_create1.png"> Create organization</a>
+			<div class="card" style="display: none;">
+				<div class="text-input">
+					<input type="text" placeholder="organization name">
+					<label></label>
+				</div>
+				<a class="waves-effect waves-light btn">Create</a>
+			</div>
+		</div>
+	</div>
+	<div class="col s10">
+		<div class="card organization">
+			<div class="organization-title">
+				<h3 class="white-text">
+					<span id="orgName"></span>
+				</h3>
+<!--  				<div class="confirm-button" id="deleteOrg"> -->
+<!-- 					<span class="target-button"><img src="@{imgs}/icon_delete_white.png"></span> -->
+<!-- 					<span class="confirm">Are you sure?</span> -->
+<!-- 				</div> -->
+				<p class="center white-text margin-0 organization-quota"><span id="appsQuota" style="display:none;">0</span><span style="display:none;">GB /</span> <span id="orgQuota">0</span>GB</p>
+				<div class="organization-functions">
+					<a class="textlink hover-white" href="/organization/#{2}/domains"><span>Domains</span> <img src="@{imgs}/icon_arrow_rt.png"></a>
+					<a class="textlink hover-white" href="/organization/#{2}/members"><span>Members</span> <img src="@{imgs}/icon_arrow_rt.png"></a>
+			  	</div>
+			  	<div class="progress white">
+					<div class="determinate black" id="orgQuotaProgressBar" style="width: 0%;"></div>
+				</div>
+			</div>
+		  	${#{3}}
+		  	<div class="organization-content" style="display:none;"></div>
+		</div>
+	</div>		
+</div>

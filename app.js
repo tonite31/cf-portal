@@ -10,6 +10,18 @@ var session = require('express-session');
 
 global._config = require('./config');
 
+if(!_config.endpoint)
+{
+	console.log('API endpoint is not found.');
+	return;
+}
+
+if(!_config.admin.username || !_config.admin.password)
+{
+	console.log('Admin account is not found.');
+	return;
+}
+
 /**
  * set global variables
  */

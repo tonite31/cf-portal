@@ -85,7 +85,7 @@ module.exports = function(app)
 			}
 			else
 			{
-				res.redirect('/signin');
+				res.redirect('/');
 				return;
 			}
 		}
@@ -146,7 +146,7 @@ module.exports = function(app)
 			
 			var err = function(err)
 			{
-				console.error('Error: ', err.stack);
+				console.error('Error: ', err);
 			    res.status(500).send({error : err});
 			};
 			

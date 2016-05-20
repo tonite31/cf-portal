@@ -1,44 +1,42 @@
-body {
-	background-color: #fff;
+.title
+{
+	padding: 50px;
+	padding-bottom: 10px;
 }
 
-.body-container {
-	padding: 0;
+.title + p
+{
+	font-size: 18px;
+	color: #676767;
+	margin-bottom: 20px;
 }
 
-.section {
-	padding: 0;
+#signinForm .input-group, #signinForm .submit-group
+{
+	padding: 10px 0;
+	margin: 0 auto;
 }
 
-#topbar {
-	display: none;
+#signinForm .input-group input
+{
+	width: 350px;
+	padding: 20px;
+	border-radius: 5px;
 }
 
-.body-container {
-	display: block !important;
+#signinForm .submit-group
+{
+	margin-top: 20px;
 }
 
-#orgLoading {
-	display: none;
-}
-
-.background {
-	background-image: url(../imgs/index_top_bg.jpg);
-	background-repeat: no-repeat;
-	background-position: center;
-	height: 442px;
-}
-
-.action-button {
-	background-color: #4c5152;
-	color: #fff;
-	border-radius: 30px;
+#signinForm .submit-group input
+{
 	margin: 0 10px;
-	text-transform: none;
-	padding: 10px 60px;
-	height: 55px;
 }
 
-.action-button:HOVER {
-	background-color: #4c5152;
+.result-desc
+{
+	font-size: 13px !important;
+	color: #EA4547;
+	margin: 20px 0;
 }

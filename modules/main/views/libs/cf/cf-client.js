@@ -109,7 +109,7 @@ var CF = {};
 //		}});
 	};
 	
-	this.users = function(name, data, success)
+	this.users = function(name, data, success, errorCallback)
 	{
 		$.ajax({
 			url : '/users/' + name,
@@ -121,7 +121,12 @@ var CF = {};
 				if(error.status == 302 && error.responseText == 'signin')
 					location.href = '/signin';
 				else
-					common_error(JSON.parse(error.responseText).error);
+				{
+					if(errorCallback)
+						errorCallback(JSON.parse(error.responseText));
+					else
+						common_error(JSON.parse(error.responseText).error);
+				}
 			}
 		});
 	};
