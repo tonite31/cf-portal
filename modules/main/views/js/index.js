@@ -27,6 +27,7 @@ var login = function(id, password)
 
 $(document).ready(function()
 {
+	$('.navbar').hide();
 	formSubmit($('#signinForm'), function(data)
 	{
 		var type = $('#signinForm input[type="submit"]').attr('data-type');
