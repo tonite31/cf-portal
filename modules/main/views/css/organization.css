@@ -1,0 +1,156 @@
+.org-body
+{
+}
+
+.org-list
+{
+	position: absolute;
+	left: 0;
+	top: 70px;
+	bottom: 0;
+	width: 15%;
+	
+	overflow: auto;
+	padding: 20px 10px;
+	
+	border-right: 1px solid #e7e7e7;
+}
+
+.org-container
+{
+	position: absolute;
+	right: 0;
+	top: 70px;
+	bottom: 0;
+	left: 15%;
+	
+	width: 85%;
+	overflow: auto;
+	
+	padding: 20px;
+}
+
+.fotter
+{
+	padding: 10px;
+	background: linear-gradient(to bottom,#444 0,#222 100%);
+	color: white;
+	font-size: 14px;
+	text-align: center;
+}
+
+.list-group, .list-group-item
+{
+	border:0;
+}
+
+.list-group-item
+{
+	padding: 10px 20px;
+}
+
+.list-group-item ul
+{
+	padding: 0;
+	margin: 5px 0;
+	list-style: none;
+}
+
+.list-group-item li
+{
+	padding: 5px 10px;
+	margin: 0;
+	list-style: none;
+}
+
+.org-name
+{
+	font-size: 16px;
+	color: #999;
+}
+
+.space-name
+{
+	color: #444;
+}
+
+.space-name:HOVER
+{
+	font-size: 14px;
+	color: #f91;
+	text-decoration: none;
+}
+
+.org-details h1
+{
+	margin: 0;
+}
+
+.org-details .progress
+{
+	margin: 10px 0;
+}
+
+.apps-container
+{
+	margin-top: 40px;
+}
+
+.app-functions
+{
+	margin-bottom: 10px;
+}
+
+.app-functions .dropdown
+{
+	display: inline-block;
+}
+
+.app-filtering
+{
+	padding: 5px;
+	
+	border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    
+	background: #E7E7E7;
+    background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#e0e0e0));
+    background: -webkit-linear-gradient(top, #eee 0%, #e0e0e0);
+    background: -moz-linear-gradient(top, #eee 0%, #e0e0e0);
+    background: -ms-linear-gradient(top, #eee 0%, #e0e0e0);
+    background: -o-linear-gradient(top, #eee 0%, #e0e0e0);
+    background: linear-gradient(top, #eee 0%, #e0e0e0);
+}
+
+.app-filtering input
+{
+	border-radius: 5px;
+}
+
+.apps-table
+{
+	width: 100%;
+}
+
+.apps-table th
+{
+	text-align: center;
+	
+	padding: 15px 10px;
+	
+	border-bottom: 1px solid #ccc;
+    border-top: 1px solid #fff;
+    
+	background: -webkit-linear-gradient(top, #eee 0%, #e0e0e0);
+    background: -moz-linear-gradient(top, #eee 0%, #e0e0e0);
+    background: -ms-linear-gradient(top, #eee 0%, #e0e0e0);
+    background: -o-linear-gradient(top, #eee 0%, #e0e0e0);
+    background: linear-gradient(top, #eee 0%, #e0e0e0);
+    background: #e7e7e7;
+    background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#e0e0e0));
+}
+
+.app-details
+{
+	margin-top: 50px;
+}

@@ -12,12 +12,19 @@
 <script src="@{libs}/jquery-2.2.3.min.js"></script>
 <script src="@{libs}/bootstrap/js/bootstrap.min.js"></script>
 <script src="@{libs}/form.js"></script>
+<script src="@{libs}/pumpkin.js"></script>
 <script src="@{libs}/event_emitter.js"></script>
 <script src="@{libs}/cf/cf-client.js"></script>
 <script src="@{js}/common.js"></script>
 <script src="@{js}/messages.js"></script>
 
 <script>
+window.onhashchange = function()
+{
+	_global.parseHash();
+	_ee.emit('hashchange');
+};
+
 $(document).ready(function()
 {
 	$('#signout').on('click', function()
@@ -53,6 +60,14 @@ $(document).ready(function()
   	</div>
 </nav>
 ${#{1}}
+<div class="alert-board"></div>
+<div class="background-progress">
+	<div class="vertical-bar"></div>
+	<div class="progress-content">
+		<span class="glyphicon glyphicon-refresh"></span>
+		<p class="progress-message"></p>
+	</div>
+</div>
 </body>
 
 </html>

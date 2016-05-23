@@ -3,6 +3,11 @@ body
 	min-width: 1200px;
 }
 
+.navbar
+{
+	margin-bottom: 0;
+}
+
 .navbar-default
 {
 	background-color: white;
@@ -71,4 +76,50 @@ margin-right: -15px !important;
 
 .navbar-right {
 float: right!important;
+}
+
+.background-progress
+{
+	display: none;
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 70px;
+	bottom: 0;
+	background-color: white;
+	text-align: center;
+	
+	z-index: 1000;
+}
+
+.background-progress .vertical-bar
+{
+	display: inline-block;
+	width: 0;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.background-progress .progress-content
+{
+	display: inline-block;
+}
+
+.background-progress .progress-message
+{
+	margin: 20px 0;
+}
+
+.background-progress span
+{
+	font-size: 100px;
+	animation-name: progress;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes progress {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
 }

@@ -17,6 +17,10 @@ var login = function(id, password)
 			{
 				$('#signinForm .result-desc').text('Password is not accord. please check the account.');
 			}
+			else
+			{
+				$('#signinForm .result-desc').text(reason.error);
+			}
 		}
 		else
 		{
@@ -31,8 +35,9 @@ $(document).ready(function()
 	formSubmit($('#signinForm'), function(data)
 	{
 		var type = $('#signinForm input[type="submit"]').attr('data-type');
-		if(type == 'signin')
+		if(!type || type == 'signin')
 		{
+			$('#signinForm .result-desc').text('Please, wait for sign in.');
 			login(data.username, data.password);
 		}
 		else

@@ -201,7 +201,10 @@ var rendering = function(req, res)
 	param['5'] = 'apps';
 	param.username = req.session.cfdata.username;
 	if(req.session.cfdata.endpoint)
+	{
 		param.tailLogServer = req.session.cfdata.endpoint.logging_socket;
+		param.endpoint = req.session.cfdata.endpoint.api;
+	}
 	
 	for(var i=1; i<split.length; i++)
 	{

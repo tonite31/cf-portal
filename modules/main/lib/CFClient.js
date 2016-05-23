@@ -61,47 +61,61 @@ CFClient.prototype.login = function(done, error)
 			}
 			else
 			{
-				var info = JSON.parse(body);
-				this.endpoint.authorization = info.authorization_endpoint;
-				this.endpoint.logging_socket = info.logging_endpoint;
-				this.endpoint.logging = 'https://' + info.logging_endpoint.replace('wss://', '').replace(':443', '');
-				this.endpoint.routing = info.routing_endpoint;
-				
-				param = {};
-				param.url = this.endpoint.authorization + '/oauth/token';
-				param.headers = {
-					Authorization: 'Basic Y2Y6',
-	            	'Content-Type': 'application/x-www-form-urlencoded'
-				};
-				param.method = 'POST';
-				param.form = {
-	                grant_type: 'password',
-	                client_id: 'cf',
-	                username: this.username,
-	                password: this.password
-	            };
-				
-				request(param, function(err, response, body)
+				if(response.statusCode == 200)
 				{
-					if(err)
+					var info = JSON.parse(body);
+					this.endpoint.authorization = info.authorization_endpoint;
+					this.endpoint.logging_socket = info.logging_endpoint;
+					this.endpoint.logging = 'https://' + info.logging_endpoint.replace('wss://', '').replace(':443', '');
+					this.endpoint.routing = info.routing_endpoint;
+					
+					param = {};
+					param.url = this.endpoint.authorization + '/oauth/token';
+					param.headers = {
+						Authorization: 'Basic Y2Y6',
+		            	'Content-Type': 'application/x-www-form-urlencoded'
+					};
+					param.method = 'POST';
+					param.form = {
+		                grant_type: 'password',
+		                client_id: 'cf',
+		                username: this.username,
+		                password: this.password
+		            };
+					
+					request(param, function(err, response, body)
 					{
-						if(error)
-							error(err);
-					}
-					else
-					{
-						var data = JSON.parse(body);
-						if(data.error)
+						if(err)
 						{
-							error(data);
+							if(error)
+								error(err);
 						}
 						else
 						{
-							this.uaaToken = data;
-							done();
+							var data = JSON.parse(body);
+							if(data.error)
+							{
+								error(data);
+							}
+							else
+							{
+								this.uaaToken = data;
+								done();
+							}
 						}
-					}
-				}.bind(this));
+					}.bind(this));
+				}
+				else
+				{
+					var start = body.indexOf('<h1>');
+					var end = body.indexOf('</h1>');
+					
+					var errorMessage = body.substring(start, end);
+					if(errorMessage)
+						error(errorMessage.replace('<h1>', ''));
+					else
+						error(body);
+				}
 			}
 		}.bind(this));
 	}
@@ -350,6 +364,12 @@ CFClient.prototype.inviteUser = function(done, error)
 
 CFClient.prototype.request = function(url, method, headers, data, done, error)
 {
+	if(!url)
+	{
+		error('URL is undefined.');
+		return;
+	}
+	
 	var param = {};
 	if(url.indexOf('/recent') == 0)
 		param.url = this.endpoint.logging + url;
