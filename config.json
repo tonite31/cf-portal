@@ -1,8 +1,8 @@
 {
-	"endpoint" : "http://api.run.ghama.io",
+	"endpoint" : "",
 	"admin" : {
-		"username" : "ghama",
-		"password" : "!2tjssuxkd"
+		"username" : "",
+		"password" : ""
 	},
 	"redis" : {
 	},
