@@ -10,6 +10,28 @@
 </li>
 </script>
 
+<script type="text/template" id="appItemTemplate">
+<tr>
+	<td><span class="{stateColor} glyphicon {stateIcon}"></span> {state}</td>
+	<td class="app-name">{name}</td>
+	<td class="app-routes">Routes loading...</td>
+	<td>
+		<div class="input-group" style="width: 70%;">
+			<input type="number" class="form-control" data-value="{instance}" value="{instance}">
+		</div>
+	</td>
+	<td>
+		<div class="input-group" style="width: 70%;">
+			<input type="number" class="form-control" data-value="{memory}" value="{memory}">
+		</div>
+	</td>
+	<td class="app-scale-buttons">
+		<button type="button" class="btn btn-primary">Update</button>
+		<span>Cancel</span>
+	</td>
+</tr>
+</script>
+
 <script>
 $(document).ready(function()
 {
@@ -32,18 +54,34 @@ $(document).ready(function()
 				<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">60%</div>
 			</div>
 			<div class="org-menus">
-				<a href="">Members</a>
+				<a href=""><span class="glyphicon glyphicon-link"></span> Domains</a>
+				<a href=""><span class="glyphicon glyphicon-link"></span> Members</a>
 			</div>
 		</div>
+		<hr style="border-color: #e0e0e0;">
+		<div class="space-details">
+			<h3>test</h3>
+			<div class="space-menus">
+				<a href=""><span class="glyphicon glyphicon-link"></span> Services</a>
+			</div>
+		</div>
+		<hr style="border-color: #e0e0e0;">
 		<div class="apps-container">
 			<div class="app-functions">
 				<button type="button" class="btn btn-primary" disabled>Start</button>
-				<button type="button" class="btn btn-default" disabled>Update app scale</button>
 				<button type="button" style="float: right;" class="btn btn-danger" disabled>Delete</button>
+				<div class="apps-status">
+					<span class="text-primary glyphicon glyphicon-play"></span><span>20 Running</span>
+					<span class="text-muted glyphicon glyphicon-pause"></span><span>4 Stopped</span>
+					<span class="text-danger glyphicon glyphicon-stop"></span><span>0 Down</span>
+				</div>
 			</div>
 			<div class="app-filtering">
-				<div class="input-group" style="width: 50%;">
+				<div class="input-group">
 					<input type="text" class="form-control" placeholder="Filter by application name">
+				</div>
+				<div>
+					<span class="glyphicon glyphicon-refresh"></span>
 				</div>
 			</div>
 			<table class="apps-table">
@@ -61,26 +99,53 @@ $(document).ready(function()
 						<th>Name</th>
 						<th>URL</th>
 						<th>Instances</th>
-						<th>Memory Limit</th>
+						<th>Memory Limit (MB)</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody id="appsBody">
+					<tr>
+						<td colspan="6" style="position: relative; height: 250px;">
+							<div class="background-progress" style="display: block; position: absolute;" id="appsProgress">
+								<div class="vertical-bar"></div>
+								<div class="progress-content">
+									<span class="glyphicon glyphicon-refresh"></span>
+									<p class="progress-message"></p>
+								</div>
+							</div>
+						</td>
+					</tr>
 				</tbody>
 			</table>
-			<div class="app-details">
+			<div class="app-details" style="display: none;" id="appDetails">
 				<div id="appDetailTab">
 					<ul class="nav nav-tabs" role="tablist">
-						<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
-						<li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
-						<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
-						<li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+						<li role="presentation" class="active"><a href="#about" aria-controls="about" role="tab" data-toggle="tab">About</a></li>
+						<li role="presentation"><a href="#status" aria-controls="status" role="tab" data-toggle="tab">Status</a></li>
+						<li role="presentation"><a href="#services" aria-controls="services" role="tab" data-toggle="tab">Services</a></li>
+						<li role="presentation"><a href="#env" aria-controls="env" role="tab" data-toggle="tab">Env Variables</a></li>
+						<li role="presentation"><a href="#routes" aria-controls="routes" role="tab" data-toggle="tab">Routes</a></li>
+						<li role="presentation"><a href="#logs" aria-controls="logs" role="tab" data-toggle="tab">Logs</a></li>
 					</ul>
 					<div class="tab-content">
-						<div role="tabpanel" class="tab-pane fade in active" id="home">...</div>
-						<div role="tabpanel" class="tab-pane fade" id="profile">...</div>
-						<div role="tabpanel" class="tab-pane fade" id="messages">...</div>
-						<div role="tabpanel" class="tab-pane fade" id="settings">...</div>
+						<div role="tabpanel" class="tab-pane fade in active" id="about">
+							${organization/about}
+						</div>
+						<div role="tabpanel" class="tab-pane fade" id="status">
+							${organization/status}
+						</div>
+						<div role="tabpanel" class="tab-pane fade" id="services">
+							${organization/services}
+						</div>
+						<div role="tabpanel" class="tab-pane fade" id="env">
+							${organization/env}
+						</div>
+						<div role="tabpanel" class="tab-pane fade" id="routes">
+							${organization/routes}
+						</div>
+						<div role="tabpanel" class="tab-pane fade" id="logs">
+							${organization/logs}
+						</div>
 					</div>
 				</div>
 			</div>

@@ -15,16 +15,16 @@ var login = function(id, password)
 			
 			if(reason.error.error_description == 'Bad credentials')
 			{
-				$('#signinForm .result-desc').text('Password is not accord. please check the account.');
+				$('#signinForm .result-desc').text('Password is not accord. please check the account.').css('color', '');
 			}
 			else
 			{
-				$('#signinForm .result-desc').text(reason.error);
+				$('#signinForm .result-desc').text(reason.error).css('color', '');
 			}
 		}
 		else
 		{
-			$('#signinForm .result-desc').text(error.responseText);
+			$('#signinForm .result-desc').text(error.responseText).css('color', '');
 		}
 	});	
 };
@@ -37,28 +37,28 @@ $(document).ready(function()
 		var type = $('#signinForm input[type="submit"]').attr('data-type');
 		if(!type || type == 'signin')
 		{
-			$('#signinForm .result-desc').text('Please, wait for sign in.');
+			$('#signinForm .result-desc').text('Please, wait for sign in.').css('color', '#337ab7');
 			login(data.username, data.password);
 		}
 		else
 		{
 			if(data.password != data.passwordConfirm)
 			{
-				$('#signinForm .result-desc').text('Both password is not accord each other.');
+				$('#signinForm .result-desc').text('Both password is not accord each other.').css('color', '');
 			}
 			else
 			{
-				$('#signinForm .result-desc').text('Please, wait for sign up.');
+				$('#signinForm .result-desc').text('Please, wait for sign up.').css('color', '#337ab7');
 				CF.users('signup', {email : data.username, password : data.password}, function(result)
 				{
 					if(result && result.code == 201)
 						login(data.username, data.password);
 					else
-						$('#signinForm .result-desc').text(JSON.stringify(result));
+						$('#signinForm .result-desc').text(JSON.stringify(result)).css('color', '');
 				},
 				function(error)
 				{
-					$('#signinForm .result-desc').text(error.error);
+					$('#signinForm .result-desc').text(error.error).css('color', '');
 				});
 			}
 		}

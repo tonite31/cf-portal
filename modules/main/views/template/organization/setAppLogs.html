@@ -39,29 +39,29 @@
 		
 		$(target).find('.tail').on('click', function()
 		{
-			if ('WebSocket' in window)
-			{  
-			    var oSocket = new WebSocket('wss://loggregator.dev.ghama.io:443/tail/?app=' + app.item.metadata.guid);
+// 			if ('WebSocket' in window)
+// 			{  
+// 			    var oSocket = new WebSocket('wss://loggregator.dev.ghama.io:443/tail/?app=' + app.item.metadata.guid);
 
-			    oSocket.onmessage = function (e) { 
-			        console.log('온다 : ', e.data); 
-			    };
+// 			    oSocket.onmessage = function (e) { 
+// 			        console.log('온다 : ', e.data); 
+// 			    };
 
-			    oSocket.onopen = function (e) {
-			        console.log('오픈');
-			    };
+// 			    oSocket.onopen = function (e) {
+// 			        console.log('오픈');
+// 			    };
 
-			    oSocket.onclose = function (e) {
-			        console.log('클로즈');
-			    };
-			}
-			else
-			{
-				common_error('This browser does not support WebSocker.');
-			}
-// 			wss://loggregator.dev.ghama.io:443
+// 			    oSocket.onclose = function (e) {
+// 			        console.log('클로즈');
+// 			    };
+// 			}
+// 			else
+// 			{
+// 				common_error('This browser does not support WebSocker.');
+// 			}
+// // 			wss://loggregator.dev.ghama.io:443
 			
-			console.log("서버 : ", $("#tailLogServer").val());
+// 			console.log("서버 : ", $("#tailLogServer").val());
 		});
 	});
 })();

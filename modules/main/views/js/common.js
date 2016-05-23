@@ -1,6 +1,24 @@
 var _global = {};
 (function()
 {
+	this.makeHash = function()
+	{
+		var hash = '';
+		
+		for(var key in this.hash)
+		{
+			if(key)
+			{
+				if(hash)
+					hash += '&';
+				
+				hash += key + '=' + this.hash[key];
+			}
+		}
+		
+		location.hash = hash;
+	};
+	
 	this.parseHash = function()
 	{
 		_global.hash = {};
@@ -169,11 +187,6 @@ var requiredValidation = function(element)
 	return !check;
 };
 
-var forEachWork = function(index, list, work, done)
-{
-	
-};
-
 var forEach = function(list, work, done, index)
 {
 	if(index == list.length)
@@ -192,9 +205,17 @@ var forEach = function(list, work, done, index)
 		if(!index)
 			index = 0;
 		
-		work.call({next : function()
+		if(list[index])
 		{
-			forEach(list, work, done, index+1);
-		}}, list[index], index)
+			work.call({next : function()
+			{
+				forEach(list, work, done, index+1);
+			}}, list[index], index);
+		}
+		else
+		{
+			if(typeof done == 'function')
+				done();
+		}
 	}
 };

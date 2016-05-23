@@ -165,6 +165,11 @@ module.exports = function(app)
 		}
 		
 		var url = req.body.url;
+		if(!url)
+		{
+			res.status(500).send({error : 'Url is undefind'});
+			return;
+		}
 		var method = req.body.method;
 		var headers = req.body.headers;
 		var data = req.body.form;
