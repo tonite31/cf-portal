@@ -80,7 +80,6 @@
 			{
 				if(prev != $(this).text())
 				{
-					//업데이트
 					var space = $('#' + _global.hash.space).get(0).item;
 					
 					$('#orgName').next().text('Please, wait for update.').css('color', '#337ab7');
