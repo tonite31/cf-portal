@@ -48,9 +48,10 @@
 		var template = '<li><a href="#" class="space-name">{name}</a></li>';
 		var that = this;
 		
-		forEach(orgList, function(org, index)
+		var forEach = new ForEach();
+		forEach.sync(orgList, function(org, index)
 		{
-			var next = this.next;
+			var done = this.done;
 			CF.async({url : org.entity.spaces_url}, function(result)
 			{
 				if(result)
@@ -63,6 +64,11 @@
 						{
 							space = $(template.replace('{name}', spaceList[i].entity.name).replace('#', '#space=' + spaceList[i].metadata.guid));
 							$(space).attr('id', spaceList[i].metadata.guid);
+							
+							if(spaceList[i].metadata.guid == _global.hash.space)
+								$(space).children('a').addClass('selected');
+							
+							spaceList[i].organization = org;
 							space.get(0).item = spaceList[i];
 							$(org.element).children('ul').append(space);
 						}
@@ -75,13 +81,22 @@
 					$(org.element).children('ul').append(space);
 				}
 
-				next(); // forEach next
+				done(); // forEach next
 			});
 		}, function()
 		{
 			//forEach done
 			that.next(); // pumpkin next
 		});
+	});
+	
+	_ee.on('hashchange', function()
+	{
+		if(_global.hash.space)
+		{
+			$('#orgList li[id] a.selected').removeClass('selected');
+			$('#' + _global.hash.space).children('a').addClass('selected');
+		}
 	});
 
 	$(document).ready(function()
@@ -93,7 +108,7 @@
 			_ee.emit('orgList_done');
 		}, function(workName, error)
 		{
-			console.error(error);
+			console.error(error.stack ? error.stack : error);
 		});
 	});
 })();

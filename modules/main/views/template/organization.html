@@ -1,6 +1,8 @@
 <link href="@{css}/organization.css" rel="stylesheet">
-<script src="@{js}/orgList.js"></script>
-<script src="@{js}/appList.js"></script>
+<script src="@{js}/organization/orgList.js"></script>
+<script src="@{js}/organization/appList.js"></script>
+<script src="@{js}/organization/orgDetail.js"></script>
+<script src="@{js}/organization/spaceDetail.js"></script>
 
 <script type="text/template" id="orgItemTemplate">
 <li class="list-group-item">
@@ -12,22 +14,34 @@
 
 <script type="text/template" id="appItemTemplate">
 <tr>
-	<td><span class="{stateColor} glyphicon {stateIcon}"></span> {state}</td>
+	<td><span class="{stateColor} glyphicon {stateIcon}"></span> <span>{state}</span></td>
 	<td class="app-name">{name}</td>
 	<td class="app-routes">Routes loading...</td>
-	<td>
-		<div class="input-group" style="width: 70%;">
-			<input type="number" class="form-control" data-value="{instance}" value="{instance}">
-		</div>
-	</td>
-	<td>
-		<div class="input-group" style="width: 70%;">
-			<input type="number" class="form-control" data-value="{memory}" value="{memory}">
-		</div>
+	<td>{disk}</td>
+	<td colspan="2">
+		<form>
+			<div class="input-group">
+				<input type="number" class="form-control" data-value="{instance}" value="{instance}" name="instance" required data-id="instance">
+			</div>
+			<div class="input-group">
+				<input type="number" class="form-control" data-value="{memory}" value="{memory}" name="memory" required data-id="memory">
+			</div>
+			<input type="submit" style="display: none;">
+		</form>
 	</td>
 	<td class="app-scale-buttons">
-		<button type="button" class="btn btn-primary">Update</button>
-		<span>Cancel</span>
+		<button type="button" class="btn btn-primary" data-id="updateScale">Update</button>
+		<span data-id="cancelScale">Cancel</span>
+		<span class="glyphicon glyphicon-refresh"></span>
+	</td>
+</tr>
+</script>
+
+<script type="text/template" id="scaleResultTemplate">
+<tr class="scale-result-tr">
+	<td colspan="7" style="text-align: right;">
+		<span class="scale-result-desc">{description}</span>
+		<span class="glyphicon glyphicon-remove"></span>
 	</td>
 </tr>
 </script>
@@ -49,9 +63,12 @@ $(document).ready(function()
 	</div>
 	<div class="org-container">
 		<div class="org-details">
-			<h1>microservice1</h1>
+			<div>
+				<h1 id="orgName"><span></span><span class="glyphicon glyphicon-pencil"></span></h1>
+				<span class="org-name-description"></span>
+			</div>
 			<div class="progress">
-				<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">60%</div>
+				<div id="quotaProgress" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">Organization quota loading...</div>
 			</div>
 			<div class="org-menus">
 				<a href=""><span class="glyphicon glyphicon-link"></span> Domains</a>
@@ -60,7 +77,10 @@ $(document).ready(function()
 		</div>
 		<hr style="border-color: #e0e0e0;">
 		<div class="space-details">
-			<h3>test</h3>
+			<div>
+				<h2 id="spaceName"><span></span><span class="glyphicon glyphicon-pencil"></span></h2>
+				<span class="space-name-description"></span>
+			</div>
 			<div class="space-menus">
 				<a href=""><span class="glyphicon glyphicon-link"></span> Services</a>
 			</div>
@@ -68,27 +88,31 @@ $(document).ready(function()
 		<hr style="border-color: #e0e0e0;">
 		<div class="apps-container">
 			<div class="app-functions">
+				<div class="apps-status">
+					<span class="text-primary glyphicon glyphicon-play"></span><span id="startedAppCount">Loading...</span>
+					<span class="text-muted glyphicon glyphicon-pause"></span><span id="stoppedAppCount">Loading...</span>
+					<span class="text-danger glyphicon glyphicon-stop"></span><span id="downAppCount">Loading...</span>
+				</div>
 				<button type="button" class="btn btn-primary" disabled>Start</button>
 				<button type="button" style="float: right;" class="btn btn-danger" disabled>Delete</button>
-				<div class="apps-status">
-					<span class="text-primary glyphicon glyphicon-play"></span><span>20 Running</span>
-					<span class="text-muted glyphicon glyphicon-pause"></span><span>4 Stopped</span>
-					<span class="text-danger glyphicon glyphicon-stop"></span><span>0 Down</span>
-				</div>
 			</div>
 			<div class="app-filtering">
 				<div class="input-group">
-					<input type="text" class="form-control" placeholder="Filter by application name">
+					<span class="glyphicon glyphicon-search"></span>
+					<input type="text" class="form-control" placeholder="Filter by application name" id="filterValue">
+					<span class="glyphicon glyphicon-remove" id="removeFilterValue"></span>
 				</div>
 				<div>
-					<span class="glyphicon glyphicon-refresh"></span>
+					<span class="refresh-app-list-description">Please, wait for refresh...</span>
+					<span class="glyphicon glyphicon-refresh" id="refreshAppList"></span>
 				</div>
 			</div>
 			<table class="apps-table">
 				<colgroup>
 					<col style="width: 10%;">
 					<col style="width: 25%;">
-					<col style="width: 35%;">
+					<col style="width: 25%;">
+					<col style="width: 10%;">
 					<col style="width: 10%;">
 					<col style="width: 10%;">
 					<col style="width: 10%;">
@@ -98,19 +122,20 @@ $(document).ready(function()
 						<th>App State</th>
 						<th>Name</th>
 						<th>URL</th>
+						<th>Disk Limit (MB)</th>
 						<th>Instances</th>
 						<th>Memory Limit (MB)</th>
-						<th></th>
+						<th>Update scale</th>
 					</tr>
 				</thead>
 				<tbody id="appsBody">
 					<tr>
-						<td colspan="6" style="position: relative; height: 250px;">
+						<td colspan="7" style="position: relative; height: 250px;">
 							<div class="background-progress" style="display: block; position: absolute;" id="appsProgress">
 								<div class="vertical-bar"></div>
 								<div class="progress-content">
 									<span class="glyphicon glyphicon-refresh"></span>
-									<p class="progress-message"></p>
+									<p class="progress-message">Applications loading...</p>
 								</div>
 							</div>
 						</td>

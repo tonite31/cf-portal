@@ -52,24 +52,25 @@ var _global = {};
 var _ee = new EventEmitter();
 var common_board = function(type, msg)
 {
-	var span = $('<div class="' + type + '">' + msg + '</div>');
-	
-	$('.alert-board').append(span);
-
-	setTimeout(function()
-	{
-		span.css('opacity', 1);
-	}, 100);
-	
-	setTimeout(function()
-	{
-		span.css('opacity', 0);
-		
-		setTimeout(function()
-		{
-			span.remove();
-		}, 500);
-	}, 5100);
+	alert(msg);
+//	var span = $('<div class="' + type + '">' + msg + '</div>');
+//	
+//	$('.alert-board').append(span);
+//
+//	setTimeout(function()
+//	{
+//		span.css('opacity', 1);
+//	}, 100);
+//	
+//	setTimeout(function()
+//	{
+//		span.css('opacity', 0);
+//		
+//		setTimeout(function()
+//		{
+//			span.remove();
+//		}, 500);
+//	}, 5100);
 };
 
 var common_success = function(msg)
@@ -187,35 +188,56 @@ var requiredValidation = function(element)
 	return !check;
 };
 
-var forEach = function(list, work, done, index)
+var ForEach = function()
 {
+	this.state = 0;
+};
+
+ForEach.prototype.sync = function(list, work, done, index)
+{
+	if(!index)
+		index = 0;
+	
+	var that = this;
 	if(index == list.length)
 	{
 		if(typeof done == 'function')
 			done();
+		
 		return;
 	}
 	else
 	{
-		if(arguments.length == 2)
+		work.call({done : function()
 		{
-			index = done = 0;
-		}
-		
-		if(!index)
-			index = 0;
-		
-		if(list[index])
+			that.sync(list, work, done, index+1);
+		}}, list[index], index);
+	}
+};
+
+ForEach.prototype.async = function(list, work, done, index)
+{
+	if(!index)
+		index = 0;
+	
+	var that = this;
+	if(list.length == 0)
+	{
+		if(typeof done == 'function')
+			done();
+	}
+	else if(index < list.length)
+	{
+		work.call({done : function()
 		{
-			work.call({next : function()
+			that.state++;
+			if(that.state == list.length)
 			{
-				forEach(list, work, done, index+1);
-			}}, list[index], index);
-		}
-		else
-		{
-			if(typeof done == 'function')
-				done();
-		}
+				if(typeof done == 'function')
+					done();
+			}
+		}}, list[index], index);
+		
+		this.async(list, work, done, index+1);
 	}
 };

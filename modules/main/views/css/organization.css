@@ -6,7 +6,7 @@
 {
 	position: absolute;
 	left: 0;
-	top: 70px;
+	top: 71px;
 	bottom: 0;
 	width: 15%;
 	
@@ -20,7 +20,7 @@
 {
 	position: absolute;
 	right: 0;
-	top: 70px;
+	top: 71px;
 	bottom: 0;
 	left: 15%;
 	
@@ -81,12 +81,19 @@
 	text-decoration: none;
 }
 
+.space-name.selected
+{
+	padding-left: 10px;
+	font-weight: bold;
+	border-left: 3px solid #f91;
+}
+
 .org-details, .space-details, .app-functions
 {
 	position: relative;
 }
 
-.org-details h1, .space-details h3
+#orgName, #spaceName
 {
 	margin: 10px 0;
 }
@@ -94,6 +101,29 @@
 .org-details .progress
 {
 	margin: 10px 0;
+}
+
+#orgName, #spaceName
+{
+	display: inline-block;
+}
+
+.org-name-description, .space-name-description
+{
+	font-size: 12px;
+	color: red;
+}
+
+#orgName .glyphicon-pencil, #spaceName .glyphicon-pencil
+{
+	font-size: 15px;
+	margin-left: 5px;
+	display: none;
+}
+
+#orgName:hover .glyphicon-pencil, #spaceName:hover .glyphicon-pencil
+{
+	display: inline;
 }
 
 .org-menus, .space-menus
@@ -147,12 +177,46 @@
 	text-align: right;
 }
 
+.app-filtering .glyphicon-search
+{
+	position: absolute;
+	top: 9.5px;
+	left: 9.5px;
+	z-index: 1000;
+	
+	color: #aaa;
+}
+
+#filterValue
+{
+	padding-left: 30px;
+}
+
+#removeFilterValue
+{
+	position: absolute;
+	top: 9.5px;
+	right: 9.5px;
+	z-index: 1000;
+	
+	color: #aaa;
+	
+	cursor: pointer;
+}
+
+#removeFilterValue:HOVER
+{
+	color: black;
+}
+
 .apps-status
 {
 	position: absolute;
 	left: 0;
 	bottom: 0;
 	right: 0;
+	
+	z-index: -1;
 	
 	text-align: center;
 }
@@ -228,6 +292,11 @@
 	background-color: #eaf3fe;
 }
 
+.apps-table tbody tr:FIRST-CHILD:HOVER
+{
+	background-color: white;
+}
+
 .apps-table td p
 {
 	margin: 0;
@@ -253,9 +322,49 @@
 	display: none;
 }
 
+.app-scale-buttons span
+{
+	cursor: pointer;
+}
+
+.app-scale-buttons span:HOVER
+{
+	text-decoration: underline;
+}
+
+.app-scale-buttons .glyphicon-refresh
+{
+	animation-name: progress;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
 #appsBody
 {
 	position: relative;
+}
+
+#appsBody .input-group
+{
+	float: left;
+	width: 49%;
+	margin: 0 0.5%;
+}
+
+#appsBody .text-primary + span
+{
+	color: #337ab7;
+}
+
+#appsBody .text-muted + span
+{
+	color: #777;
+}
+
+#appsBody .text-danger + span
+{
+	color: #a94442;
 }
 
 .tab-pane
@@ -282,4 +391,43 @@
     border-radius: 3px;
     background-color: #eee;
     padding: 10px;
+}
+
+.refresh-app-list-description
+{
+	display: none;
+	font-size: 12px;
+	margin-right: 10px;
+}
+
+#refreshAppList
+{
+	cursor: pointer;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.scale-result-desc
+{
+	font-size: 13px;
+	color: red;
+	vertical-align: middle; 
+}
+
+.scale-result-desc + span
+{
+	color: #aaa;
+	cursor: pointer;
+	vertical-align: middle;
+}
+
+.scale-result-desc + span:HOVER
+{
+	color: black;	
+}
+
+.scale-result-tr:HOVER
+{
+	background-color: white !important;
 }
