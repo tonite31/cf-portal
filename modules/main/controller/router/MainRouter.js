@@ -202,8 +202,7 @@ var rendering = function(req, res)
 	
 	var param = {};
 	param['1'] = 'index';
-	param['3'] = 'space';
-	param['5'] = 'apps';
+	
 	param.username = req.session.cfdata.username;
 	if(req.session.cfdata.endpoint)
 	{

@@ -1,0 +1,33 @@
+.status-table
+{
+	width: 100%;
+}
+
+.status-table thead {
+	border-top: 1px solid #c2c9cb;
+	border-bottom: 1px solid #c2c9cb;
+}
+
+.status-table tbody tr {
+	border-bottom: 1px solid #dce2e3;
+}
+
+.status-table th, .status-table td {
+	font-size: 12px;
+	padding: 15px;
+	text-align: center;
+}
+
+.status-table tr td:LAST-CHILD
+{
+	text-align: left;
+}
+
+input[required], select[required] {
+	transition: box-shadow 1s;
+}
+
+.status-table .progress-message
+{
+	font-size: 15px;
+}

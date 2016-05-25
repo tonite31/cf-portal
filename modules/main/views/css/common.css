@@ -123,3 +123,24 @@ float: right!important;
     from {transform: rotate(0deg);}
     to {transform: rotate(360deg);}
 }
+
+.confirm-button
+{
+	display: inline-block;
+	margin: 0 5px;
+}
+
+.confirm-button span:FIRST-CHILD
+{
+	cursor: pointer;
+}
+
+.confirm-button span:FIRST-CHILD:HOVER
+{
+	text-decoration: underline;
+}
+
+.confirm-button .confirm
+{
+	display: none;
+}

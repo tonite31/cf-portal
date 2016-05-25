@@ -1,0 +1,75 @@
+#services table
+{
+	width: 100%;
+}
+
+#services table thead {
+	border-top: 1px solid #c2c9cb;
+	border-bottom: 1px solid #c2c9cb;
+}
+
+#services table tbody tr {
+	border-bottom: 1px solid #dce2e3;
+}
+
+#services table th, #services table td {
+	padding: 15px;
+	text-align: center;
+	font-size: 12px;
+}
+
+#services table tr td:nth-child(2)
+{
+	text-align: left;
+}
+
+#services table th, #services table tr td:nth-child(3) a
+{
+	margin: 0 10px;
+}
+
+.service-name
+{
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.credentials
+{
+	cursor: pointer;
+	color: #338ECF;
+}
+
+.service-error-message
+{
+	color: red;
+}
+
+.service-select-area
+{
+	margin-top: 15px;
+}
+
+.service-select
+{
+    width: 400px;
+    margin-right: 10px;
+    
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 5px;
+    border: 1px solid #f2f2f2;
+    border-radius: 2px;
+    height: 45px;
+}
+
+.or-marketplace
+{
+	position: relative;
+    top: 10px;
+    left: 245px;
+}
+
+.service-select[disabled]
+{
+	background-color: #e0e0e0;
+}

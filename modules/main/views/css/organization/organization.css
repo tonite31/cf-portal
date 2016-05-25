@@ -96,6 +96,7 @@
 #orgName, #spaceName
 {
 	margin: 10px 0;
+	vertical-align: middle;
 }
 
 .org-details .progress
@@ -106,6 +107,7 @@
 #orgName, #spaceName
 {
 	display: inline-block;
+	position: relative;
 }
 
 .org-name-description, .space-name-description
@@ -114,16 +116,29 @@
 	color: red;
 }
 
-#orgName .glyphicon-pencil, #spaceName .glyphicon-pencil
-{
-	font-size: 15px;
-	margin-left: 5px;
-	display: none;
-}
-
-#orgName:hover .glyphicon-pencil, #spaceName:hover .glyphicon-pencil
+#orgName:HOVER .glyphicon-pencil, #spaceName .glyphicon-pencil
 {
 	display: inline;
+}
+
+#orgName .glyphicon-pencil, #spaceName .glyphicon-pencil
+{
+	display: none;
+	position: absolute;
+	font-size: 10px;
+    margin-left: 5px;
+}
+
+#orgName .glyphicon-pencil
+{
+    top: 22px;
+    right: -12px;
+}
+
+#spaceName .glyphicon-pencil
+{
+    top: 17px;
+    right: -18px;
 }
 
 .org-menus, .space-menus
@@ -287,12 +302,22 @@
 	border-bottom: 1px solid #e0e0e0;
 }
 
-.apps-table tbody tr:HOVER, .apps-table tbody tr.selected
+.apps-table tbody tr
 {
-	background-color: #eaf3fe;
+	background-color: #f7f7f7;
 }
 
-.apps-table tbody tr:FIRST-CHILD:HOVER
+.apps-table tbody tr:HOVER, .apps-table tbody tr.selected
+{
+	background-color: #fefefe;
+}
+
+.apps-table tbody tr.selected td:FIRST-CHILD
+{
+	border-left: 3px solid #FF9911;
+}
+
+.apps-table tbody tr:FIRST-CHILD, .apps-table tbody tr:FIRST-CHILD:HOVER
 {
 	background-color: white;
 }
@@ -373,11 +398,17 @@
 	position: relative;
 }
 
-.tab-pane p.label
+.tab-pane .pre-label
 {
-	margin: 10px 0 5px 0;
+	margin: 20px 0 5px 0;
     color: #686868;
     font-weight: bold;
+    font-size: 14px;
+}
+
+.tab-pane .pre-label:FIRST-CHILD
+{
+	margin-top: 0;
 }
 
 .tab-pane pre

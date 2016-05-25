@@ -1,4 +1,6 @@
-<div class="background-progress" style="display: block; position: absolute;" id="aboutProgress">
+<script src="@{js}/organization/appAbout.js"></script>
+
+<div class="background-progress aboutProgress" style="display: block; position: absolute;">
 	<div class="vertical-bar"></div>
 	<div class="progress-content">
 		<span class="glyphicon glyphicon-refresh"></span>
@@ -7,12 +9,12 @@
 </div>
 
 <div style="display: none;">
-	<p>BUILDPACK</p>
-	<pre id="buildpack"></pre>
-	<p>START CMD</p>
-	<pre id="cmd"></pre>
-	<p>STACK</p>
-	<pre id="stack"></pre>
+	<p class="pre-label">BUILDPACK</p>
+	<pre class="buildpack"></pre>
+	<p class="pre-label">START CMD</p>
+	<pre class="cmd"></pre>
+	<p class="pre-label">STACK</p>
+	<pre class="stack"></pre>
 </div>
 
-<div class="alert alert-warning" style="display: none;" id="aboutMessage"></div>
+<div class="alert alert-warning aboutMessage" style="display: none;"></div>

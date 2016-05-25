@@ -280,43 +280,30 @@
 			$('#appsBody tr').removeClass('selected');
 			$(this).addClass('selected');
 			
+			var type = $('#appDetailTab li.active a').attr('aria-controls');
 			var app = $(this).get(0).item;
-			setAbout(app);
 			
-			$('#appDetails').show();
+			var detail = $('#appDetails');
+			var context = detail.clone();
+			
+			context.insertAfter(detail);
+			_ee.emit('app_detail_' + type, context, app);
+			
+			context.show();
+			
+			detail.remove();
+			
+			$('#appDetailTab a').click(function(e)
+			{
+			  e.preventDefault();
+			  $(this).tab('show');
+			  
+			  var name = $(this).attr('aria-controls');
+			  _ee.emit('app_detail_' + name, context, app);
+			});
 		});
 	};
 
-	var setAbout = function(app)
-	{
-		$('#aboutProgress').show().next().hide();
-		
-		$('#aboutProgress .progress-message').text('Status loading...');
-		
-		$('#buildpack').text(app.entity.buildpack ? app.entity.buildpack : app.entity.detected_buildpack);
-		$('#cmd').text(app.entity.detected_start_command);
-		
-		CF.async({url : app.entity.stack_url}, function(stackResult)
-		{
-			if(stackResult && stackResult.entity)
-			{
-				$('#stack').text(stackResult.entity.name + "(" + stackResult.entity.description + ")");
-				$('#aboutProgress').next().show();
-			}
-			else
-			{
-				$('#aboutMessage').text(stackResult.description).show();
-			}
-			
-			$('#aboutProgress').hide();
-			
-		}, function(error)
-		{
-			$('#aboutProgress').hide();
-			$('#aboutMessage').text(error).show();
-		});
-	};
-	
 	_ee.on('hashchange', function()
 	{
 		if(_global.hash.space)

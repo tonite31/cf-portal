@@ -1,4 +1,8 @@
-<table>
+<link href="@{css}/organization/app_status.css" rel="stylesheet">
+
+<script src="@{js}/organization/appStatus.js"></script>
+
+<table class="status-table">
 	<colgroup>
 		<col style="width: 16.666%;">
 		<col style="width: 16.666%;">
@@ -17,5 +21,19 @@
 			<th>UPTIME</th>
 		</tr>
 	</thead>
-	<tbody></tbody>
+	<tbody>
+		<tr>
+			<td colspan="6" style="text-align: center; position: relative; height: 250px;">
+				<div class="background-progress appInstanceProgress" style="display: block; position: absolute;">
+					<div class="vertical-bar"></div>
+					<div class="progress-content">
+						<span class="glyphicon glyphicon-refresh"></span>
+						<p class="progress-message">Instances loading...</p>
+					</div>
+				</div>
+			</td>
+		</tr>
+	</tbody>
 </table>
+
+<div class="alert alert-warning statusMessage" style="display: none;"></div>

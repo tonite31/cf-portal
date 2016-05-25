@@ -82,35 +82,35 @@
 				{
 					var space = $('#' + _global.hash.space).get(0).item;
 					
-					$('#orgName').next().text('Please, wait for update.').css('color', '#337ab7');
+					$('.org-name-description').text('Please, wait for update.').css('color', '#337ab7');
 					CF.async({url : '/v2/organizations/' + space.organization.metadata.guid, method : 'PUT', form : {name : $(this).text()}}, function(result)
 					{
 						if(result)
 						{
 							if(result.entity)
 							{
-								$('#orgName').next().text('Updated.').css('color', '#337ab7');
+								$('.org-name-description').text('Updated.').css('color', '#337ab7');
 								setTimeout(function()
 								{
-									$('#orgName').next().text('');
+									$('.org-name-description').text('');
 								}, 1000 * ORG_NAME_UPDATE_TIME);
 							}
 							else
 							{
 								$('#orgName span:first').text(prev);
-								$('#orgName').next().text(result.description).css('color', '');
+								$('.org-name-description').text(result.description).css('color', '');
 							}
 						}
 						else
 						{
 							$('#orgName span:first').text(prev);
-							$('#orgName').next().text('Unknown error.').css('color', '');
+							$('.org-name-description').text('Unknown error.').css('color', '');
 						}
 					},
 					function(error)
 					{
 						$('#orgName span:first').text(prev);
-						$('#orgName').next().text(error.stack ? error.stack : error).css('color', '');
+						$('.org-name-description').text(error.stack ? error.stack : error).css('color', '');
 					});
 				}
 				

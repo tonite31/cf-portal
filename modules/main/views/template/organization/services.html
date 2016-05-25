@@ -1,0 +1,63 @@
+<link href="@{css}/organization/app_services.css" rel="stylesheet">
+
+<script src="@{js}/organization/appService.js"></script>
+
+<div class="background-progress servicesProgress" style="display: none; position: absolute;">
+	<div class="vertical-bar"></div>
+	<div class="progress-content">
+		<span class="glyphicon glyphicon-refresh"></span>
+		<p class="progress-message">Services Loading...</p>
+	</div>
+</div>
+
+<script type="text/template" id="appServiceTemplate">
+<tr>
+	<td>
+		<img src="{imgUrl}">
+	</td>
+	<td>
+		<p class="service-name">{name}</p>
+		<p class="service-description">{description}</p>
+		<p><span class="credentials"><span>Show credentials</span> <span class="glyphicon glyphicon-triangle-right"></span></span></p>
+		<div style="display: none;">{credentials}</div>
+	</td>
+	<td>
+		<a href="{manageUrl}"><span class="glyphicon glyphicon-link"></span> Manage</a>
+		<a href="{supportUrl}"><span class="glyphicon glyphicon-link"></span> Support</a>
+		<a href="{docsUrl}"><span class="glyphicon glyphicon-link"></span> Docs</a>
+	</td>
+	<td>
+		<button type="button" class="btn btn-danger">Unbind</button>
+	</td>
+</tr>
+</script>
+
+<div class="service-container" style="display: none;">
+	<table class="service-table">
+		<colgroup>
+			<col style="width: 10%;">
+			<col style="width: 55%;">
+			<col style="width: 25%;">
+			<col style="width: 10%;">
+		</colgroup>
+		<tbody>
+		</tbody>
+	</table>
+	<div class="service-select-area">
+		<form>
+			<select class="service-select" required>
+				<option value="" disabled selected>Select a service</option>
+			</select>
+			<input type="submit" class="btn btn-primary" value="Bind">
+			<div class="confirm-button">
+				<span>Cancel</span>
+				<span class="confirm">Confirm</span>
+			</div>
+		</form>
+		<p>
+			<a href="" class="or-marketplace">or add from Marketplace</a>
+		</p>
+	</div>
+</div>
+
+<div class="alert alert-warning servicesMessage" style="display: none;"></div>
