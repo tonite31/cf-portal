@@ -27,7 +27,11 @@
 		<a target="_blank" href="{docsUrl}"><span class="glyphicon glyphicon-link"></span> Docs</a>
 	</td>
 	<td>
-		<button type="button" class="btn btn-danger">Unbind</button>
+		<span class="glyphicon glyphicon-refresh unbind-progress"></span>
+		<div class="confirm-button">
+			<button type="button" class="btn btn-danger">Unbind</button>
+			<span class="confirm">Confirm</span>
+		</div>
 	</td>
 </tr>
 </script>
@@ -44,18 +48,17 @@
 		</tbody>
 	</table>
 	<div class="service-select-area">
-		<form>
-			<select class="service-select" required>
+		<form class="bind-form">
+			<select class="service-select" name="service_instance_guid" required>
 				<option value="" disabled selected>Select a service</option>
 			</select>
-			<input type="submit" class="btn btn-primary" value="Bind">
-			<div class="confirm-button">
-				<span>Cancel</span>
-				<span class="confirm">Confirm</span>
-			</div>
+			<span class="glyphicon glyphicon-refresh bind-progress"></span>
+			<input type="submit" class="btn btn-primary bind-service" value="Bind">
+			<span class="bind-cancel">Cancel</span>
+			<span class="bind-service-message"></span>
 		</form>
 		<p>
-			<a href="" class="or-marketplace">or add from Marketplace</a>
+			<a href="/marketplace" class="or-marketplace">or add from Marketplace</a>
 		</p>
 	</div>
 </div>

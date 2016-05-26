@@ -130,17 +130,14 @@ float: right!important;
 	margin: 0 5px;
 }
 
-.confirm-button span:FIRST-CHILD
-{
-	cursor: pointer;
-}
-
-.confirm-button span:FIRST-CHILD:HOVER
-{
-	text-decoration: underline;
-}
-
 .confirm-button .confirm
 {
 	display: none;
+	cursor: pointer;
+	color: red;
+}
+
+.confirm-button .confirm:HOVER
+{
+	text-decoration: underline;
 }

@@ -96,7 +96,7 @@ var common_warning = function(msg)
 
 var confirmButton = function(element, callback)
 {
-	$(element).find("span:first").on("click", function()
+	$(element).find(".confirm").prev().on("click", function()
 	{
 		var that = this;
 		$(this).hide().next().show();
@@ -116,7 +116,7 @@ var confirmButton = function(element, callback)
 		}, 3000);
 	});
 	
-	$(element).find("span:last").on("click", function()
+	$(element).find(".confirm").on("click", function()
 	{
 		if(callback)
 			callback.call(this);

@@ -71,5 +71,24 @@
 
 .service-select[disabled]
 {
-	background-color: #e0e0e0;
+	background-color: #F9F9F9;
+}
+
+.bind-service-message
+{
+	margin-left: 10px;
+	color: red;
+	font-size: 12px;
+}
+
+.bind-progress, .unbind-progress
+{
+	margin: 0 10px;
+	
+	display: none;
+	
+	animation-name: progress;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
 }

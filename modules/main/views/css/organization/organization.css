@@ -304,12 +304,12 @@
 
 .apps-table tbody tr
 {
-	background-color: #f7f7f7;
+/* 	background-color: #f7f7f7; */
 }
 
 .apps-table tbody tr:HOVER, .apps-table tbody tr.selected
 {
-	background-color: #fefefe;
+	background-color: #eaf3fe;
 }
 
 .apps-table tbody tr.selected td:FIRST-CHILD
