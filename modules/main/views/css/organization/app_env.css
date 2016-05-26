@@ -1,0 +1,61 @@
+.env-cancel
+{
+	cursor: pointer;
+}
+
+.env-cancel:HOVER
+{
+	text-decoration: underline;
+}
+
+.env-service-message
+{
+	margin-left: 10px;
+	color: red;
+	font-size: 12px;
+}
+
+.env-progress
+{
+	margin: 0 10px;
+	
+	display: none;
+	
+	animation-name: progress;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.env-form
+{
+	margin-top: 40px;
+}
+
+.env-form .input-group
+{
+	display: inline-block;
+	vertical-align: top;
+}
+
+.user-provided-container .confirm-button
+{
+	float: right;
+}
+
+.user-provided-container .confirm-button .edit
+{
+	margin: 0 10px;
+}
+
+.confirm-button span
+{
+	cursor: pointer;
+	font-size: 12px;
+}
+
+.user-provided-message
+{
+	font-size: 12px;
+	color: red;
+}

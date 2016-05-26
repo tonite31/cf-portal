@@ -141,3 +141,8 @@ float: right!important;
 {
 	text-decoration: underline;
 }
+
+input[disabled], select[disabled]
+{
+	background-color: #F9F9F9 !important;
+}

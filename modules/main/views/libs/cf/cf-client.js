@@ -88,7 +88,10 @@ var CF = {};
 		        	if(error)
 		        		error(xmlhttp.responseText);
 		        	else if(common_error)
+		        	{
+		        		console.log("여긴가 : ", JSON.stringify(xmlhttp));
 		        		common_error(xmlhttp.responseText);
+		        	}
 		        }
 		    }
 		}

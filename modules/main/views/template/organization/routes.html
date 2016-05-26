@@ -1,0 +1,53 @@
+<link href="@{css}/organization/app_routes.css" rel="stylesheet">
+
+<script src="@{js}/organization/appRoutes.js"></script>
+
+<script type="text/template" id="routesRowTemplate">
+<tr>
+	<td><a target="_blank" href="{url}">{url}</a></td>
+	<td>
+		<div class="confirm-button">
+			<span class="glyphicon glyphicon-refresh map-progress"></span>
+			<span>Unmap</span>
+			<span class="confirm">confirm</span>
+			<span class="unmap-message"></span>
+		</div>
+	</td>
+</tr>
+</script>
+
+<div class="background-progress routesProgress" style="display: block; position: absolute;">
+	<div class="vertical-bar"></div>
+	<div class="progress-content">
+		<span class="glyphicon glyphicon-refresh"></span>
+		<p class="progress-message">Routes Loading...</p>
+	</div>
+</div>
+
+<div style="display: none;">
+	<table class="routes-table">
+		<colgroup>
+			<col style="width: 80%;">
+			<col style="width: 20%;">
+		</colgroup>
+		<tbody></tbody>
+	</table>
+	<form class="routes-form">
+		<div class="input-group">
+			<input type="text" class="form-control" placeholder="hostname" name="host">
+		</div>
+		<div class="input-group">
+			<select class="routes-select" name="domain_guid" required disabled>
+				<option value="" disabled selected>Domains Loadding...</option>
+			</select>
+		</div>
+		<div class="input-group" style="width: 500px;">
+			<span class="glyphicon glyphicon-refresh map-progress"></span>
+			<input type="submit" class="btn btn-primary" value="Map">
+			<span class="map-cancel">Cancel</span>
+			<span class="map-message"></span>
+		</div>
+	</form>
+</div>
+
+<div class="alert alert-warning routesMessage" style="display: none;"></div>
