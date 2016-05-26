@@ -52,7 +52,8 @@ var _global = {};
 var _ee = new EventEmitter();
 var common_board = function(type, msg)
 {
-	alert(msg);
+	console.log("머지 : ", type, msg);
+	alert('[' + type + ']' + msg);
 //	var span = $('<div class="' + type + '">' + msg + '</div>');
 //	
 //	$('.alert-board').append(span);
@@ -94,26 +95,30 @@ var common_warning = function(msg)
 	common_board('alert alert-warning', msg);
 };
 
-var confirmButton = function(element, callback)
+var confirmButton = function(element, callback, timeout)
 {
 	$(element).find(".confirm").prev().on("click", function()
 	{
 		var that = this;
 		$(this).hide().next().show();
+		
 		setTimeout(function()
 		{
 			$(that).next().css('opacity', 1);
 		}, 100);
 		
-		setTimeout(function()
+		if(timeout === false)
 		{
-			$(that).next().css('opacity', 0);
 			setTimeout(function()
 			{
-				$(that).next().hide();
-				$(that).show();
-			}, 100);
-		}, 3000);
+				$(that).next().css('opacity', 0);
+				setTimeout(function()
+				{
+					$(that).next().hide();
+					$(that).show();
+				}, 100);
+			}, 3000);
+		}
 	});
 	
 	$(element).find(".confirm").on("click", function()

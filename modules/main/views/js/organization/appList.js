@@ -57,6 +57,10 @@
 			{
 				$('.apps-container').html('<p class="alert alert-warning">Applications are not found.</p>');
 			}
+		},
+		function(error)
+		{
+			$('.apps-container').html('<p class="alert alert-danger">' + error + '</p>');
 		});
 	});
 
@@ -122,6 +126,7 @@
 					else
 					{
 						//오류가 발생했다.
+						console.error('체크용 : ', routeResult);
 						$(appElement).find('.app-routes').html('<span style="color: red;">' + routeResult.description + '</span>');
 					}
 				}
@@ -130,6 +135,10 @@
 					//라우트가 없다.
 					$(appElement).find('.app-routes').html('<span style="color: red;">Routes is not found.</span>');
 				}
+			},
+			function(error)
+			{
+				$(appElement).find('.app-routes').html('<span style="color: red;">' + error + '</span>');
 			});
 		},
 		function()
