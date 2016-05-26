@@ -109,7 +109,6 @@ var confirmButton = function(element, callback, timeout)
 		
 		if(timeout !== false)
 		{
-			console.log("여기 호출이 되는거냐");
 			setTimeout(function()
 			{
 				$(that).next().css('opacity', 0);
