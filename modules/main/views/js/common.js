@@ -246,3 +246,60 @@ ForEach.prototype.async = function(list, work, done, index)
 		this.async(list, work, done, index+1);
 	}
 };
+
+
+var _IntervalTimer = {};
+
+(function()
+{
+	this.timers = {};
+	this.callbacks = {};
+	
+	this.addTimer = function(name, time, work, intervalCallback)
+	{
+		var count = time;
+		var that = this;
+		this.callbacks[name] = function()
+		{
+			if(intervalCallback)
+				intervalCallback(count);
+			
+			count--;
+			
+			if(count == 0)
+			{
+				clearInterval(that.timers[name]);
+				that.timers[name] = null;
+				
+				work(function()
+				{
+					that.start(name);
+				});
+			}
+		};
+	};
+	
+	this.start = function(name)
+	{
+		var callback = this.callbacks[name];
+		
+		var timer = this.timers[name];
+		if(timer)
+		{
+			clearInterval(timer);
+			timer = null;
+		}
+		
+		this.timers[name] = setInterval(callback, 1000);
+	};
+	
+	this.end = function(name)
+	{
+		if(this.timers[name])
+		{
+			clearInterval(this.timers[name]);
+			this.timers[name] = null;
+		}
+	};
+	
+}).call(_IntervalTimer);

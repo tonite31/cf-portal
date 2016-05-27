@@ -1,35 +1,39 @@
-<table class="status-table">
-	<colgroup>
-		<col style="width: 16.666%;">
-		<col style="width: 16.666%;">
-		<col style="width: 16.666%;">
-		<col style="width: 16.666%;">
-		<col style="width: 16.666%;">
-		<col style="width: 16.666%;">
-	</colgroup>
-	<thead>
-		<tr>
-			<th>#</th>
-			<th>STATUS</th>
-			<th>CPU</th>
-			<th>MEMORY</th>
-			<th>DISK</th>
-			<th>UPTIME</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td colspan="6" style="text-align: center; position: relative; height: 250px;">
-				<div class="background-progress appInstanceProgress" style="display: block; position: absolute;">
-					<div class="vertical-bar"></div>
-					<div class="progress-content">
-						<span class="glyphicon glyphicon-refresh"></span>
-						<p class="progress-message">Instances loading...</p>
-					</div>
-				</div>
-			</td>
-		</tr>
-	</tbody>
-</table>
+<div class="background-progress appInstanceProgress" style="display: block; position: absolute;">
+	<div class="vertical-bar"></div>
+	<div class="progress-content">
+		<span class="glyphicon glyphicon-refresh"></span>
+		<p class="progress-message">Instances loading...</p>
+	</div>
+</div>
+
+<div style="display: none;">
+	<div class="function-container">
+		<div class="right">
+			<span class="next-timer"></span>
+			<span class="glyphicon glyphicon-refresh small-progress"></span>
+		</div>
+	</div>
+	<table class="status-table">
+		<colgroup>
+			<col style="width: 16.666%;">
+			<col style="width: 16.666%;">
+			<col style="width: 16.666%;">
+			<col style="width: 16.666%;">
+			<col style="width: 16.666%;">
+			<col style="width: 16.666%;">
+		</colgroup>
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>STATUS</th>
+				<th>CPU</th>
+				<th>MEMORY</th>
+				<th>DISK</th>
+				<th>UPTIME</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+</div>
 
 <div class="alert alert-warning statusMessage" style="display: none;"></div>

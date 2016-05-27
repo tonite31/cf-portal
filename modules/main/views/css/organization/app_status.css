@@ -27,3 +27,28 @@
 {
 	font-size: 15px;
 }
+
+.function-container
+{
+	display: table;
+	width: 100%;
+	height: 30px;
+}
+
+.function-container .right
+{
+	float: right;
+}
+
+.next-timer
+{
+	font-size: 12px;
+}
+
+.small-progress
+{
+	display: inline-block;
+	animation-name: none;
+	margin-left: 10px;
+	cursor: pointer;
+}

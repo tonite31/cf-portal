@@ -297,6 +297,14 @@
 			
 			context.insertAfter(detail);
 			
+			for(var key in _IntervalTimer.timers)
+			{
+				if(key.indexOf('app_detail_') != -1)
+				{
+					_IntervalTimer.end(key);
+				}
+			}
+			
 			$('head').find('*[data-type="details"]').remove();
 			$('head').append('<script data-type="details" src="/modules/main/views/js/organization/app_' + type + '.js"></script>');
 			$('head').append('<link data-type="details" href="/modules/main/views/css/organization/app_' + type + '.css" rel="stylesheet">');
@@ -308,16 +316,24 @@
 			
 			$('#appDetailTab a').on('click', function(e)
 			{
-			  e.preventDefault();
-			  $(this).tab('show');
+				e.preventDefault();
+				$(this).tab('show');
+  
+				var name = $(this).attr('aria-controls');
 			  
-			  var name = $(this).attr('aria-controls');
+				for(var key in _IntervalTimer.timers)
+				{
+					if(key.indexOf('app_detail_') != -1)
+					{
+						_IntervalTimer.end(key);
+					}
+				}
 			  
-			  $('head').find('*[data-type="details"]').remove();
-			  $('head').append('<script data-type="details" src="/modules/main/views/js/organization/app_' + name + '.js"></script>');
-			  $('head').append('<link data-type="details" href="/modules/main/views/css/organization/app_' + name + '.css" rel="stylesheet">');
-			  
-			  _ee.emit('app_detail_' + name, context, app);
+				$('head').find('*[data-type="details"]').remove();
+				$('head').append('<script data-type="details" src="/modules/main/views/js/organization/app_' + name + '.js"></script>');
+				$('head').append('<link data-type="details" href="/modules/main/views/css/organization/app_' + name + '.css" rel="stylesheet">');
+				  
+				_ee.emit('app_detail_' + name, context, app);
 			});
 		});
 	};
