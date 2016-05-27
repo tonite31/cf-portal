@@ -3,8 +3,8 @@
 
 <div class="jumbotron" style="background-color: white; margin-top: 100px;">
 	<div class="container" style="text-align: center;">
-		<h1 class="title"><img src="@{imgs}/logo_black_big.png"></h1>
-		<p>Cloud Foundry Web Service</p>
+		<h1 class="title">CF Web Portal</h1>
+<!-- 		<p>Cloud Foundry Web Service</p> -->
 		<form id="signinForm">
 			<div class="input-group">
 				<input type="text" class="form-control" name="username" placeholder="Username" required pattern="[a-zA-Z0-9@~!@#$%^&*\(\)-_\.]*">
@@ -16,6 +16,7 @@
 				<input type="password" class="form-control" name="passwordConfirm" placeholder="Password confirm" pattern="[a-zA-Z0-9@~!@#$%^&*\(\)-_\.]*">
 			</div>
 			<div class="submit-group">
+				<span class="glyphicon glyphicon-refresh small-progress" id="signProgress"></span>
 				<input type="submit" style="display: none;">
 				<input type="button" class="btn btn-primary" value="Sign in" id="signin">
 				<input type="button" class="btn btn-default" value="Sign up" id="signup">

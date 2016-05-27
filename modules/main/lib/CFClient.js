@@ -397,7 +397,7 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 		{
 			if(body)
 			{
-				if(body.indexOf && body.indexOf('CF-InvalidAuthToken') != -1)
+				if(body.indexOf && (body.indexOf('CF-InvalidAuthToken') != -1 || body.indexOf('Invalid authorization')))
 				{
 					//login이 풀린것.
 					this.login(function()
@@ -412,7 +412,14 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 							}
 							else
 							{
-								done(body ? JSON.parse(body) : '');
+								if(url.indexOf('/recent') != -1)
+								{
+									done(body);
+								}
+								else
+								{
+									done(body ? JSON.parse(body) : '');
+								}
 							}
 						});
 					}.bind(this), error);
@@ -421,7 +428,14 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 				}
 			}
 			
-			done(body ? JSON.parse(body) : '');
+			if(url.indexOf('/recent') != -1)
+			{
+				done(body);
+			}
+			else
+			{
+				done(body ? JSON.parse(body) : '');
+			}
 		}
 	}.bind(this));
 };

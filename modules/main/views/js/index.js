@@ -26,6 +26,8 @@ var login = function(id, password)
 		{
 			$('#signinForm .result-desc').text(error.responseText).css('color', '');
 		}
+		
+		$('#signProgress').hide().next().next().show().next().show();
 	});	
 };
 
@@ -38,6 +40,7 @@ $(document).ready(function()
 		if(!type || type == 'signin')
 		{
 			$('#signinForm .result-desc').text('Please, wait for sign in.').css('color', '#337ab7');
+			$('#signProgress').css('display', 'inline-block').parent().find('input').hide();
 			login(data.username, data.password);
 		}
 		else
@@ -49,15 +52,23 @@ $(document).ready(function()
 			else
 			{
 				$('#signinForm .result-desc').text('Please, wait for sign up.').css('color', '#337ab7');
+				$('#signProgress').css('display', 'inline-block').parent().find('input').hide();
+				
 				CF.users('signup', {email : data.username, password : data.password}, function(result)
 				{
 					if(result && result.code == 201)
+					{
 						login(data.username, data.password);
+					}
 					else
+					{
+						$('#signProgress').hide().next().next().next().show().next().show();
 						$('#signinForm .result-desc').text(JSON.stringify(result)).css('color', '');
+					}
 				},
 				function(error)
 				{
+					$('#signProgress').hide().next().next().next().show().next().show();
 					$('#signinForm .result-desc').text(error.error).css('color', '');
 				});
 			}

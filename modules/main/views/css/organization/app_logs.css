@@ -1,0 +1,37 @@
+.function-container
+{
+	display: table;
+	width: 100%;
+	height: 30px;
+}
+
+.function-container .right
+{
+	float: right;
+}
+
+.next-timer
+{
+	font-size: 12px;
+}
+
+.small-progress
+{
+	display: inline-block;
+	animation-name: none;
+	margin-left: 10px;
+	cursor: pointer;
+}
+
+.logs-container pre
+{
+	padding: 20px;
+    border-radius: 0 0 2px 2px;
+    color: #FFFFFF;
+    background-color: #212121;
+}
+
+.logs-date
+{
+	color: #1a739e;
+}

@@ -40,13 +40,14 @@ body
 .navbar-default
 {
 	background-color: white;
+	border-color: #aaa;
 }
 
 .navbar-header
 {
 	position: relative;
 	top: 2px;
-	margin-right: 100px !important;
+	margin-right: 160px !important;
 	float: left;
 }
 
@@ -60,7 +61,7 @@ body
 	display: inline-block;
 	position: relative;
     top: 5px;
-    left: 13px;
+    left: 75px;
 }
 
 .navbar-right .glyphicon
@@ -177,4 +178,16 @@ float: right!important;
 input[disabled], select[disabled]
 {
 	background-color: #F9F9F9 !important;
+}
+
+.small-progress
+{
+	margin: 0 10px;
+	
+	display: none;
+	
+	animation-name: progress;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
 }

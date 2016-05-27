@@ -133,6 +133,7 @@
 					<ul class="nav nav-tabs" role="tablist">
 						<li role="presentation" class="active"><a href="#about" aria-controls="about" role="tab" data-toggle="tab">About</a></li>
 						<li role="presentation"><a href="#status" aria-controls="status" role="tab" data-toggle="tab">Status</a></li>
+						<li role="presentation"><a href="#events" aria-controls="events" role="tab" data-toggle="tab">Events</a></li>
 						<li role="presentation"><a href="#services" aria-controls="services" role="tab" data-toggle="tab">Services</a></li>
 						<li role="presentation"><a href="#env" aria-controls="env" role="tab" data-toggle="tab">Env Variables</a></li>
 						<li role="presentation"><a href="#routes" aria-controls="routes" role="tab" data-toggle="tab">Routes</a></li>
@@ -144,6 +145,9 @@
 						</div>
 						<div role="tabpanel" class="tab-pane fade" id="status">
 							${organization/status}
+						</div>
+						<div role="tabpanel" class="tab-pane fade" id="events">
+							${organization/events}
 						</div>
 						<div role="tabpanel" class="tab-pane fade" id="services">
 							${organization/services}

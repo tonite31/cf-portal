@@ -1,0 +1,47 @@
+<script type="text/template" id="appEventsRowTemplate">
+<tr>
+	<td>{type}</td>
+	<td>{actor}</td>
+	<td>{timestamp}</td>
+</tr>
+</script>
+
+<div class="background-progress eventsProgress" style="display: block; position: absolute;">
+	<div class="vertical-bar"></div>
+	<div class="progress-content">
+		<span class="glyphicon glyphicon-refresh"></span>
+		<p class="progress-message">Events Loading...</p>
+	</div>
+</div>
+
+<div style="display: none;">
+	<div class="function-container">
+		<span class="events-message"></span>
+	</div>
+	<table class="events-table">
+		<colgroup>
+			<col style="width: 30%;">
+			<col style="width: 30%;">
+			<col style="width: 30%;">
+		</colgroup>
+		<thead>
+			<tr>
+				<th>Type</th>
+				<th>Actor</th>
+				<th>Timestamp</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+		<tfoot>
+			<tr>
+				<td colspan="3" style="text-align: center;">
+					<span class="glyphicon glyphicon-refresh small-progress"></span>
+					<button type="button" class="btn btn-primary more-events">More</button>
+					<span class="more-message"></span>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+</div>
+
+<div class="alert alert-warning eventsMessage" style="display: none;"></div>

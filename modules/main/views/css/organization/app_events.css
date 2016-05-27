@@ -1,0 +1,53 @@
+.events-message
+{
+	color: red;
+}
+
+.function-container
+{
+	display: table;
+	width: 100%;
+	height: 30px;
+}
+
+.app-event
+{
+	border-top: 1px solid #e0e0e0;
+}
+
+.events-table
+{
+	width: 100%;
+}
+
+.events-table thead {
+	border-top: 1px solid #c2c9cb;
+	border-bottom: 1px solid #c2c9cb;
+}
+
+.events-table tbody tr {
+	border-bottom: 1px solid #dce2e3;
+}
+
+.events-table th, .events-table td {
+	font-size: 12px;
+	padding: 15px;
+	text-align: center;
+}
+
+.events-table .progress-message
+{
+	font-size: 15px;
+}
+
+.small-progress
+{
+	display: none;
+	animation-name: progress;
+}
+
+.more-message
+{
+	color: red;
+	font-size: 12px;
+}

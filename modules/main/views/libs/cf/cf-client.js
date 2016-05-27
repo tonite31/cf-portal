@@ -61,7 +61,7 @@ var CF = {};
 		        {
 		        	if(xmlhttp.responseText == "signin")
 		        	{
-		        		location.href = "/signin";
+		        		location.href = "/";
 		        	}
 		        	else if(xmlhttp.responseText.indexOf('CERT_HAS_EXPIRED') != -1)
 		        	{
@@ -77,7 +77,7 @@ var CF = {};
 		        }
 		        else if(xmlhttp.status == 302 && xmlhttp.responseText == "signin")
 		        {
-		        	location.href = "/signin";
+		        	location.href = "/";
 		        }
 		        else if(xmlhttp.status == 201)
 		        {
@@ -87,11 +87,6 @@ var CF = {};
 		        {
 		        	if(error)
 		        		error(xmlhttp.responseText);
-		        	else if(common_error)
-		        	{
-		        		console.log("여긴가 : ", JSON.stringify(xmlhttp));
-		        		common_error(xmlhttp.responseText);
-		        	}
 		        }
 		    }
 		}

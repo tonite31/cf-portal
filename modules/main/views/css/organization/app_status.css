@@ -23,10 +23,6 @@
 	text-align: left;
 }
 
-input[required], select[required] {
-	transition: box-shadow 1s;
-}
-
 .status-table .progress-message
 {
 	font-size: 15px;

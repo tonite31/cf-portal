@@ -296,18 +296,27 @@
 			var context = detail.clone();
 			
 			context.insertAfter(detail);
+			
+			$('head').find('*[data-type="details"]').remove();
+			$('head').append('<script data-type="details" src="/modules/main/views/js/organization/app_' + type + '.js"></script>');
+			$('head').append('<link data-type="details" href="/modules/main/views/css/organization/app_' + type + '.css" rel="stylesheet">');
 			_ee.emit('app_detail_' + type, context, app);
 			
 			context.show();
 			
 			detail.remove();
 			
-			$('#appDetailTab a').click(function(e)
+			$('#appDetailTab a').on('click', function(e)
 			{
 			  e.preventDefault();
 			  $(this).tab('show');
 			  
 			  var name = $(this).attr('aria-controls');
+			  
+			  $('head').find('*[data-type="details"]').remove();
+			  $('head').append('<script data-type="details" src="/modules/main/views/js/organization/app_' + name + '.js"></script>');
+			  $('head').append('<link data-type="details" href="/modules/main/views/css/organization/app_' + name + '.css" rel="stylesheet">');
+			  
 			  _ee.emit('app_detail_' + name, context, app);
 			});
 		});
