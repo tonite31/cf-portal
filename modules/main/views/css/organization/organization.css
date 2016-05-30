@@ -74,6 +74,11 @@
 	color: #444;
 }
 
+.space-name:ACTIVE, .space-name:FOCUS
+{
+	text-decoration: none;
+}
+
 .space-name:HOVER
 {
 	font-size: 14px;

@@ -21,7 +21,7 @@
 					var appList = result.resources;
 					if(appList.length == 0)
 					{
-						$('#appsBody').append('<tr><td colspan="6" style="text-align: center;">no applications</td></tr>');
+						$('#appsBody').append('<tr><td colspan="7" style="text-align: center;">no applications</td></tr>');
 					}
 					else
 					{
@@ -277,6 +277,8 @@
 				else
 					selectedApp.click();
 				
+				$('#appDetailTab').show();
+				
 				pumpkin.execute([{name : 'getAppRoutes', params : {appList : appList}}], function()
 				{
 					$('#refreshAppList').removeAttr('data-state').css('animation-name', '');
@@ -434,6 +436,9 @@
 	
 	_ee.on('hashchange', function()
 	{
+		_IntervalTimer.end('refresh_app_list');
+		$('.refresh-app-list-description').text('');
+		
 		if(_global.hash.space)
 		{
 			var space = $('#' + _global.hash.space).get(0);
@@ -443,6 +448,7 @@
 				
 				$('#appsBody tr').hide();
 				$('#appsProgress').parent().parent().show();
+				$('#appDetailTab').hide();
 				
 				$('#appsProgress .progress-message').text('Applications loading...');
 				setAppList(space.item.entity.apps_url, function()
