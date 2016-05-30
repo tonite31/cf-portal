@@ -16,7 +16,7 @@
 			if(p < 10)
 				text = p + '%';
 			else
-				appQuotaSum + 'MB / ' + organizationQuota + 'MB (' + p + '%)';
+				text = appQuotaSum + 'MB / ' + organizationQuota + 'MB (' + p + '%)';
 			$('#quotaProgress').removeClass('active').addClass('active').css('width', p + '%').text(text);
 		}
 	};

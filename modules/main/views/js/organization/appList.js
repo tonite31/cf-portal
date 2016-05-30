@@ -672,5 +672,26 @@
 				});
 			});
 		});
+		
+		$('#appFilter').on('keyup', function()
+		{
+			if($(this).val() == '')
+			{
+				$('#appsBody tr').show();
+				$('#appsBody tr:first').hide();
+			}
+			else
+			{
+				$('#appsBody tr').hide();
+				$('#appsBody tr .app-name span:first-child:contains(' + $(this).val() + ')').parent().parent().show();
+			}
+		});
+		
+		$('#removeFilterValue').on('click', function()
+		{
+			$('#appFilter').val('');
+			$('#appsBody tr').show();
+			$('#appsBody tr:first').hide();
+		});
 	});
 })();
