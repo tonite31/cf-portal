@@ -1,119 +1,64 @@
-<link href="@{css}/subpages.css" rel="stylesheet">
+<link href="@{css}/domains.css" rel="stylesheet">
 
-<script type="text/template" id="DomainRow">
+<script src="@{js}/domains.js"></script>
+
+<script type="text/template" id="domainRowTemplate">
 <tr>
+	<td>{domain}</td>
 	<td>
-		<p class="paragraph">{url} <small>{shared}</small></p>
-	</td>
-	<td class="center-align">
-		<div class="confirm-button">
-			<span class="target-button">Delete</span>
-			<span class="confirm">Delete</span>
-		</div>
+		<button type="button" class="btn btn-danger delete">Delete</button>
+		<span class="domain-message"></span>
 	</td>
 </tr>
 </script>
 
-<script>
-_ee.on('setOrganization_done', function(organization)
-{
-	CF.async({url : organization.entity.domains_url}, function(result)
-	{
-		$('#domainTable tbody').html('');
-		if(result)
-		{
-			var domainList = result.resources;
-			for(var i=0; i<domainList.length; i++)
-			{
-				var html = $('#DomainRow').html();
-				
-				html = html.replace('{url}', domainList[i].entity.name);
-				if(!domainList[i].entity.owning_organization_guid)
-					html = html.replace('{shared}', 'SHARED');
-				else
-					html = html.replace('{shared}', '');
-				
-				var tr = $(html);
-				$('#domainTable tbody').append(tr);
-				tr.get(0).item = domainList[i];
-				
-				(function(tr, domain)
-				{
-					confirmButton(tr, function()
-					{
-						CF.async({url : '/v2/domains/' + domain.metadata.guid, method: 'DELETE'}, function(result)
-						{
-							tr.remove();
-						}, common_error);
-					});	
-				})(tr, domainList[i]);
-			}
-		}
-	}, common_error);
-});
-
-$(document).ready(function()
-{
-	$('#addDomain').on('click', function()
-	{
-		var domainName = $('#domainName').val();
-		CF.async({url : '/v2/domains', method : 'POST', form : {name : domainName, owning_organization_guid : $('#orgName').get(0).item.metadata.guid}}, function(domain)
-		{
-			if(domain)
-			{
-				if(domain.entity)
-				{
-					var html = $('#DomainRow').html();
-					html = html.replace('{url}', domain.entity.name).replace('{shared}', '');
-					
-					var tr = $(html);
-					$('#domainTable tbody').append(tr);
-					tr.get(0).item = domain;
-					confirmButton(tr, function()
-					{
-						CF.async({url : '/v2/domains/' + domain.metadata.guid, method: 'DELETE'}, function(result)
-						{
-							tr.remove();
-						}, common_error);
-					});
-				}
-				else
-				{
-					common_error(result.description);
-				}
-			}
-		}, common_error);
-		
-		$("#domainName").val("");
-	});
-	
-	$('#cancelDomain').on('click', function()
-	{
-		$('#domainName').val('');	
-	});
-});
-</script>
-
-<div class="sub-container">
-	<div class="card margin-top-20 row padding-40">
-		<h4>Domains</h4>
+<div class="container">
+	<div class="page-header">
+		<h2>Domains</h2>
+	</div>
+	<form id="domainsForm">
 		<div>
-			<table id="domainTable">
+			<select class="org-select" id="orgSelect" name="owning_organization_guid" required disabled>
+				<option value="" disabled selected>Organizations Loadding...</option>
+			</select>
+		</div>
+		<div>
+			<table class="domains-table">
 				<colgroup>
-					<col style="width: 90%;">
-					<col style="width: 10%;">
+					<col style="width: 80%;">
+					<col style="width: 20%;">
 				</colgroup>
-				<tbody>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Delete</th>
+					</tr>
+				</thead>
+				<tbody id="domainsBody">
+					<tr class="progress-row">
+						<td colspan="2" style="position: relative; height: 250px;">
+							<div class="background-progress" style="display: block; position: absolute;" id="appsProgress">
+								<div class="vertical-bar"></div>
+								<div class="progress-content">
+									<span class="glyphicon glyphicon-refresh"></span>
+									<p class="progress-message">Domains loading...</p>
+								</div>
+							</div>
+						</td>
+					</tr>
 				</tbody>
 			</table>
-			<div class="margin-top-40 margin-bottom-40">
-				<div class="text-input app-route-hostname">
-					<input type="text" id="domainName" placeholder="Domain name">
-					<label></label>
-				</div>
-				<a class="waves-effect waves-light btn action-button" id="addDomain">Add</a>
-				<a class="waves-effect waves-light btn action-button grey darken-4" id="cancelDomain">Cancel</a>
+		</div>
+		<div style="margin-top: 10px;">
+			<div class="input-group" style="width: 400px;">
+				<input type="text" class="form-control" id="domainName" placeholder="domain name" name="name" required>
+			</div>
+			<div class="input-group" style="width: 500px;">
+				<span class="glyphicon glyphicon-refresh small-progress"></span>
+				<input type="submit" class="btn btn-primary" value="Add">
+				<span id="cancel">Cancel</span>
+				<span id="message"></span>
 			</div>
 		</div>
-	</div>
+	</form>
 </div>

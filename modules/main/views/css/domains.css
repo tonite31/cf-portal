@@ -1,0 +1,82 @@
+.container
+{
+	padding-top: 10px;
+}
+
+.org-select
+{
+    width: 400px;
+    margin-right: 10px;
+    
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 5px;
+    border: 1px solid #f2f2f2;
+    border-radius: 2px;
+    height: 45px;
+}
+
+.domains-table
+{
+	width: 100%;
+	margin-top: 10px;
+}
+
+.domains-table thead {
+	border-top: 1px solid #c2c9cb;
+	border-bottom: 1px solid #c2c9cb;
+}
+
+.domains-table tbody tr {
+	border-bottom: 1px solid #dce2e3;
+}
+
+.domains-table th, .domains-table td {
+	font-size: 12px;
+	padding: 15px;
+	text-align: center;
+}
+
+.domains-table td:FIRST-CHILD
+{
+	text-align: left;
+	font-size: 15px;
+}
+
+#domainsForm
+{
+	margin-top: 10px;
+}
+
+#domainsForm .input-group
+{
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#domainsForm input[type='submit']
+{
+	margin: 0 10px;
+}
+
+#domainsForm input[type='text']
+{
+	padding: 21.5px;
+    border: 1px solid #F2f2f2;
+    box-shadow: none;
+}
+
+#message
+{
+	color: red;
+	font-size: 12px;
+}
+
+#cancel
+{
+	cursor: pointer;
+}
+
+#cancel:HOVER
+{
+	text-decoration: underline;	
+}
