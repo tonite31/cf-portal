@@ -35,7 +35,7 @@
 				}
 				else
 				{
-					error(result.description);
+					error(result.description ? result.description : JSON.stringify(result.error));
 				}
 			}
 			else
@@ -184,10 +184,9 @@
 			
 			template.get(0).item = {serviceInstance : serviceInstance, servicePlan : servicePlan, service : service};
 			
-			var unbindButton = template.find('.confirm-button');
-			confirmButton(unbindButton, function()
+			var unbindButton = template.find('.unbind');
+			confirmButton(unbindButton, function(done)
 			{
-				unbindButton.hide().prev().css('display', 'inline-block');
 				CF.async({url : '/v2/service_bindings/' + serviceBinding.metadata.guid, method : 'DELETE'}, function(result)
 				{
 					var length = unbindButton.parent().parent().parent().find('tr').length;
@@ -206,6 +205,7 @@
 				});
 			});
 			
+			$(context).find('.service-table td[colspan="4"]').remove();
 			$(context).find('.service-table tbody').append(template);
 			
 			callback();
@@ -269,7 +269,7 @@
 				}
 				else
 				{
-					$(context).find('.servicesMessage').text(result.description).show();
+					$(context).find('.servicesMessage').text(result.description ? result.description : JSON.stringify(result.error)).show();
 				}
 			}
 			else
@@ -401,7 +401,6 @@
 				{
 					if(result.entity)
 					{
-						$(context).find('.service-table td[colspan="4"]').remove();
 						bindingService(context, result, function()
 						{
 							$(context).find('.bind-progress').hide().next().show().next().show();
@@ -410,7 +409,7 @@
 					}
 					else
 					{
-						$(context).find('.bind-service-message').text(result.description);
+						$(context).find('.bind-service-message').text(result.description ? result.description : JSON.stringify(result.error));
 					}
 				}
 				else

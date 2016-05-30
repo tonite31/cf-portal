@@ -61,7 +61,7 @@
 							else
 							{
 								$('#spaceName span:first').text(prev);
-								$('.space-name-description').text(result.description).css('color', '');
+								$('.space-name-description').text(result.description ? result.description : JSON.stringify(result.error)).css('color', '');
 							}
 						}
 						else

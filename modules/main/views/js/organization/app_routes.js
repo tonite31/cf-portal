@@ -14,7 +14,7 @@
 				}
 				else
 				{
-					error(result.description);
+					error(result.description ? result.description : JSON.stringify(result.error));
 				}
 			}
 			else
@@ -41,7 +41,7 @@
 				}
 				else
 				{
-					next(params.host + ' : ' + result.description);
+					next(params.host + ' : ' + result.description ? result.description : JSON.stringify(result.error));
 				}
 			}
 			else
@@ -94,7 +94,7 @@
 				}
 				else
 				{
-					error(result.description);
+					error(result.description ? result.description : JSON.stringify(result.error));
 				}
 			}
 			else
@@ -114,20 +114,19 @@
 		
 		var row = $(template.replace(/{url}/gi, url));
 		
-		confirmButton(row.find('.confirm-button'), function()
+		confirmButton(row.find('.unmap'), function(done)
 		{
 			var that = this;
-			$(this).hide().prev().hide().prev().css('display', 'inline-block');
 			CF.async({url : mappingUrl, method : 'DELETE'}, function(result)
 			{
 				$('#' + appGuid).find('.app-routes a[href="' + url + '"]').parent().remove();
-				$(that).parent().parent().parent().remove();
+				$(that).parent().parent().remove();
 			},
 			function(error)
 			{
 				$(that).next().text(error);
 			});
-		}, false);
+		});
 		
 		$(context).find('.routes-table tbody').append(row);
 	};
@@ -153,7 +152,7 @@
 				}
 				else
 				{
-					$(context).find('.map-message').text(result.description);
+					$(context).find('.map-message').text(result.description ? result.description : JSON.stringify(result.error));
 				}
 			}
 			else
@@ -221,7 +220,7 @@
 				{
 					if(result.code)
 					{
-						$(context).find('.map-message').text(result.description);
+						$(context).find('.map-message').text(result.description ? result.description : JSON.stringify(result.error));
 						return;
 					}
 					else if(result.total_results == 1)
@@ -244,7 +243,7 @@
 						}
 						else
 						{
-							$(context).find('.map-message').text(result.description);
+							$(context).find('.map-message').text(result.description ? result.description : JSON.stringify(result.error));
 						}
 					}
 					else
@@ -285,7 +284,7 @@
 				}
 				else
 				{
-					$(context).find('.map-message').text(result.description);
+					$(context).find('.map-message').text(result.description ? result.description : JSON.stringify(result.error));
 				}
 			}
 			else

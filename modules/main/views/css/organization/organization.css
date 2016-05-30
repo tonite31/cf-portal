@@ -93,6 +93,17 @@
 	position: relative;
 }
 
+.app-functions
+{
+	display: table;
+	width: 100%;
+}
+
+.app-functions button
+{
+	margin: 0 5px;
+}
+
 #orgName, #spaceName
 {
 	margin: 10px 0;
@@ -332,14 +343,36 @@
 	display: inline-block;
 }
 
-.app-name, .app-name
+.app-name
 {
 	font-size: 17px;
 }
 
 .app-name, .app-name + td
 {
-	text-align: left;
+	text-align: left !important;
+}
+
+.app-name .glyphicon-pencil
+{
+	display: none;
+	font-size: 10px;
+}
+
+.app-name span:first-child:HOVER .glyphicon-pencil
+{
+	display: inline;
+}
+
+.app-name span:first-child + .glyphicon-refresh + .glyphicon-pencil
+{
+	display: none !important;
+}
+
+.app-name-message
+{
+	font-size: 10px;
+	color: red;
 }
 
 .app-scale-buttons > *
@@ -426,7 +459,6 @@
 
 .refresh-app-list-description
 {
-	display: none;
 	font-size: 12px;
 	margin-right: 10px;
 }

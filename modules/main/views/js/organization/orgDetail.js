@@ -11,8 +11,13 @@
 	{
 		if(appQuotaSum != null && organizationQuota != null)
 		{
-			var p = (appQuotaSum / organizationQuota) * 100;
-			$('#quotaProgress').removeClass('active').addClass('active').css('width', p + '%').text(appQuotaSum + 'MB / ' + organizationQuota + 'MB (' + p + '%)');
+			var text = '';
+			var p = Math.floor((appQuotaSum / organizationQuota) * 100);
+			if(p < 10)
+				text = p + '%';
+			else
+				appQuotaSum + 'MB / ' + organizationQuota + 'MB (' + p + '%)';
+			$('#quotaProgress').removeClass('active').addClass('active').css('width', p + '%').text(text);
 		}
 	};
 	
@@ -29,7 +34,7 @@
 				}
 				else
 				{
-					$('#quotaProgress').css('width', '0%').removeClass('active').text(result.description);
+					$('#quotaProgress').css('width', '0%').removeClass('active').text(result.description ? result.description : JSON.stringify(result.error));
 				}
 			}
 			else
@@ -98,7 +103,7 @@
 							else
 							{
 								$('#orgName span:first').text(prev);
-								$('.org-name-description').text(result.description).css('color', '');
+								$('.org-name-description').text(result.description ? result.description : JSON.stringify(result.error)).css('color', '');
 							}
 						}
 						else

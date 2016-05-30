@@ -10,7 +10,7 @@
 			$(context).find('.appInstanceProgress').hide().next().show();
 			if(result)
 			{
-				if(result.description)
+				if(result.description || result.error)
 				{
 					$(context).find('.status-table tbody').html('');
 					if(result.code == 200003)
@@ -21,9 +21,9 @@
 					}
 					else
 					{
-						$(context).find('.status-table tbody').append('<tr><td colspan="6" style="text-align: center;">' + result.description + '</td></tr>');
+						$(context).find('.status-table tbody').append('<tr><td colspan="6" style="text-align: center;">' + result.description ? result.description : JSON.stringify(result.error) + '</td></tr>');
 						if(error)
-							error(result.description);
+							error(result.description ? result.description : JSON.stringify(result.error));
 					}
 				}
 				else
@@ -102,12 +102,16 @@
 		
 		$(context).find('.small-progress').on('click', function()
 		{
+			_IntervalTimer.end('app_detail_status');
+			
 			var that = this;
 			$(this).css('animation-name', 'progress').prev().text('Refreshing...');
 			
 			getStatus(context, app, function()
 			{
 				$(that).css('animation-name', 'none').prev().text('');
+				
+				_IntervalTimer.start('app_detail_status');
 			},
 			function(error)
 			{

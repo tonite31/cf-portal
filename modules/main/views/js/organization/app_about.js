@@ -18,7 +18,7 @@
 			}
 			else
 			{
-				$(context).find('.aboutMessage').text(stackResult.description).show();
+				$(context).find('.aboutMessage').text(stackResult.description ? stackResult.description : JSON.stringify(stackResult.error)).show();
 			}
 			
 			$(context).find('.aboutProgress').hide();

@@ -1,8 +1,45 @@
 (function()
 {
-	var updateUserProvided = function(context, app, environment, callback)
+	var deleteButton = function(selector, callback)
 	{
-		
+		$(selector).css('transition', 'opacity 0.2s');
+		$(selector).on('click', function()
+		{
+			var that = this;
+			
+			this.timer = null;
+			
+			if(this.isConfirm)
+			{
+				this.isConfirm = false;
+				if(callback)
+				{
+					$('<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>').insertBefore(this);
+					$(this).hide();
+					callback.call(this, function()
+					{
+						$(that).prev().remove();
+						$(that).show();
+					});
+				}
+			}
+			else
+			{
+				this.origin = $(this).text() ? $(this).text() : $(this).val();
+				$(this).css('opacity', '0').removeClass('glyphicon').removeClass('glyphicon-remove');
+				setTimeout(function()
+				{
+					that.isConfirm = true;
+					$(that).css('opacity', '1').text('Confirm');
+					
+					setTimeout(function()
+					{
+						that.isConfirm = false;
+						$(that).text('').addClass('glyphicon').addClass('glyphicon-remove');
+					}, 3000);
+				}, 300);
+			}
+		});
 	};
 	
 	var setUserProvided = function(context, app, environment)
@@ -15,7 +52,6 @@
 			html += '<span>[' + key + ']</span>';
 			html += '<div class="confirm-button">';
 			html += '<span class="glyphicon glyphicon-pencil edit"></span>';
-			html += '<span class="glyphicon glyphicon-refresh env-progress"></span>';
 			html += '<span class="glyphicon glyphicon-remove"></span><span class="confirm">confirm</span>';
 			html += '<span class="user-provided-message"></span>'
 			html += '</div>';
@@ -64,7 +100,7 @@
 							else
 							{
 								$(that).hide().prev().show().prev().hide().prev().show();
-								$(that).next().text(result.description);
+								$(that).next().text(result.description ? result.description : JSON.stringify(result.error));
 							}
 						}
 						else
@@ -87,10 +123,10 @@
 				}
 			});
 			
-			confirmButton($(this).find('.confirm-button'), function()
+			deleteButton($(this).find('.glyphicon-remove'), function(done)
 			{
 				var that = this;
-				$(this).hide().prev().hide().prev().css('display', 'inline-block').prev().hide();
+//				$(this).hide().prev().hide().prev().css('display', 'inline-block').prev().hide();
 				delete environment[key];
 
 				var param = {};
@@ -110,19 +146,19 @@
 						}
 						else
 						{
-							$(that).hide().prev().show().prev().hide().prev().show();
-							$(that).next().text(result.description);
+//							$(that).hide().prev().show().prev().hide().prev().show();
+							$(that).next().text(result.description ? result.description : JSON.stringify(result.error));
 						}
 					}
 					else
 					{
-						$(that).hide().prev().show().prev().hide().prev().show();
+//						$(that).hide().prev().show().prev().hide().prev().show();
 						$(that).next().text('Unkown error');
 					}
 				},
 				function(error)
 				{
-					$(that).hide().prev().show().prev().hide().prev().show();
+//					$(that).hide().prev().show().prev().hide().prev().show();
 					$(that).next().text(error);
 				});
 			});
@@ -182,7 +218,7 @@
 					}
 					else
 					{
-						$(context).find('.env-service-message').text(result.description);
+						$(context).find('.env-service-message').text(result.description ? result.description : JSON.stringify(result.error));
 					}
 				}
 				else

@@ -23,11 +23,6 @@
 	text-align: right;
 }
 
-.routes-table tr td:LAST-CHILD
-{
-	text-align: left;
-}
-
 .routes-table .progress-message
 {
 	font-size: 15px;

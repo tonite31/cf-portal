@@ -95,37 +95,76 @@ var common_warning = function(msg)
 	common_board('alert alert-warning', msg);
 };
 
-var confirmButton = function(element, callback, timeout)
+var confirmButton = function(selector, callback)
 {
-	$(element).find(".confirm").prev().on("click", function()
+	$(selector).css('transition', 'opacity 0.2s');
+	$(selector).on('click', function()
 	{
 		var that = this;
-		$(this).hide().next().show();
 		
-		setTimeout(function()
-		{
-			$(that).next().css('opacity', 1);
-		}, 100);
+		this.timer = null;
 		
-		if(timeout !== false)
+		if(this.isConfirm)
 		{
+			this.isConfirm = false;
+			if(callback)
+			{
+				$('<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>').insertBefore(this);
+				$(this).hide();
+				callback.call(this, function()
+				{
+					$(that).prev().remove();
+					$(that).show();
+				});
+			}
+		}
+		else
+		{
+			this.origin = $(this).text() ? $(this).text() : $(this).val();
+			$(this).css('opacity', '0');
 			setTimeout(function()
 			{
-				$(that).next().css('opacity', 0);
+				that.isConfirm = true;
+				$(that).css('opacity', '1').text('Confirm');
+				
 				setTimeout(function()
 				{
-					$(that).next().hide();
-					$(that).show();
-				}, 100);
-			}, 3000);
+					that.isConfirm = false;
+					$(that).text(that.origin).val(that.origin);
+				}, 3000);
+			}, 300);
 		}
 	});
 	
-	$(element).find(".confirm").on("click", function()
-	{
-		if(callback)
-			callback.call(this);
-	});
+//	$(element).find(".confirm").prev().on("click", function()
+//	{
+//		var that = this;
+//		$(this).hide().next().show();
+//		
+//		setTimeout(function()
+//		{
+//			$(that).next().css('opacity', 1);
+//		}, 100);
+//		
+//		if(timeout !== false)
+//		{
+//			setTimeout(function()
+//			{
+//				$(that).next().css('opacity', 0);
+//				setTimeout(function()
+//				{
+//					$(that).next().hide();
+//					$(that).show();
+//				}, 100);
+//			}, 3000);
+//		}
+//	});
+//	
+//	$(element).find(".confirm").on("click", function()
+//	{
+//		if(callback)
+//			callback.call(this);
+//	});
 };
 
 var editableText = function(element, callback)
@@ -254,25 +293,29 @@ var _IntervalTimer = {};
 {
 	this.timers = {};
 	this.callbacks = {};
+	this.counts = {};
+	this.times = {};
 	
 	this.addTimer = function(name, time, work, intervalCallback)
 	{
-		var count = time;
+		this.times[name] = time;
+		this.counts[name] = time;
 		var that = this;
 		this.callbacks[name] = function()
 		{
 			if(intervalCallback)
-				intervalCallback(count);
+				intervalCallback(that.counts[name]);
 			
-			count--;
+			that.counts[name]--;
 			
-			if(count == 0)
+			if(that.counts[name] == -1)
 			{
 				clearInterval(that.timers[name]);
 				that.timers[name] = null;
 				
 				work(function()
 				{
+					that.counts[name] = time;
 					that.start(name);
 				});
 			}
@@ -290,7 +333,8 @@ var _IntervalTimer = {};
 			timer = null;
 		}
 		
-		this.timers[name] = setInterval(callback, 1000);
+		if(callback)
+			this.timers[name] = setInterval(callback, 1000);
 	};
 	
 	this.end = function(name)
@@ -299,6 +343,8 @@ var _IntervalTimer = {};
 		{
 			clearInterval(this.timers[name]);
 			this.timers[name] = null;
+			
+			this.counts[name] = this.times[name];
 		}
 	};
 	

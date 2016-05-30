@@ -16,7 +16,7 @@
 <script type="text/template" id="appItemTemplate">
 <tr id="{guid}">
 	<td><span class="{stateColor} glyphicon {stateIcon}"></span> <span>{state}</span></td>
-	<td class="app-name">{name}</td>
+	<td class="app-name"><span>{name}</span> <span class="glyphicon glyphicon-pencil"></span><span class="app-name-message"></span></td>
 	<td class="app-routes">Routes loading...</td>
 	<td>{disk}</td>
 	<td colspan="2">
@@ -79,8 +79,12 @@
 					<span class="text-muted glyphicon glyphicon-pause"></span><span id="stoppedAppCount">Loading...</span>
 					<span class="text-danger glyphicon glyphicon-stop"></span><span id="downAppCount">Loading...</span>
 				</div>
-				<button type="button" class="btn btn-primary" disabled>Start</button>
-				<button type="button" style="float: right;" class="btn btn-danger" disabled>Delete</button>
+				<button type="button" class="btn btn-primary" id="startApp" style="display: none;"><span class="glyphicon glyphicon-play"></span></button>
+				<button type="button" class="btn btn-danger" id="stopApp" style="display: none;"><span class="glyphicon glyphicon-stop"></span></button>
+				<button type="button" class="btn btn-primary" id="restartApp" style="display: none;"><span class="glyphicon glyphicon-repeat"></span></button>
+				<span style="float: right;">
+					<button type="button" class="btn btn-danger" id="deleteApp">Delete</button>
+				</span>
 			</div>
 			<div class="app-filtering">
 				<div class="input-group">
@@ -89,7 +93,7 @@
 					<span class="glyphicon glyphicon-remove" id="removeFilterValue"></span>
 				</div>
 				<div>
-					<span class="refresh-app-list-description">Please, wait for refresh...</span>
+					<span class="refresh-app-list-description"></span>
 					<span class="glyphicon glyphicon-refresh" id="refreshAppList"></span>
 				</div>
 			</div>

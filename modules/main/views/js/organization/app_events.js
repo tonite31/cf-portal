@@ -41,7 +41,7 @@
 				}
 				else
 				{
-					$(context).find('.eventsProgress').hide().next().hide().next().text(result.description).show();
+					$(context).find('.eventsProgress').hide().next().hide().next().text(result.description ? result.description : JSON.stringify(result.error)).show();
 				}
 			}
 			else
@@ -103,7 +103,7 @@
 					}
 					else
 					{
-						$(context).find('.events-message').text(result.description);
+						$(context).find('.events-message').text(result.description ? result.description : JSON.stringify(result.error));
 					}
 				}
 				else
