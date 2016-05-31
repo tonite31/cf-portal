@@ -1,20 +1,62 @@
-.services .service-instance-table tr {
-	cursor: pointer;
+.container
+{
+	padding: 10px 0;
 }
 
-.services .service-instance-table tr:HOVER {
-	background-color: #F8F8F8;
+.select
+{
+    width: 400px;
+    margin-right: 10px;
+    
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 5px;
+    border: 1px solid #f2f2f2;
+    border-radius: 2px;
+    height: 45px;
 }
 
-.services .service-instance-table td {
+.services-table
+{
+	width: 100%;
+	margin-top: 10px;
+}
+
+.services-table thead {
+	border-top: 1px solid #c2c9cb;
+	border-bottom: 1px solid #c2c9cb;
+}
+
+.services-table tbody tr {
+	border-bottom: 1px solid #dce2e3;
+}
+
+.services-table th, .services-table td {
+	font-size: 12px;
+	padding: 15px;
+	text-align: center;
+}
+
+.services-table td:FIRST-CHILD
+{
+	text-align: left;
 	font-size: 15px;
-	color: #666;
 }
 
-.services .service-instance-table td img, .services .service-instance-table td span {
-	vertical-align: middle;
+.services-table td.error
+{
+	color: red;
+	font-size: 12px;
 }
 
-.services .service-instance-table td span {
-	margin-left: 10px;
+.upper-label
+{
+	font-size: 12px;
+	font-weight: bold;
+	padding-left: 5px;
+}
+
+.upper-label:LAST-CHILD
+{
+	position: relative;
+	left: 335px;
 }

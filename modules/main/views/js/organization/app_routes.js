@@ -181,6 +181,7 @@
 		pumpkin.setData({app : app});
 		pumpkin.execute(['getRouteMappings'], function()
 		{
+			$(context).find('.routes-table tbody').html('');
 			var mappingList = this.data.routeMappings;
 			var forEach = new ForEach();
 			forEach.async(mappingList, function(mapping, index)

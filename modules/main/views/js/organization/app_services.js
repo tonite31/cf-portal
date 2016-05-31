@@ -205,7 +205,7 @@
 				});
 			});
 			
-			$(context).find('.service-table td[colspan="4"]').remove();
+			$(context).find('.service-table tbody').html('');
 			$(context).find('.service-table tbody').append(template);
 			
 			callback();
