@@ -135,36 +135,48 @@ var confirmButton = function(selector, callback)
 			}, 300);
 		}
 	});
-	
-//	$(element).find(".confirm").prev().on("click", function()
-//	{
-//		var that = this;
-//		$(this).hide().next().show();
-//		
-//		setTimeout(function()
-//		{
-//			$(that).next().css('opacity', 1);
-//		}, 100);
-//		
-//		if(timeout !== false)
-//		{
-//			setTimeout(function()
-//			{
-//				$(that).next().css('opacity', 0);
-//				setTimeout(function()
-//				{
-//					$(that).next().hide();
-//					$(that).show();
-//				}, 100);
-//			}, 3000);
-//		}
-//	});
-//	
-//	$(element).find(".confirm").on("click", function()
-//	{
-//		if(callback)
-//			callback.call(this);
-//	});
+};
+
+var confirmSpan = function(selector, callback)
+{
+	$(selector).css('transition', 'opacity 0.2s');
+	$(selector).on('click', function()
+	{
+		var that = this;
+		
+		this.timer = null;
+		
+		if(this.isConfirm)
+		{
+			this.isConfirm = false;
+			if(callback)
+			{
+				$('<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>').insertBefore(this);
+				$(this).hide();
+				callback.call(this, function()
+				{
+					$(that).prev().remove();
+					$(that).show();
+				});
+			}
+		}
+		else
+		{
+			this.originClass = this.className;
+			this.isConfirm = true;
+			
+			$(this).css('opacity', '0');
+			setTimeout(function()
+			{
+				$(that).css('opacity', '1').attr('class', 'btn btn-danger').text('Confirm');
+				setTimeout(function()
+				{
+					that.isConfirm = false;
+					$(that).attr('class', that.originClass).text('');
+				}, 3000);
+			}, 300);
+		}
+	});
 };
 
 var editableText = function(element, callback)

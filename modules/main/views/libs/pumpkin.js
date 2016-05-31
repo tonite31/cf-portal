@@ -67,7 +67,7 @@ Pumpkin.prototype.execute = function(list, done, error, index, params)
 			}
 			else
 			{
-				this.execute(list, done, error, index+1, params);
+				this.execute(list, done, error, index+1, null);
 			}
 		}
 		catch(err)
@@ -151,7 +151,7 @@ Pumpkin.prototype.executeAsync = function(list, done, error, index, params)
 				}
 				else
 				{
-					this.executeAsync(list, done, error, index+1, params);
+					this.executeAsync(list, done, error, index+1, null);
 				}
 			}
 		}
