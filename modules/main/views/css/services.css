@@ -10,12 +10,12 @@
     
     background-color: rgba(255, 255, 255, 0.9);
     padding: 5px;
-    border: 1px solid #f2f2f2;
+    border: 1px solid #aaa;
     border-radius: 2px;
     height: 45px;
 }
 
-.services-table
+.services-table, .detail-table
 {
 	width: 100%;
 	margin-top: 10px;
@@ -26,26 +26,60 @@
 	border-bottom: 1px solid #c2c9cb;
 }
 
-.services-table tbody tr {
+.services-table tbody tr, .detail-table tbody tr {
 	border-bottom: 1px solid #dce2e3;
 }
 
-.services-table th, .services-table td {
+.services-table th, .services-table td, .detail-table th {
 	font-size: 12px;
 	padding: 15px;
 	text-align: center;
 }
 
-.services-table td:FIRST-CHILD
+.detail-table td {
+	font-size: 14px;
+	padding: 15px;
+}
+
+.services-table tr td:FIRST-CHILD, .services-table tr td:nth-child(2)
 {
 	text-align: left;
-	font-size: 15px;
+}
+
+.services-table tr td:LAST-CHILD a
+{
+	margin: 0 5px;
+}
+
+.services-table tbody tr:HOVER, .services-table tbody tr.selected
+{
+	background-color: #eaf3fe;
+}
+
+.services-table tr.selected td:FIRST-CHILD
+{
+	border-left: 3px solid #FF9911;
+}
+
+.services-table tbody tr:FIRST-CHILD, .services-table tbody tr:FIRST-CHILD:HOVER
+{
+	background-color: white;
 }
 
 .services-table td.error
 {
 	color: red;
 	font-size: 12px;
+}
+
+.detail-table tr td:FIRST-CHILD
+{
+	text-align: left;
+}
+
+.detail-table thead
+{
+	border-bottom: 1px solid #c2c9cb;
 }
 
 .upper-label
@@ -59,4 +93,50 @@
 {
 	position: relative;
 	left: 335px;
+}
+
+.service-details
+{
+	margin-top: 40px;
+}
+
+.service-details .tab-pane
+{
+	padding: 10px 0;
+}
+
+.detail-table .message, #settings .message
+{
+	color: red;
+	font-size: 12px;
+}
+
+#settings .input-group
+{
+	margin: 10px 0;
+}
+
+.service-details .tab-content
+{
+	position: relative;
+}
+
+.plan-name
+{
+	font-size: 15px;
+}
+
+.plan-name + br + span
+{
+	font-weight: normal;
+}
+
+.bullets
+{
+	text-align: left;
+}
+
+p.message
+{
+	margin: 15px 0;
 }

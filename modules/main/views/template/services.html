@@ -4,10 +4,24 @@
 
 <script type="text/template" id="serviceRowTemplate">
 <tr>
-	<td>{service}</td>
+	<td>{description}</td>
+	<td>{name}</td>
+	<td>{boundApps}</td>
+	<td>{plan}</td>
 	<td>
-		<button type="button" class="btn btn-danger delete">Delete</button>
-		<span class="service-message"></span>
+		<a target="_blank" href="{manageUrl}"><span class="glyphicon glyphicon-link"></span> Manage</a>
+		<a target="_blank" href="{supportUrl}"><span class="glyphicon glyphicon-link"></span> Support</a>
+		<a target="_blank" href="{docsUrl}"><span class="glyphicon glyphicon-link"></span> Docs</a>
+	</td>
+</tr>
+</script>
+
+<script type="text/template" id="boundAppRowTemplate">
+<tr>
+	<td>{name}</td>
+	<td style="text-align: center;">
+		<button type="button" class="btn btn-danger unbind">Unbind</button>
+		<span class="message"></span>
 	</td>
 </tr>
 </script>
@@ -28,17 +42,19 @@
 	<div>
 		<table class="services-table" id="serviceTable">
 			<colgroup>
-				<col style="width: 35%;">
 				<col style="width: 25%;">
+				<col style="width: 25%;">
+				<col style="width: 10%;">
 				<col style="width: 20%;">
 				<col style="width: 20%;">
 			</colgroup>
 			<thead>
 				<tr>
 					<th>Service</th>
-					<th>Name</th>
+					<th>Instance Name</th>
 					<th>Bound Apps</th>
 					<th>Plan</th>
+					<th>Link</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -55,5 +71,65 @@
 				</tr>
 			</tbody>
 		</table>
+	</div>
+	<div class="service-details" style="display: none;" id="serviceDetails">
+		<div id="serviceDetailTab">
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active"><a href="#bindings" aria-controls="bindings" role="tab" data-toggle="tab">Bindings</a></li>
+				<li role="presentation"><a href="#plan" aria-controls="plan" role="tab" data-toggle="tab">Plan</a></li>
+				<li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+			</ul>
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane fade in active" id="bindings">
+					<table class="detail-table binding-table" style="display: none;">
+						<colgroup>
+							<col style="width: 80%;">
+							<col style="width: 20%;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>Bound App Name</th>
+								<th>Unbind</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+				<div role="tabpanel" class="tab-pane fade" id="plan">
+					<table class="detail-table plans-table">
+						<colgroup>
+							<col style="width: 20%;">
+							<col style="width: 20%;">
+							<col style="width: 20%;">
+							<col style="width: 20%;">
+							<col style="width: 20%;">
+						</colgroup>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+				<div role="tabpanel" class="tab-pane fade" id="settings">
+					<form>
+						<div class="input-group" style="width: 500px;">
+							<input type="text" class="form-control" name="name" placeholder="Service instance name">
+						</div>
+						<div>
+							<span class="glyphicon glyphicon-refresh small-progress"></span>
+							<input type="submit" class="btn btn-primary" value="Save changes">
+							<button type="button" class="btn btn-danger" id="deleteServiceInstance">Delete Service Instance</button>
+							<span class="message"></span>
+						</div>
+					</form>
+				</div>
+				<div class="background-progress detailProgress" style="display: block; position: absolute; z-index:1000;">
+					<div class="vertical-bar"></div>
+					<div class="progress-content">
+						<span class="glyphicon glyphicon-refresh"></span>
+						<p class="progress-message">Service Instance Loading...</p>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
