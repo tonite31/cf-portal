@@ -1,422 +1,100 @@
 <link href="@{css}/marketplace.css" rel="stylesheet">
+<script src="@{js}/marketplace.js"></script>
 
-<script type="text/template" id="ServicePlanRow">
-<tr>
-	<td class="center-align">
-		<p class="marketplace-service-plan-name">{name}</p>
-		<p>{amount}</p>
-	</td>
-	<td class="center-align">
-		{description}
-	</td>
-	<td class="center-align">
-		<a class="waves-effect waves-light btn action-button select-plan">Select this plan</a>
-	</td>
-</tr>
-</script>
-
-<script type="text/template" id="SelectedServicePlan">
-<div class="col s4">
-	<h3 class="marketplace-service-name">{name}</h3>
-	<p><small>{smallName}</small></p>
-	<div>{description}</div>
-</div>
-<div class="col s8">
-	<div class="row">
-		<div class="col s4">
-			<span>Instance Name</span>
+<script type="text/template" id="serviceRowTemplate">
+<div class="service-row">
+	<div class="image-container">
+		<img src="{imageUrl}">
+	</div>
+	<div class="service-container">
+		<div class="service-name">
+			<h2>{name} <small>{label}</small></h2>
 		</div>
-		<div class="col s8">
-			<input type="text" class="instance-name" placeholder="name" required>
+		<div class="service-description">
+			{description}
+		</div>
+		<div>
+			<span class="view-plans">View plans</span>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col s4">
-			<span>Select a organization</span>
-		</div>
-		<div class="col s8">
-			<select class="browser-default organization" required></select>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col s4">
-			<span>Add to Space</span>
-		</div>
-		<div class="col s8">
-			<select class="browser-default space" required><option value='' disalbed>Select a space</option></select>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col s4">
-			<span>Bind to App</span>
-		</div>
-		<div class="col s8">
-			<select class="browser-default app"><option value='' disalbed>do not bind</option></select>
-		</div>
-	</div>
-	<div class="row advance-option">
-		<p class="col s12">Add Parameters</p>
-		<div class="col s12">
-			<input type="text" class="key" placeholder="Key">
-			<input type="text" class="value" placeholder="Value">
-			<span class="add-parameter"><i class="material-icons">add</i></span>
-		</div>
-	</div>
-	<div class="row right-align">
-		<a class="cancel-bind-service">Cancel</a>
-		<a class="waves-effect waves-light btn action-button add-service">Add</a>
-	</div>
-</div>
-</script>
-
-<script type="text/template" id="ServiceList">
-<div class="row marketplace-service">
-	<div class="col s2 center-align">
-		<img src="{img}" class="service-icon">
-	</div>
-	<div class="col s10">
-		<h3 class="marketplace-service-name">{name} <small>{description}</small></h3>
-		<p class="marketplace-service-description">{longDescription}</p>
-		<span class="view-plans">View plans</span>
-	</div>
-	<div class="col s12 marketplace-service-detail card" style="display: none;">
-		<div class="marketplace-service-detail-wrapper">
-			<table>
-				<tbody>
-				</tbody>
-			</table>
-			<div class="row marketplace-service-selected"></div>
-		</div>
-	</div>
-</div>
-</script>
-
-<script>
-jQuery.expr[':'].contains = function(a, i, m) {
-  return jQuery(a).text().toLowerCase()
-      .indexOf(m[3].toLowerCase()) >= 0;
-};
-
-_ee.on('setService_done', function(target, service)
-{
-	var tbody = $(target).find('tbody');
-	CF.async({url : service.entity.service_plans_url}, function(result)
-	{
-		if(result)
-		{
-			var nameRow = null;
-			var descriptionRow = null;
-			
-			var planList = result.resources;
-			for(var i=0; i<planList.length; i++)
-			{
-				var amount = '';
-				var unit = '';
-				var extra = planList[i].entity.extra;
-				var description = '';
-				var displayName = planList[i].entity.name;
-				
-				if(extra)
-				{
-					extra = JSON.parse(extra);
-					if(extra.displayName)
-						displayName = extra.displayName;
-					planList[i].entity.extra = extra;
-					if(extra.costs)
-					{
-						var costs = extra.costs[0];
-						amount = costs.amount;
-						for(var key in amount)
-						{
-							if(key == 'usd')
-							{
-								amount = "$" + amount[key];
-								break;
-							}
-						}
-						
-						unit = costs.unit;
-					}
-					
-					description = '<ul>';
-					for(var j=0; j<extra.bullets.length; j++)
-						description += '<li>' + extra.bullets[j] + '</li>';
-						
-					description += '</ul>';
-				}
-				
-				planList[i].service = service;
-				
-				if(i%5 == 0)
-				{
-					nameRow = $('<tr></tr>');
-					descriptionRow = $('<tr></tr>');
-					tbody.append(nameRow).append(descriptionRow);
-				}
-				
-				if(amount && unit)
-					amount = ' - (' + amount + '/' + unit + ')';
-				
-				planList[i].entity.textAmount = amount + '/' + unit;
-				planList[i].entity.description = description;
-				
-				var td = $('<th><p class="service-plan-name">' + displayName + '</p><p>' + amount + '</p><p><a class="waves-effect waves-light btn action-button select-plan">Select this plan</a> <span class="selected-plan" style="display: none;">Selected plan</span></p></th>');
-				nameRow.append(td);
-				descriptionRow.append('<td>' + description + '</td>');
-				
-				td.get(0).item = planList[i];
-			}
-			
-			$('#orgLoading').hide();
-			$('.body-container').show();
-			
-			_ee.emit('setPlans_done', target);
-		}
-	}, common_error);
-});
-
-_ee.on('setPlans_done', function(target, selectButton)
-{
-	$(target).find('tbody .select-plan').on('click', function()
-	{
-		var plan = $(this).parent().parent().get(0).item;
-		
-		var html = $('#SelectedServicePlan').html();
-		html = html.replace(/{name}/gi, plan.entity.name).replace(/{smallName}/gi, plan.service.entity.description).replace(/{amount}/gi, plan.entity.textAmount);
-		html = html.replace(/{description}/gi, plan.entity.description);
-		
-		var selectedTarget = $(target).find('.marketplace-service-selected').html(html).parent().css('margin-left', '-100%').end();
-		
-		CF.async({url : '/v2/organizations'}, function(result)
-		{
-			if(result)
-			{
-				var html = '';
-				var orgList = result.resources;
-				for(var i=0; i<orgList.length; i++)
-				{
-					html += '<option value="' + orgList[i].metadata.guid + '">' + orgList[i].entity.name + '</option>';
-				}
-				
-				html = '<option value="" disabled selected>Select a organization</option>' + html;
-				
-				selectedTarget.find('.organization').html(html).on('change', function()
-				{
-					var guid = $(this).val();
-					
-					selectedTarget.find('.space').attr('disabled', '').children('option').text('Loading sapces');
-					CF.async({url : '/v2/organizations/' + guid + '/spaces'}, function(result)
-					{
-						if(result)
-						{
-							var html = '';
-							
-							var spaceList = result.resources;
-							for(var i=0; i<spaceList.length; i++)
-							{
-								html += '<option value="' + spaceList[i].metadata.guid + '">' + spaceList[i].entity.name + '</option>';
-							}
-							
-							html = '<option value="" disabled selected>Select a space</option>' + html;
-							
-							selectedTarget.find('.space').html(html).on('change', function()
-							{
-								selectedTarget.find('.app').attr('disabled', '').children('option').text('Loading apps');
-								CF.async({url : '/v2/spaces/' + $(this).val() + '/apps'}, function(result)
-								{
-									if(result)
-									{
-										var html = '';
-										
-										var appsList = result.resources;
-										for(var i=0; i<appsList.length; i++)
-										{
-											html += '<option value="' + appsList[i].metadata.guid + '">' + appsList[i].entity.name + '</option>';
-										}
-										
-										html = '<option value="" selected>do not bind</option>' + html;
-										selectedTarget.find('.app').html(html).removeAttr('disabled');
-									}
-								}, common_error);
-							});
-							
-							selectedTarget.find('.space').removeAttr('disabled');
-						}
-					}, common_error);
-				});
-			}
-		}, common_error);
-		
-		selectedTarget.find('.add-parameter').on('click', function()
-		{
-			var type = $(this).children('i').text();
-			if(type == 'add')
-			{
-				var clone = $(this).parent().clone(true);
-				clone.find('input').val('');
-				
-				$(clone).insertAfter($(this).parent());
-				
-				$(this).children('i').html('delete');
-			}
-			else
-			{
-				$(this).parent().remove();
-			}
-		});
-		
-		selectedTarget.find('.cancel-bind-service').on('click', function()
-		{
-			selectedTarget.parent().css('margin-left', '').end().html('');	
-		});
-		
-		selectedTarget.find('.add-service').on('click', function()
-		{
-			//FIXME validation
-			
-			var headers = {'Content-Type' : 'application/x-www-form-urlencoded'};
-			var data = {};
-			data.name = selectedTarget.find('.instance-name').val();
-			data.service_plan_guid = plan.metadata.guid;
-			data.space_guid = selectedTarget.find('.space').val();
-			data.parameters = {};
-			data.tags = plan.service.entity.tags;
-			
-// 			if(!data.name || !data.space_guid)
-// 			{
-// 				common_alert('please enter the infomation');
-// 				return;
-// 			}
-			
-			if(requiredValidation($(this).parent().parent()))
-			{
-				selectedTarget.find('.advance-option div').each(function()
-				{
-					var key = $(this).children('.key').val();
-					var value = $(this).children('.value').val();
-					
-					if(key)
-						data.parameters[key] = value;
-				});
-				
-				CF.async({url : '/v2/service_instances', method : 'POST', headers : headers, form : data}, function(result)
-				{
-					if(result)
-					{
-						if(result.entity)
-						{
-							var appGuid = selectedTarget.find('.app').val();
-							if(appGuid)
-							{
-								CF.async({url : '/v2/service_bindings', method : 'POST', headers, form : {service_instance_guid : result.metadata.guid, app_guid : appGuid}}, function(result)
-								{
-									if(result)
-									{
-										if(result.entity)
-										{
-											location.href = '/organization/' + selectedTarget.find('.organization').val() + '/space/' + data.space_guid + '/services';
-										}
-										else
-										{
-											common_error(result.description);
-										}
-									}
-								}, common_error);
-							}
-							else
-							{
-								location.href = '/organization/space/' + data.space_guid + '/services';
-							}
-						}
-						else
-						{
-							common_error(result.description);
-						}
-					}
-				}, common_error);
-			}
-		});
-	});
-});
-	
-$(document).ready(function()
-{
-	CF.async({url : '/v2/services'}, function(result)
-	{
-		if(result)
-		{
-			var serviceList = result.resources;
-			for(var i=0; i<serviceList.length; i++)
-			{
-				if(!serviceList[i].entity.active)
-					continue;
-
-				var extra = serviceList[i].entity.extra;
-				var img = '';
-				var name = serviceList[i].entity.label;
-				var longDescription = '';
-				
-				if(extra)
-				{
-					extra = JSON.parse(extra);
-					serviceList[i].entity.extra = extra;
-					
-					img = extra.imageUrl;
-					name = extra.displayName;
-					longDescription = extra.longDescription;
-				}
-				
-				var description = serviceList[i].entity.description;
-				var html = $('#ServiceList').html();
-				html = html.replace('{img}', img).replace('{name}', name).replace('{description}', description).replace('{longDescription}', longDescription);
-				
-				var target = $(html);
-				$('#serviceList').append(target);
-				
-				var tbody = $(target).find('tbody');
-
-				_ee.emit('setService_done', target, serviceList[i]);
-			}
-			
-			$('#serviceList .view-plans').on('click', function()
-			{
-				var text = $(this).text();
-				if(text == 'View plans')
-					$(this).text('Hide plans').parent().next().show(300);
-				else
-					$(this).text('View plans').parent().next().hide(300);
-			});
-		}
-		else
-		{
-			common_error(result);
-		}
-	}, common_error);
-	
-	$('.marketplace-filter input').on('input', function()
-	{
-		if(!$(this).val())
-		{
-			$('.marketplace-service-name').parent().parent().show();
-		}
-		else
-		{
-			$('.marketplace-service-name').parent().parent().hide();
-			$('.marketplace-service-name:contains("' + $(this).val() + '")').parent().parent().show();
-		}
-	});
-});
-</script>
-
-<div class="section no-pad-bot">
-	<div class="container">
-		<div class="relative marketplace-header">
-			<h2>Marketplace</h2>
-			<div class="marketplace-filter">
-				<input type="text" placeholder="Service name">
+	<div class="plans-container">
+		<table class="plans-table">
+			<colgroup>
+				<col style="width: 20%;">
+				<col style="width: 20%;">
+				<col style="width: 20%;">
+				<col style="width: 20%;">
+				<col style="width: 20%;">
+			</colgroup>
+			<tbody>
+			</tbody>
+		</table>
+		<div class="background-progress plans-progress" style="display: block; position: absolute;">
+			<div class="vertical-bar"></div>
+			<div class="progress-content">
+				<span class="glyphicon glyphicon-refresh"></span>
+				<p class="progress-message">Plans Loading...</p>
 			</div>
 		</div>
-		<div class="white" id="serviceList">
+	</div>
+</div>
+</script>
+
+<div class="container">
+	<div class="page-header">
+		<h2>Marketplace</h2>
+	</div>
+	<div id="serviceList"></div>
+	
+	<div class="background-progress marketplace-progress" style="display: block; position: absolute;">
+		<div class="vertical-bar"></div>
+		<div class="progress-content">
+			<span class="glyphicon glyphicon-refresh"></span>
+			<p class="progress-message">Marketplace Loading...</p>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="selectPlanDialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="modalTitle"></h4>
+			</div>
+			<form class="modal-form">
+				<div class="modal-body">
+					<p id="modalDescription"></p>
+					<p id="modalPlanName"></p>
+					<div class="form-row">
+						<div class="input-group">
+	  						<input type="text" class="form-control" name="name" placeholder="Instance name" required>
+						</div>
+					</div>
+					<div class="form-row">
+						<select class="select" id="modalOrganizations" required></select>
+					</div>
+					<div class="form-row">
+						<select class="select" name="space_guid" id="modalSpaces" required></select>
+					</div>
+					<div class="form-row">
+						<select class="select" name="appGuid" id="modalApps" disabled></select>
+					</div>
+					<div class="form-row">
+						<p>Add Parameters(optional)</p>
+						<div class="input-group parameters" style="width: 100%;">
+							<input type="text" class="form-control key" placeholder="key" style="width: 45%;">
+							<input type="text" class="form-control value" placeholder="value" style="width: 45%;">
+							<span class="glyphicon glyphicon-plus"></span>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<span class="message" style="float:left;" id="modalMessage"></span>
+					<input type="submit" class="btn btn-primary" value="Add">
+					<button type="button" class="btn btn-default" id="cancelModal">Cancel</button>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>

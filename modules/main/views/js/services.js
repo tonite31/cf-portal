@@ -394,11 +394,17 @@
 				{
 					var planList = result.resources;
 
-					var th = $('<tr></tr>');
-					var tr = $('<tr></tr>');
+					var th = null;
+					var tr = null;
 					
 					for(var i=0; i<planList.length; i++)
 					{
+						if(th == null && tr == null)
+						{
+							th = $('<tr></tr>');
+							tr = $('<tr></tr>');
+						}
+						
 						var nameTh = $('<th><p class="plan-name">' + planList[i].entity.name + '</p></th>');
 						th.append(nameTh);
 						
@@ -439,14 +445,14 @@
 						{
 							$('.plans-table tbody').append(th).append(tr);
 							
-							th = null;
-							tr = null;
-
 							tr.find('.select-plan').on('click', function()
 							{
 								var plan = $(this).parent().get(0).item;
 								selectPlan(serviceInstance, plan, this, $(this).next());
 							});
+							
+							th = null;
+							tr = null;
 						}
 					}
 					
@@ -589,7 +595,6 @@
 			
 			CF.async({url : serviceInstance.metadata.url, method : 'DELETE'}, function(result)
 			{
-				console.log(result);
 				if(result)
 				{
 					if(result.code)

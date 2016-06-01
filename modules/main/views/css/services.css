@@ -131,12 +131,24 @@
 	font-weight: normal;
 }
 
-.bullets
+.bullets ul
 {
-	text-align: left;
+	margin-bottom: 20px;
+	text-align: left !important;
+	display: inline-block;
 }
 
 p.message
 {
 	margin: 15px 0;
+}
+
+.bullets ul
+{
+	margin-bottom: 20px;
+}
+
+.bullets ul li
+{
+	margin: 5px 0;
 }
