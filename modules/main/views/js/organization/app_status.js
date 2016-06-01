@@ -71,7 +71,7 @@
 		});
 	};
 	
-	_ee.on('app_detail_status', function(context, app)
+	_ee.once('app_detail_status', function(context, app)
 	{
 		$(context).find('.appInstanceProgress').show().next().hide();
 		$(context).find('.statusMessage').hide();

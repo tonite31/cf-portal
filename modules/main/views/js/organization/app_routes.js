@@ -174,7 +174,7 @@
 		});
 	};
 	
-	_ee.on('app_detail_routes', function(context, app)
+	_ee.once('app_detail_routes', function(context, app)
 	{
 		$(context).find('.routesProgress').show().next().hide();
 		

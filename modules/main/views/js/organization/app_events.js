@@ -1,6 +1,6 @@
 (function()
 {
-	_ee.on('app_detail_events', function(context, app)
+	_ee.once('app_detail_events', function(context, app)
 	{
 		$(context).find('.eventsProgress').show().next().hide();
 		

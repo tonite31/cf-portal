@@ -292,7 +292,7 @@
 		var that = this;
 		var app = this.data.app;
 		
-		var selectElement = $(context).find('.service-select');
+		var selectElement = $(context).find('.service-select').html('<option value="">Service Instances Loading...</option>');
 		
 		serviceListPumpkin.setData({app : app});
 		serviceListPumpkin.executeAsync(['getServiceInstances', 'getUserProvidedServiceInstances'], function()
@@ -360,8 +360,8 @@
 			console.error(error);
 		});
 	});
-	
-	_ee.on('app_detail_services', function(context, app)
+
+	_ee.once('app_detail_services', function(context, app)
 	{
 		$(context).find('.service-container').hide();
 		$(context).find('.servicesProgress').show();
@@ -374,11 +374,9 @@
 			$(context).find('.servicesProgress').hide();
 			$(context).find('.service-container').show();
 			
-			$(context).find('.service-select option:first').text('Services are loading...').parent().attr('disabled', '');
-			
 			pumpkin.executeAsync(['getServiceList'], function()
 			{
-				$(context).find('.service-select option:first').text('Select a service').parent().removeAttr('disabled');
+				$(context).find('.service-select option:first').text('Select a service').attr('disabled', '').parent().removeAttr('disabled');
 			},
 			function(workName, error)
 			{

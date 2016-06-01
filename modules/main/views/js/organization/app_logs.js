@@ -20,7 +20,7 @@
 		}, error, true);
 	};
 	
-	_ee.on('app_detail_logs', function(context, app)
+	_ee.once('app_detail_logs', function(context, app)
 	{
 		$(context).find('.logsProgress').show().next().hide();
 		

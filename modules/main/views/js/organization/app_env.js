@@ -165,7 +165,7 @@
 		});
 	};
 	
-	_ee.on('app_detail_env', function(context, app)
+	_ee.once('app_detail_env', function(context, app)
 	{
 		$(context).find('.envProgress').show().next().hide();
 		
