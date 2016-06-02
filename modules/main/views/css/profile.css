@@ -1,53 +1,17 @@
-#topbar {
-	display: block;
+.input-group
+{
+	margin: 20px 0;
 }
 
-#orgLoading {
-	display: none !important;
+.input-group p
+{
+	font-weight: bold;
+	font-size: 15px;
 }
 
-.red {
-	color: white !important;
-}
-
-h3 {
-	position: relative;
-	width: 50%;
-	margin: 30px auto;
-}
-
-p {
-	margin: 20px auto;
-	position: relative;
-	width: 50%;
-}
-
-.edit-icon {
-	display: none;
-	
-	position: absolute;
-	right: 10px;
-}
-
-.editable-img {
-	position: relative;
-	width: 50%;
-	margin: 30px auto;
-}
-
-.editable-img img {
-	cursor: pointer;
-}
-
-.editable-img img+.edit-icon {
-	top: 45%;
-}
-
-.editable-text:hover+.edit-icon, .editable-img img:hover+.edit-icon {
-	display: inline-block;
-}
-
-.input-field {
-	display: block;
-	margin: 15px 0;
+.message
+{
+	margin: 20px 0;
+	color: red;
+	font-size: 12px;
 }

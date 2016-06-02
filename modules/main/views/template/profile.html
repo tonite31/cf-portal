@@ -1,120 +1,37 @@
 <link href="@{css}/profile.css" rel="stylesheet">
+<script src="@{js}/profile.js"></script>
 
-<script>
-$(document).ready(function()
-{
-	$('.body-container').show();
+<div class="container">
+	<div class="page-header">
+		<h2>Profile</h2>
+	</div>
+	<form id="profileForm">
+		<div class="input-group">
+			<p>Username</p>
+			<span>#{username}</span>
+			<input type="hidden" class="form-control" name="id" id="id">
+		</div>
+		<div class="input-group">
+			<p>Password</p>
+			<input type="password" class="form-control" name="password" required>
+		</div>
+		<div class="input-group">
+			<p>Password confirm</p>
+			<input type="password" class="form-control" name="passwordConfirm" required>
+		</div>
+		<div class="input-groupt">
+			<span class="glyphicon glyphicon-refresh small-progress"></span>
+			<input type="submit" class="btn btn-primary" value="Save">
+			<button type="button" class="btn btn-danger delete">Delete</button>
+		</div>
+	</form>
+	<p class="message"></p>
+</div>
 
-	CF.users('getUser', {username : $('#username').attr('data-username')}, function(result)
-	{
-		if(result && result.resources.length == 1)
-		{
-			var profile = result.resources[0];
-			if(profile.name.familyName)
-				$('#familyName').val(profile.name.familyName).next().addClass('active');
-			if(profile.name.givenName)
-				$('#givenName').val(profile.name.givenName).next().addClass('active');
-			$('#id').val(profile.id);
-		}
-	});
-	
-	$('#save').on('click', function()
-	{
-		var password = $('#password').val();
-		var passwordConfirm = $('#passwordConfirm').val();
-		
-		if((password || passwordConfirm) && password != passwordConfirm)
-		{
-			common_warning('Password is not accord each other.');
-			return;
-		}
-		else if(password && passwordConfirm && password == passwordConfirm)
-		{
-			CF.users('password', {id : $('#id').val(), username : $('#username').attr('data-username'), password : password}, function(result)
-			{
-				if(result && result.status == 'ok')
-				{
-					common_alert('Password updated.');
-				}
-				else
-				{
-					common_error(result);
-				}
-			});
-		}
-		
-		CF.users('updateUser', {id : $('#id').val(), name : {familyName : $('#familyName').val(), givenName : $('#givenName').val()}}, function(result)
-		{
-			if(result)
-			{
-				common_alert('User information updated.');		
-			}
-			else
-			{
-				common_error(result);
-			}
-		});
-	});
-	
-	confirmButton($('.confirm-button'), function()
-	{
-// 		CF.async({url : '/v2/users/' + $('#id').val() + '/organizations'}, function(result)
-// 		{
-// 			console.log("하 : ", result);
-// 			if(result)
-// 			{
-// 				var organizations = result.resources;
-// 				for(var i=0; i<organizations.length; i++)
-// 				{
-// 					CF.async({url : '/v2/users/' + $('#id').val() + '/organizations/' + organizations[i].metadata.guid}, function(){});
-// 				}
-// 			}
-// 		});
-		CF.users('withdrawal', {}, function(result)
-		{
-			if(result)
-			{
-				CF.signout(function()
-				{
-					location.href = '/';	
-				});
-			}
-		});
-	});
-});
-</script>
-
-<div class="section sign-container">
-	<div class="container center-align">
-		<div class="center-align editable-img">
-			<img src="@{imgs}/user_smile.png"> <i class="material-icons edit-icon">mode_edit</i>
-		</div>
-		<h3><span>#{username}</span></h3>
-		<div>
-			<input type="hidden" id="id">
-		</div>
-		<div class="input-field for-central">
-          	<input id="password" type="password" name="password">
-          	<label for="password">Password</label>
-        </div>
-		<div class="input-field for-central">
-          	<input id="passwordConfirm" type="password" name="passwordConfirm">
-          	<label for="passwordConfirm">Password confirm</label>
-        </div>
-		<div class="input-field for-central">
-          	<input id="familyName" type="text" name="familyName">
-          	<label for="familyName">Family name</label>
-        </div>
-        <div class="input-field for-central">
-          	<input id="givenName" type="text" name="givenName">
-          	<label for="givenName">Given name</label>
-        </div>
-        <div>
-        	<span class="target-button waves-effect waves-light btn action-button" id="save">Save</span>
-			<div class="confirm-button">
-				<span class="target-button waves-effect waves-light btn red darken-3">Delete</span>
-				<span class="confirm">Are you sure?</span>
-			</div>
-		</div>
+<div class="background-progress profile-progress" style="display: block; position: absolute;">
+	<div class="vertical-bar"></div>
+	<div class="progress-content">
+		<span class="glyphicon glyphicon-refresh"></span>
+		<p class="progress-message">Profile loading...</p>
 	</div>
 </div>

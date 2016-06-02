@@ -19,7 +19,7 @@ var login = function(id, password)
 			}
 			else
 			{
-				$('#signinForm .result-desc').text(reason.error).css('color', '');
+				$('#signinForm .result-desc').text(reason.error.description ? reason.error.description : JSON.stringify(reason.error)).css('color', '');
 			}
 		}
 		else

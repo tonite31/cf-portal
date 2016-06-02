@@ -119,6 +119,8 @@ pumpkin.addWork('getQuotaByName', function(params)
 
 pumpkin.addWork('createOrg', function(params)
 {
+	var next = this.next;
+	var error = this.error;
 	this.data.client.request('/v2/organizations', 'POST', null, {name : params.name, quota_definition_guid : params.metadata.guid}, function(data)
 	{
 		if(data)
@@ -132,19 +134,35 @@ pumpkin.addWork('createOrg', function(params)
 			{
 				if(data.code == 30002)
 				{
-					this.data.client.request('/v2/organizations', 'POST', null, {name : params.name + '2', quota_definition_guid : params.metadata.guid}, function(data)
+					//임시코드 만약 조직이 있으면 그놈으로 권한 주고 이동.
+					this.data.client.request('/v2/organizations?q=name:' + params.name, 'GET', null, null, function(result)
 					{
-						if(data.entity)
+						if(result)
 						{
-							this.data.orgId = data.metadata.guid;
-							this.next({orgId : data.metadata.guid});
+							if(result.resources)
+							{
+								this.data.orgId = result.resources[0].metadata.guid;
+								this.next({orgId : this.data.orgId});
+							}
+							else
+							{
+								this.error(result);
+							}
 						}
-						else
-						{
-							this.error(data);
-						}
-							
 					}.bind(this));
+//					this.data.client.request('/v2/organizations', 'POST', null, {name : params.name + '2', quota_definition_guid : params.metadata.guid}, function(data)
+//					{
+//						if(data.entity)
+//						{
+//							this.data.orgId = data.metadata.guid;
+//							this.next({orgId : data.metadata.guid});
+//						}
+//						else
+//						{
+//							this.error(data);
+//						}
+//							
+//					}.bind(this));
 				}
 				else
 				{
@@ -193,8 +211,34 @@ pumpkin.addWork('createSpace', function(params)
 	{
 		if(result)
 		{
-			this.data.spaceId = result.metadata.guid;
-			this.next({spaceId : result.metadata.guid});
+			if(result.code == 40002)
+			{
+				//임시코드 만약 영역이 있으면 그놈으로 권한 주고 이동.
+				this.data.client.request('/v2/spaces?q=name:' + params.name, 'GET', null, null, function(result)
+				{
+					if(result)
+					{
+						if(result.resources)
+						{
+							this.data.spaceId = result.resources[0].metadata.guid;
+							this.next({spaceId : this.data.spaceId});
+						}
+						else
+						{
+							this.error(result);
+						}
+					}
+				}.bind(this));
+			}
+			else if(result.entity)
+			{
+				this.data.spaceId = result.metadata.guid;
+				this.next({spaceId : result.metadata.guid});
+			}
+			else
+			{
+				this.error(result);
+			}
 		}
 		else
 		{
