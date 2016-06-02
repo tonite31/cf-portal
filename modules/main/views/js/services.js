@@ -158,14 +158,14 @@
 	
 	var getServices = function()
 	{
+		var progress = $('#serviceTable tbody tr:first').show();
+		$('#serviceTable tbody').html('').append(progress);
+		
 		var guid = $('#spaceSelect').val();
 		CF.async({url : '/v2/spaces/' + guid + '/service_instances'}, function(result)
 		{
 			if(result)
 			{
-				var progress = $('#serviceTable tbody tr:first');
-				$('#serviceTable tbody').html('').append(progress);
-				
 				if(result.resources)
 				{
 					var serviceList = result.resources;
@@ -245,6 +245,9 @@
 					},
 					function()
 					{
+						if(serviceList.length == 0)
+							$('#serviceTable tbody').append('<tr><td colspan="5" style="text-align:center;">no services</td></tr>');
+						
 						$('#serviceTable tbody tr').show();
 						progress.hide();
 						

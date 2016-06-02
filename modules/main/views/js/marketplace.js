@@ -2,6 +2,15 @@
 {
 	var selectPlan = function(service, plan)
 	{
+		var first = $('.parameters:first');
+		$('.parameters').remove();
+		
+		$('.form-row:last').append(first);
+		
+		$('.modal-form input[type="text"]').val('');
+		$('.modal-form select').html('');
+		$('#modalMessage').text('');
+		
 		plan.service = service;
 		$('#selectPlanDialog').modal('show').get(0).item = plan;
 		
@@ -335,7 +344,31 @@
 					data.parameters[key] = value;
 			});
 			
-			console.log("야압 : ", data);
+			$('.modal-form .small-progress').css('display', 'inline-block').next().next().hide().next().hide();
+			
+			CF.async({url : '/v2/service_instances', method : 'POST', form : data}, function(result)
+			{
+				$('.modal-form .small-progress').hide().next().next().show().next().show();
+				if(result)
+				{
+					if(result.entity)
+					{
+						$('#selectPlanDialog').modal('hide');
+					}
+					else
+					{
+						$('#modalMessage').text(result.description ? result.description : JSON.stringify(result.error));
+					}
+				}
+				else
+				{
+					$('#modalMessage').text('Unknown Error');	
+				}
+			},
+			function(error)
+			{
+				$('#modalMessage').text(error);
+			});
 		});
 		
 		$('#cancelModal').on('click', function()
@@ -349,6 +382,7 @@
 			
 			$('.modal-form input[type="text"]').val('');
 			$('.modal-form select').html('');
+			$('#modalMessage').text('');
 		});
 		
 		var addParameter = function()

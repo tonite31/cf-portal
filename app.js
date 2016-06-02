@@ -84,13 +84,14 @@ if(_config.redis && _config.redis.host && _config.redis.port)
 	app.use(session({
 	    store: new RedisStore({client: redis}),
 	    secret: 'cf portal',
+	    cookie: {maxAge:6000},
 	    saveUninitialized: true,
 	    resave: false
 	}));
 }
 else
 {
-	app.use(session({ secret: 'halloween', resave: true, saveUninitialized: true}));
+	app.use(session({ secret: 'halloween', cookie: {maxAge:6000}, resave: true, saveUninitialized: true}));
 }
 
 app.use(methodOverride());
