@@ -212,7 +212,7 @@
 							input.checked = true;
 					}
 					
-					$('#' + params.tableName + ' tbody tr input[type="checkbox"]').on('change', function()
+					$('#' + params.tableName + ' tbody tr input[type="checkbox"]').off('change').on('change', function()
 					{
 						var userGuid = $(this).parent().parent().get(0).item.metadata.guid;
 						params.userGuid = userGuid;
@@ -251,7 +251,7 @@
 						function(workName, error)
 						{
 							$(that).prev().remove();
-							$('<span style="color: red;">' + error + '</span>').insertBefore(that);
+							$('<span style="color: red;">' + (error.description ? error.description : JSON.stringify(error)) + '</span>').insertBefore(that);
 						});
 					});
 					
