@@ -180,6 +180,7 @@
 	{
 		$(context).find('.routesProgress').show().next().hide();
 		$(context).find('.routesMessage').text('').hide();
+		$(context).find('input[name="host"]').val('');
 		
 		pumpkin.setData({app : app, urlList : []});
 		pumpkin.execute(['getRouteMappings'], function()
@@ -218,18 +219,26 @@
 			$(context).find('.routes-form select').attr('disabled', '');
 			$(context).find('.routes-form .map-progress').css('display', 'inline-block').next().hide().next().hide();
 			
-			CF.async({url : '/v2/routes?q=host:' + data.host + '&q=domain_guid:' + data.domain_guid}, function(result)
+//			CF.async({url : '/v2/routes?q=host:' + data.host + '&q=domain_guid:' + data.domain_guid}, function(result)
+			CF.async({url : '/v2/routes'}, function(result)
 			{
 				if(result)
 				{
-					if(result.code)
+					if(result.resources)
+					{
+						var routeList = result.resources;
+						for(var i=0; i<routeList.length; i++)
+						{
+							if(routeList[i].entity.host == data.host && routeList[i].entity.domain_guid == data.domain_guid)
+							{
+								mapRoute(context, app.metadata.guid, routeList[i].metadata.guid, data);
+								return;
+							}
+						}
+					}
+					else
 					{
 						$(context).find('.map-message').text(result.description ? result.description : JSON.stringify(result.error));
-						return;
-					}
-					else if(result.total_results == 1)
-					{
-						mapRoute(context, app.metadata.guid, result.resources[0].metadata.guid, data);
 						return;
 					}
 				}
@@ -267,11 +276,15 @@
 					$(context).find('.routes-form select').removeAttr('disabled');
 					$(context).find('.routes-form .map-progress').hide().next().show().next().show();
 				});
+			},
+			function(error)
+			{
+				$(context).find('.map-message').text(error);
 			});
 		});
 		
 		var space = $('#' + _global.hash.space).get(0);
-		var select = $(context).find('.routes-select');
+		var select = $(context).find('.routes-select').html('');
 		CF.async({url : space.item.organization.entity.domains_url}, function(result)
 		{
 			if(result)
@@ -284,7 +297,7 @@
 						select.append('<option value="' + domainList[i].metadata.guid + '">' + domainList[i].entity.name + '</option>');
 					}
 					
-					select.removeAttr('disabled').children('option:first').text('Select a domain');
+					select.removeAttr('disabled').prepend('<option value="">Select a domain</option>');
 				}
 				else
 				{

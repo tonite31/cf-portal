@@ -258,7 +258,7 @@
 		});
 	};
 	
-	var setAppList = function(appsUrl, callback)
+	var setAppList = function(appsUrl, callback, isTimerRefresh)
 	{
 		pumpkin.execute([{name : 'getAppList', params : {appsUrl : appsUrl}}], function(appList)
 		{
@@ -270,7 +270,8 @@
 			if(appList.length > 0)
 			{
 				bindScaleEvent();
-				setAppDetails();
+				if(!isTimerRefresh)
+					setAppDetails();
 				
 				var selectedApp = $('#appsBody tr.selected');
 				if(selectedApp.length == 0)
@@ -569,7 +570,7 @@
 				$('.refresh-app-list-description').text('');
 				$('#refreshAppList').css('animation-name', 'none').attr('data-state', 'off');
 				start();
-			});
+			}, true);
 		},
 		function(count)
 		{
