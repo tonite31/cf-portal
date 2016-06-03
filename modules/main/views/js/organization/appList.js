@@ -396,7 +396,7 @@
 			
 			detail.remove();
 			
-			$('#appDetailTab a').off('click').on('click', function(e)
+			$('#appDetailTab a[role="tab"]').off('click').on('click', function(e)
 			{
 				e.preventDefault();
 				$(this).tab('show');

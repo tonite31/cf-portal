@@ -205,7 +205,6 @@
 				});
 			});
 			
-			$(context).find('.service-table tbody').html('');
 			$(context).find('.service-table tbody').append(template);
 			
 			callback();
@@ -225,6 +224,7 @@
 		var next = this.next;
 		CF.async({url : this.data.app.entity.service_bindings_url}, function(result)
 		{
+			$(context).find('.service-table tbody').html('');
 			if(result)
 			{
 				if(result.resources)
@@ -255,7 +255,7 @@
 							{
 								$(this).find('span:first').text('Show credentials');
 								$(this).parent().next().hide();
-								this.isShow = false;
+								this.isShown = false;
 							}
 						});
 						
