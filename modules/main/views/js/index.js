@@ -97,6 +97,7 @@ $(document).ready(function()
 	
 	$('#cancel').on('click', function()
 	{
+		$('#signinForm .input-group input').val('');
 		$(this).hide().prev().removeClass('btn-primary').addClass('btn-default').prev().show();
 		$(this).prev().removeAttr('data-mode').parent().prev().hide().children('input').removeAttr('required');
 	});
