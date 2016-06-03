@@ -1,5 +1,7 @@
 <link href="@{css}/organization.css" rel="stylesheet">
 
+<script src="@{js}/organization.js"></script>
+
 <script src="@{js}/organization/orgList.js"></script>
 <script src="@{js}/organization/appList.js"></script>
 <script src="@{js}/organization/orgDetail.js"></script>
@@ -7,8 +9,8 @@
 
 <script type="text/template" id="orgItemTemplate">
 <li class="list-group-item">
-	<span class="org-name">{orgName} <span class="glyphicon glyphicon-plus create-space"></span></span>
-	<ul>
+	<span class="org-name">{orgName}</span>
+	<ul id="{guid}">
 	</ul>
 </li>
 </script>
@@ -50,6 +52,9 @@
 <div class="org-body">
 	<div class="org-list">
 		<ul class="list-group" id="orgList"></ul>
+		<div style="text-align: center;">
+			<button type="button" class="btn btn-primary" id="createSpace"><span class="glyphicon glyphicon-plus"></span> Create Space</button>
+		</div>
 	</div>
 	<div class="org-container">
 		<div class="org-details">
@@ -165,6 +170,35 @@
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="createSpaceDialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Create Space</h4>
+			</div>
+			<form class="modal-form">
+				<div class="modal-body">
+					<div class="form-row">
+						<select class="select" id="createSpaceOrganization" name="organization_guid" required></select>
+					</div>
+					<div class="form-row">
+						<div class="input-group">
+	  						<input type="text" class="form-control" name="name" placeholder="Sapce name" required>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<span class="glyphicon glyphicon-refresh small-progress"></span>
+					<span class="message" style="float:left;" id="createSpaceMessage"></span>
+					<input type="submit" class="btn btn-primary" value="Create">
+					<button type="button" class="btn btn-default" id="cancelCreateSpaceModal">Cancel</button>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>

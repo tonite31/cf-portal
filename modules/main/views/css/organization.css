@@ -504,3 +504,30 @@
 {
 	font-size: 11px;
 }
+
+#createSpaceDialog .form-row
+{
+	margin: 10px 0;
+}
+
+#createSpaceDialog .form-row label
+{
+	display: block;
+	font-size: 12px;
+}
+
+#createSpaceMessage
+{
+	color: red;
+	font-size: 12px;
+}
+
+.select
+{
+	background-color: rgba(255, 255, 255, 0.9);
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    height: 45px;
+    width: 60%;
+}

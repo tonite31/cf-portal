@@ -16,7 +16,7 @@
 					for(var i=0; i<orgList.length; i++)
 					{
 						var html = $('#orgItemTemplate').html();
-						html = html.replace('{orgName}', orgList[i].entity.name);
+						html = html.replace('{orgName}', orgList[i].entity.name).replace('{guid}', orgList[i].metadata.guid);
 						
 						html = $(html);
 						
@@ -52,6 +52,7 @@
 		forEach.sync(orgList, function(org, index)
 		{
 			var done = this.done;
+			console.log(org.element);
 			CF.async({url : org.entity.spaces_url}, function(result)
 			{
 				if(result)
@@ -70,6 +71,7 @@
 							
 							spaceList[i].organization = org;
 							space.get(0).item = spaceList[i];
+							
 							$(org.element).children('ul').append(space);
 						}
 					}
