@@ -364,7 +364,7 @@
 	font-size: 10px;
 }
 
-.app-name span:first-child:HOVER .glyphicon-pencil
+.app-name span:first-child:HOVER + .glyphicon-pencil
 {
 	display: inline;
 }

@@ -355,7 +355,7 @@
 	
 	var selectPlan = function(serviceInstance, plan, successTarget, errorTarget)
 	{
-		$('<span class="glyphicon glyphicon-refresh small-progress></span>').insertBefore(successTarget);
+		$('<span class="glyphicon glyphicon-refresh small-progress"></span>').insertBefore(successTarget);
 		$(successTarget).hide().prev().css('display', 'inline-block');
 		
 		CF.async({url : '/v2/service_instances/' + serviceInstance.metadata.guid, method : 'PUT', headers : {'Content-Type' : 'application/x-www-form-urlencoded'}, form : {service_plan_guid : plan.metadata.guid}}, function(result)
@@ -365,8 +365,8 @@
 			{
 				if(result.entity)
 				{
-					$('.bullets').find('.selected-plan').removeAttr('disabled', '').removeClass('btn-info').addClass('btn-primary').addClass('select-plan').removeClass('selected-plan');
-					$(successTarget).attr('disabled', '').removeClass('btn-primary').addClass('btn-info').addClass('selected-plan').removeClass('select-plan');;
+					$('.bullets').find('.selected-plan').removeAttr('disabled', '').removeClass('btn-info').addClass('btn-primary').addClass('select-plan').removeClass('selected-plan').text('Select this plan');
+					$(successTarget).attr('disabled', '').removeClass('btn-primary').addClass('btn-info').addClass('selected-plan').removeClass('select-plan').text('Selected');
 				}
 				else
 				{
@@ -416,18 +416,22 @@
 						if(planList[i].entity.extra)
 						{
 							planList[i].entity.extra = JSON.parse(planList[i].entity.extra);
-							$('<span>$' + planList[i].entity.extra.costs[0].amount.usd + ' / ' + planList[i].entity.extra.costs[0].unit + '</span>').insertAfter(nameTh.find('span'));
+							if(planList[i].entity.extra.costs)
+								$('<span>$' + planList[i].entity.extra.costs[0].amount.usd + ' / ' + planList[i].entity.extra.costs[0].unit + '</span>').insertAfter(nameTh.find('span'));
 							
 							var bullets = planList[i].entity.extra.bullets;
-							var html = '<ul>';
-							for(var j=0; j<bullets.length; j++)
+							if(bullets)
 							{
-								html += '<li>' + bullets[j] + '</li>';
+								var html = '<ul>';
+								for(var j=0; j<bullets.length; j++)
+								{
+									html += '<li>' + bullets[j] + '</li>';
+								}
+								
+								html += '</ul>';
+								
+								td.append(html);
 							}
-							
-							html += '</ul>';
-							
-							td.append(html);
 						}
 						
 						if(serviceInstance.plan.metadata.guid != planList[i].metadata.guid)

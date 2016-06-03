@@ -4,6 +4,7 @@
 	getUrlPumpkin.addWork('getRoute', function(params)
 	{
 		var next = this.next;
+		var error = this.error;
 		CF.async({url : params.url}, function(result)
 		{
 			if(result)
@@ -22,15 +23,16 @@
 				error('Route is not found.');
 			}
 		},
-		function(error)
+		function(err)
 		{
-			error(error);
+			error(err);
 		});
 	});
 	
 	getUrlPumpkin.addWork('getDomain', function(params)
 	{
 		var next = this.next;
+		var error = this.error;
 		CF.async({url : params.domain_url}, function(result)
 		{
 			if(result)
@@ -49,9 +51,9 @@
 				next(params.host + ' : Domain is not found.');
 			}
 		},
-		function(error)
+		function(err)
 		{
-			next(params.host + ' : ' + error);
+			next(params.host + ' : ' + err);
 		});
 	});
 	
@@ -66,7 +68,7 @@
 		var that = this;
 		
 		//현재 앱에 맵핑된 라우트를 가져온다.
-		CF.async({url : '/v2/route_mappings?q=app_guid:' + app.metadata.guid}, function(result)
+		CF.async({url : '/v2/apps/' + app.metadata.guid + '/routes'}, function(result)
 		{
 			if(result)
 			{
@@ -76,7 +78,7 @@
 					forEach.async(result.resources, function(routeMapping, index)
 					{
 						var done = this.done;
-						getUrlPumpkin.execute([{name : 'getRoute', params : {url : routeMapping.entity.route_url}}, 'getDomain'], function(url)
+						getUrlPumpkin.execute([{name : 'getDomain', params : {host : routeMapping.entity.host, domain_url : routeMapping.entity.domain_url}}], function(url)
 						{
 							routeMapping.entity.url = url;
 							done();
@@ -102,9 +104,9 @@
 				next();
 			}
 		},
-		function(error)
+		function(err)
 		{
-			error(error);
+			error(err);
 		});
 	});
 	
@@ -177,8 +179,9 @@
 	_ee.once('app_detail_routes', function(context, app)
 	{
 		$(context).find('.routesProgress').show().next().hide();
+		$(context).find('.routesMessage').text('').hide();
 		
-		pumpkin.setData({app : app});
+		pumpkin.setData({app : app, urlList : []});
 		pumpkin.execute(['getRouteMappings'], function()
 		{
 			$(context).find('.routes-table tbody').html('');
@@ -200,7 +203,7 @@
 		function(workName, error)
 		{
 			$(context).find('.routesProgress').hide().next().hide();
-			$(context).find('.routesMessage').text(error);
+			$(context).find('.routesMessage').text(error).show();
 		});
 		
 		formSubmit($(context).find('.routes-form'), function(data)
