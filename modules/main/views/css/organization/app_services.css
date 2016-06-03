@@ -96,6 +96,7 @@
 .bind-cancel
 {
 	cursor: pointer;
+	margin: 0 5px;
 }
 
 .bind-cancel:HOVER {
