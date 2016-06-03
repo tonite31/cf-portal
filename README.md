@@ -12,8 +12,10 @@ CF Portal is a web-frontend for cloundfoundry based on nodejs.
 5. Install npm packages : <code>npm install</code>
 6. Push this application to Cloud Foundry using the cf Command Line Interface (CLI): <code>cf push.</code>
 
-##Disclaimer
-The current version is an early release (alpha). Some features are still to come and it may contain major bugs.
+##Version History
+2.0.0
+ - Design chagned.
+ - Improved performance.
 
 ##License
 Code licensed under <a href="https://github.com/tonite31/cf-portal/blob/master/LICENSE">MIT</a>
