@@ -18,9 +18,9 @@
 			else
 				text = appQuotaSum + 'MB / ' + organizationQuota + 'MB (' + p + '%)';
 			
-			if(p > 50 && p < 80)
+			if(p > 50 && p <= 80)
 				$('#quotaProgress').removeClass('progress-bar-danger').addClass('progress-bar-warning');
-			else if(p >= 80)
+			else if(p > 80)
 				$('#quotaProgress').removeClass('progress-bar-warning').addClass('progress-bar-danger');
 			else
 				$('#quotaProgress').removeClass('progress-bar-warning').removeClass('progress-bar-danger');
