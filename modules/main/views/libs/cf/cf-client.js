@@ -122,8 +122,6 @@ var CF = {};
 				{
 					if(errorCallback)
 						errorCallback(JSON.parse(error.responseText));
-					else
-						common_error(JSON.parse(error.responseText).error);
 				}
 			}
 		});

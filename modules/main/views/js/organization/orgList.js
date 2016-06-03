@@ -52,7 +52,6 @@
 		forEach.sync(orgList, function(org, index)
 		{
 			var done = this.done;
-			console.log(org.element);
 			CF.async({url : org.entity.spaces_url}, function(result)
 			{
 				if(result)

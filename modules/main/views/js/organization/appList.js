@@ -1,7 +1,7 @@
 (function()
 {
 	var APP_REFRESH_TIME = 60 * 5; //5분에 한 번씩 앱 목록을 갱신한다.
-	var UPDATE_SCALE_SUCCESS_MESSAGE_TIME = 5; //앱의 인스턴스와 메모리 업데이트를 성공적으로 마친경우 메시지 표시 시간.
+	var UPDATE_SCALE_SUCCESS_MESSAGE_TIME = 3; //앱의 인스턴스와 메모리 업데이트를 성공적으로 마친경우 메시지 표시 시간.
 	var appRefreshTimer = null;
 	
 	var pumpkin = new Pumpkin();
@@ -179,6 +179,9 @@
 			var tr = $(this).parent().parent();
 			var app = $(this).parent().parent().get(0);
 			var item = app.item;
+
+			var instanceInput = $(this).find('input[name="instance"]');
+			var memoryInput = $(this).find('input[name="memory"]')
 			
 			formSubmit(this, function(data)
 			{
@@ -193,22 +196,20 @@
 						{
 							item.entity.instances = new Number(data.instance);
 							item.entity.memory = new Number(data.memory);
+							
+							instanceInput.attr('data-value', item.entity.instances);
+							memoryInput.attr('data-value', item.entity.memory);
 	
 							app.item = item;
 							
 							sacleTd.find('*').hide();
 							
-							var desc = $($('#scaleResultTemplate').html().replace('{description}', 'Updated.'));
-							desc.find('.scale-result-desc').css('color', '#337ab7').next().on('click', function()
-							{
-								desc.remove();
-							});
-							
-							desc.insertAfter(tr);
+							var updatedMessage = $('<span style="color: #337ab7; display:inline; font-size:12px;">Updated.</span>');
+							tr.find('td:last').append(updatedMessage);
 							
 							setTimeout(function()
 							{
-								$(desc).remove();
+								$(updatedMessage).remove();
 							}, 1000 * UPDATE_SCALE_SUCCESS_MESSAGE_TIME);
 						}
 						else
@@ -419,7 +420,6 @@
 			
 			// 앱 상태
 			var app = this.item;
-			console.log('상태 : ', app.entity.state);
 			if(app.entity.state == 'STARTED')
 			{
 				$('#startApp').hide();
