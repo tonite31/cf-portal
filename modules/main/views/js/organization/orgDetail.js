@@ -94,6 +94,7 @@
 						{
 							if(result.entity)
 							{
+								$('#' + result.metadata.guid).prev().text(result.entity.name);
 								$('.org-name-description').text('Updated.').css('color', '#337ab7');
 								setTimeout(function()
 								{

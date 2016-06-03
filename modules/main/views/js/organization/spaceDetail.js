@@ -52,6 +52,7 @@
 						{
 							if(result.entity)
 							{
+								$('#' + result.metadata.guid).children('a').text(result.entity.name);
 								$('.space-name-description').text('Updated.').css('color', '#337ab7');
 								setTimeout(function()
 								{
