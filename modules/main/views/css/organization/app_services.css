@@ -92,3 +92,12 @@
     animation-timing-function: linear;
     animation-iteration-count: infinite;
 }
+
+.bind-cancel
+{
+	cursor: pointer;
+}
+
+.bind-cancel:HOVER {
+	text-decoration: underline;
+}
