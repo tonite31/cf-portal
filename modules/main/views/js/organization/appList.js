@@ -419,6 +419,7 @@
 			
 			// 앱 상태
 			var app = this.item;
+			console.log('상태 : ', app.entity.state);
 			if(app.entity.state == 'STARTED')
 			{
 				$('#startApp').hide();
@@ -467,18 +468,27 @@
 		else
 			space = $('#orgList li li').get(0);
 		
-		if(_global.hash.space == space.item.metadata.guid)
+		if(space)
 		{
-			_ee.emit('space_selected', space.item);
-			setAppList(space.item.entity.apps_url, function()
+			if(_global.hash.space == space.item.metadata.guid)
 			{
-				_IntervalTimer.start('refresh_app_list');
-			});
+				_ee.emit('space_selected', space.item);
+				setAppList(space.item.entity.apps_url, function()
+				{
+					_IntervalTimer.start('refresh_app_list');
+				});
+			}
+			else
+			{
+				_global.hash.space = space.item.metadata.guid;
+				_global.makeHash();
+			}
 		}
 		else
 		{
-			_global.hash.space = space.item.metadata.guid;
-			_global.makeHash();
+//			$('#mainMenus ul:first').remove();
+//			$('.org-body > div').remove();
+//			$('.org-body').append('<div class="alert alert-warning" role="alert" style="margin-top: 20px; text-align: center;">You have no any organization.</div>');
 		}
 	});
 	
@@ -497,6 +507,7 @@
 			{
 				if(result.entity && result.entity.state == 'STARTED')
 				{
+					app.entity.state = result.entity.state;
 					td.html('<span class="text-primary glyphicon glyphicon-play"></span> <span>Started</span>').css('color', '');
 					next();
 				}
@@ -528,6 +539,7 @@
 			{
 				if(result.entity && result.entity.state == 'STOPPED')
 				{
+					app.entity.state = result.entity.state;
 					td.html('<span class="text-primary glyphicon glyphicon-pause"></span> <span>Stopped</span>').css('color', '');
 					next();
 				}
