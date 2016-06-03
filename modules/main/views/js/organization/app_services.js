@@ -366,6 +366,7 @@
 		$(context).find('.service-container').hide();
 		$(context).find('.servicesProgress').show();
 		$(context).find('.servicesMessage').hide();
+		$(context).find('.bind-service-message').text('');
 		
 		pumpkin.setData({context : context, app : app});
 		
@@ -403,6 +404,7 @@
 						{
 							$(context).find('.bind-progress').hide().next().show().next().show();
 							$(context).find('.service-select').val('').removeAttr('disabled');
+							$(context).find('.service-select option[value="' + data.service_instance_guid + '"]').remove();
 						});
 					}
 					else
