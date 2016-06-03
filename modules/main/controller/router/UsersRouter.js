@@ -457,7 +457,6 @@ module.exports = function(app)
 						list.push({name : 'createSpace', params : {name : 'dev'}});
 						list.push({name : 'setSpaceRole', params : {type : 'managed_spaces'}});
 						list.push({name : 'setSpaceRole', params : {type : 'spaces'}});
-						list.push({name : 'sendInviteMail', params : {hostname : req.headers.host, target : email}});
 					}
 					else
 					{
@@ -465,6 +464,7 @@ module.exports = function(app)
 					}
 					
 					pumpkin.data.orgId = orgId;
+					list.push({name : 'sendInviteMail', params : {hostname : req.headers.host, target : email}});
 					list.push({name : 'setOrgRole', params : {type : 'auditors', username : email}});
 					
 					pumpkin.execute(list, function(result)
