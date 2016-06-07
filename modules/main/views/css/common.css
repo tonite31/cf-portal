@@ -41,6 +41,10 @@ body
 {
 	background-color: white;
 	border-color: #aaa;
+	border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
 }
 
 .navbar-header
@@ -190,4 +194,54 @@ input[disabled], select[disabled]
     animation-duration: 2s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
+}
+
+.footer
+{
+	position: absolute;
+	
+	z-index: 1000;
+	
+	color: white;
+	
+	bottom:0;
+	left:0;
+	right:0;
+	height: 40px;
+	
+	font-size:0;
+	
+	padding: 10px;
+	
+	background: #444;
+    background: -moz-linear-gradient(top,#444 0,#222 100%);
+    background: -webkit-gradient(linear,left top,left bottom,color-stop(0,#444),color-stop(100%,#222));
+    background: -webkit-linear-gradient(top,#444 0,#222 100%);
+    background: -o-linear-gradient(top,#444 0,#222 100%);
+    background: -ms-linear-gradient(top,#444 0,#222 100%);
+    background: linear-gradient(to bottom,#444 0,#222 100%);
+}
+
+.footer > span
+{
+	font-size: 12px;
+	vertical-align: middle;
+}
+
+.footer > .divider
+{
+	display: inline-block;
+	
+	height: 20px;
+	width: 0;
+	
+	margin: 0 10px;
+	
+	border-left: 1px solid #222;
+	border-right: 1px solid #444;
+}
+
+.footer a
+{
+	color: white;
 }

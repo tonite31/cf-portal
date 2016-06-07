@@ -7,7 +7,7 @@
 	position: absolute;
 	left: 0;
 	top: 71px;
-	bottom: 0;
+	bottom: 40px;
 	width: 15%;
 	
 	overflow: auto;
@@ -21,7 +21,7 @@
 	position: absolute;
 	right: 0;
 	top: 71px;
-	bottom: 0;
+	bottom: 40px;
 	left: 15%;
 	
 	width: 85%;

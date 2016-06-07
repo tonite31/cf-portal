@@ -1,0 +1,68 @@
+<style>
+.select
+{
+    width: 400px;
+    margin-right: 10px;
+    
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 5px;
+    border: 1px solid #f2f2f2;
+    border-radius: 2px;
+    height: 45px;
+}
+
+.pre-label
+{
+	margin-top: 20px;
+}
+</style>
+
+<script>
+$(document).ready(function()
+{
+	$('#osSelect').on('change', function()
+	{
+		var value = $(this).val();
+		if(value)
+		{
+			$('#link').attr('href', value).show();
+		}
+		else
+		{
+			$('#link').hide();
+		}
+	});
+});
+</script>
+
+<div class="container">
+	<div class="page-header">
+		<h2>Download CLI</h2>
+	</div>
+	<div>
+		<p>Cloud Foundry CLI for pushing and managing apps, creating and binding services, and mroe</p>
+		<p>Download and Install the CLI</p>
+		<p>
+			<select id="osSelect" class="select">
+				<option>Choose your OS</option>
+				<option value="https://cli.run.pivotal.io/stable?release=windows32&source=pws">Windows 32 bit</option>
+				<option value="https://cli.run.pivotal.io/stable?release=windows64&source=pws">Windows 64 bit</option>
+				<option value="https://cli.run.pivotal.io/stable?release=macosx64&source=pws">Mac OS X 64 bit</option>
+				<option value="https://cli.run.pivotal.io/stable?release=debian64&source=pws">Linux 64 bit(.deb)</option>
+				<option value="https://cli.run.pivotal.io/stable?release=debian32&source=pws">Linux 32 bit(.deb)</option>
+				<option value="https://cli.run.pivotal.io/stable?release=redhat64&source=pws">Linux 64 bit(.rpm)</option>
+				<option value="https://cli.run.pivotal.io/stable?release=redhat32&source=pws">Linux 32 bit(.rpm)</option>
+			</select>
+			<a id="link" class="btn btn-primary" style="display:none;">Download</a>
+		</p>
+	</div>
+	<div style="margin-top: 40px;">
+		<h3>Basic Usage</h3>
+		<p class="pre-label">Login to the CLI</p>
+		<pre>$ cf login -a api.my-unique-domain.io</pre>
+		<p class="pre-label">Get help in the CLI</p>
+		<pre>$ cf help</pre>
+		<p class="pre-label">Push an application</p>
+		<pre>$ cf push your_app</pre>
+	</div>
+</div>
