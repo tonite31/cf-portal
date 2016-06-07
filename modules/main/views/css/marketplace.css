@@ -1,3 +1,8 @@
+.footer
+{
+	position: static;
+}
+
 .service-row
 {
 	display: table;
