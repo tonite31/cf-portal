@@ -587,7 +587,7 @@
 		
 		$('#refreshAppList').on('click', function()
 		{
-			_IntervalTimer.end('app_detail_status');
+			_IntervalTimer.end('refresh_app_list');
 			var state = $(this).attr('data-state');
 			if(state != 'on')
 			{
@@ -598,7 +598,7 @@
 					$('.refresh-app-list-description').text('');
 					$('#refreshAppList').css('animation-name', 'none').attr('data-state', 'off');
 							
-					_IntervalTimer.start('app_detail_status');
+					_IntervalTimer.start('refresh_app_list');
 				});
 			}
 			else
@@ -681,7 +681,7 @@
 					$('.refresh-app-list-description').text('');
 					$('#refreshAppList').css('animation-name', 'none').attr('data-state', 'off');
 							
-					_IntervalTimer.start('app_detail_status');
+					_IntervalTimer.start('refresh_app_list');
 				});
 			});
 		});

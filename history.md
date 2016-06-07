@@ -1,7 +1,8 @@
 #History
 
-## 0.0.2
-Change routing policy.
+## 2.0.1
+ - Fixed bugs.
 
-## 0.0.1
-First release.
+## 2.0.0
+ - Design chagned.
+ - Improved performance.

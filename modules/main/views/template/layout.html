@@ -22,7 +22,16 @@
 window.onhashchange = function()
 {
 	_global.parseHash();
-	_ee.emit('hashchange');
+	
+	if(!_global.hash.space)
+	{
+		_global.hash.space = $('.space-name.selected').parent().attr('id');
+		location.hash = 'space=' + _global.hash.space;
+	}
+	else
+	{
+		_ee.emit('hashchange');		
+	}
 };
 
 $(document).ready(function()
