@@ -9,7 +9,9 @@ module.exports = function(app)
 	app.post('/signout.do', function(req, res, next)
 	{
 		if(req.session.cfdata)
-			req.session.cfdata = null;
+		{
+			delete req.session.cfdata;
+		}
 		
 		res.end();
 	});
@@ -207,8 +209,9 @@ var rendering = function(req, res)
 	if(req.session.cfdata.endpoint)
 	{
 		param.tailLogServer = req.session.cfdata.endpoint.logging_socket;
-		param.endpoint = req.session.cfdata.endpoint.api;
 	}
+	
+	param.endpoint = _config.endpoint;
 	
 	for(var i=1; i<split.length; i++)
 	{
