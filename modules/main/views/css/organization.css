@@ -128,7 +128,7 @@
 	position: relative;
 }
 
-.org-name-description, .space-name-description
+.org-name-description, .space-name-description, .delete-message
 {
 	font-size: 12px;
 	color: red;

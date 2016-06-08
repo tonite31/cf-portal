@@ -364,6 +364,10 @@
 					});
 				});
 			}
+			else
+			{
+				$('#appDetailTab').hide();
+			}
 		});
 	}
 	
@@ -673,18 +677,26 @@
 			var app = $('#appsBody tr.selected').get(0).item;
 			CF.async({url : '/v2/apps/' + app.metadata.guid, method : 'DELETE'}, function(result)
 			{
-				done();
-				_IntervalTimer.end('refresh_app_list');
-				var space = $('#' + _global.hash.space).get(0);
-				$('#refreshAppList').css('animation-name', 'progress').attr('data-state', 'on');
-				$('.refresh-app-list-description').text('Refreshing...');
-				setAppList(space.item.entity.apps_url, function()
+				if(result && result.code)
 				{
-					$('.refresh-app-list-description').text('');
-					$('#refreshAppList').css('animation-name', 'none').attr('data-state', 'off');
-							
-					_IntervalTimer.start('refresh_app_list');
-				});
+					$('.delete-message').text(result.description ? result.description : JSON.stringify(result.error));
+				}
+				else
+				{
+					_IntervalTimer.end('refresh_app_list');
+					var space = $('#' + _global.hash.space).get(0);
+					$('#refreshAppList').css('animation-name', 'progress').attr('data-state', 'on');
+					$('.refresh-app-list-description').text('Refreshing...');
+					setAppList(space.item.entity.apps_url, function()
+					{
+						$('.refresh-app-list-description').text('');
+						$('#refreshAppList').css('animation-name', 'none').attr('data-state', 'off');
+								
+						_IntervalTimer.start('refresh_app_list');
+					});
+				}
+				
+				done();
 			});
 		});
 		
