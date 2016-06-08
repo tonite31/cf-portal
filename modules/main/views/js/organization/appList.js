@@ -367,6 +367,8 @@
 			else
 			{
 				$('#appDetailTab').hide();
+				if(callback)
+					callback();
 			}
 		});
 	}
