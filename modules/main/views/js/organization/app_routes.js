@@ -135,7 +135,7 @@
 	
 	var mapRoute = function(context, appGuid, routeGuid, data)
 	{
-		CF.async({url : "/v2/route_mappings", method : "POST", form : {app_guid : appGuid, route_guid : routeGuid}}, function(result)
+		CF.async({url : '/v2/routes/' + routeGuid + '/apps/' + appGuid, method : "PUT"}, function(result)
 		{
 			if(result)
 			{
