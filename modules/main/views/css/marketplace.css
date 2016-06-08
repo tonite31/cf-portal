@@ -3,6 +3,11 @@
 	position: static;
 }
 
+.container
+{
+	min-height: 700px;
+}
+
 .service-row
 {
 	display: table;

@@ -500,6 +500,8 @@
 		{
 			$('.detailProgress').show();
 			
+			$('.tab-pane.active').removeClass('active');
+			
 			$('#serviceTable tbody tr.selected').removeClass('selected');
 			$(this).addClass('selected');
 			
@@ -513,8 +515,9 @@
 			
 			setDetailsPumpkin.executeAsync(workList, function()
 			{
+				var id = $('#serviceDetailTab >ul > li.active').children('a').attr('aria-controls');
+				$('#' + id).addClass('active');
 				$('.detailProgress').hide();
-				$('.binding-table').show();
 				$('html, body').animate({scrollTop:document.body.scrollHeight});
 			});
 		});
@@ -529,6 +532,8 @@
 		
 		$('#orgSelect').on('change', function()
 		{
+			$('.tab-pane.active').removeClass('active');
+			$('#spaceSelect').html('<option value="" disabled selected>Spaces Loading...</option>');
 			pumpkin.execute([{name : 'getSpaces', params : {guid : $(this).val()}}], function()
 			{
 				getServices();
@@ -537,6 +542,7 @@
 		
 		$('#spaceSelect').on('change', function()
 		{
+			$('.tab-pane.active').removeClass('active');
 			if($(this).val() == '')
 			{
 				if(this.init)
@@ -614,6 +620,7 @@
 				}
 				
 				$('#serviceDetails').hide();
+				$('#settings input[type="submit"]').show();
 				serviceInstance.element.remove();
 				done();
 			},

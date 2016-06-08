@@ -219,30 +219,28 @@
 			$(context).find('.routes-form select').attr('disabled', '');
 			$(context).find('.routes-form .map-progress').css('display', 'inline-block').next().hide().next().hide();
 			
-//			CF.async({url : '/v2/routes?q=host:' + data.host + '&q=domain_guid:' + data.domain_guid}, function(result)
-			CF.async({url : '/v2/routes'}, function(result)
+			CF.async({url : '/v2/routes?q=host:' + data.host + '&q=domain_guid:' + data.domain_guid}, function(result)
 			{
 				if(result)
 				{
 					if(result.resources)
 					{
-						var routeList = result.resources;
-						for(var i=0; i<routeList.length; i++)
+						if(result.resources.length == 1)
 						{
-							if(routeList[i].entity.host == data.host && routeList[i].entity.domain_guid == data.domain_guid)
-							{
-								mapRoute(context, app.metadata.guid, routeList[i].metadata.guid, data);
-								return;
-							}
+							mapRoute(context, app.metadata.guid, result.resources[0].metadata.guid, data);
+							return;
 						}
 					}
 					else
 					{
 						$(context).find('.map-message').text(result.description ? result.description : JSON.stringify(result.error));
-						return;
 					}
 				}
-				
+				else
+				{
+					$(context).find('.map-message').text('Unknown Error');
+				}
+
 				//만약 스페이스 라우트 목록에 라우트가 없다면 새로운 라우트를 먼저 만들고.
 				CF.async({url : "/v2/routes", method : "POST", form : data}, function(result)
 				{

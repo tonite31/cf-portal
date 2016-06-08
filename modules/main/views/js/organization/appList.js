@@ -21,6 +21,8 @@
 					var appList = result.resources;
 					if(appList.length == 0)
 					{
+						$('#startApp').hide();
+						$('#deleteApp').hide();
 						$('#appsBody').append('<tr><td colspan="7" style="text-align: center;">no applications</td></tr>');
 					}
 					else

@@ -3,6 +3,11 @@
 	position: static;
 }
 
+.container
+{
+	min-height: 700px;
+}
+
 .input-group
 {
 	margin: 20px 0;

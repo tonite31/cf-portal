@@ -51,7 +51,6 @@
 			$('.small-progress').css('display', 'inline-block').next().hide().next().hide();
 			CF.users('password', data, function(result)
 			{
-				console.log("머냐 : ", result);
 				$('.small-progress').hide().next().show().next().show();
 				if(result)
 				{
@@ -65,7 +64,7 @@
 					}
 					else
 					{
-						$('.message').text(result.description ? result.description : JSON.stringify(result.error));
+						$('.message').text(result.description ? result.description : JSON.stringify(result));
 					}
 				}
 				else

@@ -199,6 +199,9 @@
 					var userList = result.resources;
 					for(var i=0; i<userList.length; i++)
 					{
+						if($('#' + params.tableName + ' tbody tr[data-guid="' + userList[i].metadata.guid + '"]').length > 0)
+							continue;
+						
 						var template = $('#userRowTemplate').html();
 						template = template.replace('{guid}', userList[i].metadata.guid).replace('{username}', userList[i].entity.username);
 						

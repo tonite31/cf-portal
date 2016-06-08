@@ -6,6 +6,7 @@
 .container
 {
 	padding-top: 10px;
+	min-height: 700px;
 }
 
 .org-select

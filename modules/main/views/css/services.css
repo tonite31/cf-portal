@@ -6,6 +6,7 @@
 .container
 {
 	padding: 10px 0;
+	min-height: 700px;
 }
 
 .select

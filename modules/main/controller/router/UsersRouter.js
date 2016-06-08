@@ -507,28 +507,48 @@ module.exports = function(app)
 		var oldPassword = req.session.cfdata.password;
 		var password = req.body.password;
 		
-		cf.setUserInfo(username, oldPassword);
-		cf.login(function(result)
+		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
+		client.setUserInfo(_config.admin.username, _config.admin.password);
+		client.login(function()
 		{
-			cf.changePassword(id, password, function(result)
+			client.getUser(username, function(result)
 			{
-				if(result)
+				if(result && result.resources)
 				{
-					res.send(result);
+					var user = result.resources[0];
+					cf.setUserInfo(username, oldPassword);
+					cf.login(function(result)
+					{
+						cf.changePassword(user.id, password, function(result)
+						{
+							if(result)
+							{
+								res.send(result);
+							}
+						},
+						function(error)
+						{
+							if(error)
+							{
+								res.status(500).send({error : error});
+							}
+						});
+					},
+					function(error)
+					{
+						if(error)
+							res.status(500).send({error : error});
+					});
 				}
 			},
-			function(error)
+			function(err)
 			{
-				if(error)
-				{
-					res.status(500).send({error : error});
-				}
+				res.status(500).send({error : err});
 			});
 		},
-		function(error)
+		function(err)
 		{
-			if(error)
-				res.status(500).send({error : error});
+			res.status(500).send({error : err});
 		});
 	});
 	

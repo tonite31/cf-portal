@@ -102,6 +102,8 @@
 {
 	display: table;
 	width: 100%;
+	
+	min-height: 20px;
 }
 
 .app-functions button

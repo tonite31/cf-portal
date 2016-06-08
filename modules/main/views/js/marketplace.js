@@ -110,7 +110,8 @@
 						if(planList[i].entity.extra)
 						{
 							planList[i].entity.extra = JSON.parse(planList[i].entity.extra);
-							$('<span>$' + planList[i].entity.extra.costs[0].amount.usd + ' / ' + planList[i].entity.extra.costs[0].unit + '</span>').insertAfter(nameTh.find('.plan-name'));
+							if(planList[i].entity.extra.costs)
+								$('<span>$' + planList[i].entity.extra.costs[0].amount.usd + ' / ' + planList[i].entity.extra.costs[0].unit + '</span>').insertAfter(nameTh.find('.plan-name'));
 							
 							var bullets = planList[i].entity.extra.bullets;
 							var html = '<ul>';
@@ -348,21 +349,48 @@
 			
 			CF.async({url : '/v2/service_instances', method : 'POST', form : data}, function(result)
 			{
-				$('.modal-form .small-progress').hide().next().next().show().next().show();
 				if(result)
 				{
 					if(result.entity)
 					{
-						$('#selectPlanDialog').modal('hide');
+						if(data.appGuid)
+						{
+							CF.async({url : '/v2/service_bindings', method : 'POST', form : {service_instance_guid : result.metadata.guid, app_guid : data.appGuid}}, function(result)
+							{
+								$('.modal-form .small-progress').hide().next().next().show().next().show();
+								if(result)
+								{
+									if(result.entity)
+									{
+										$('#selectPlanDialog').modal('hide');
+									}
+									else
+									{
+										$('#modalMessage').text(result.description ? result.description : JSON.stringify(result.error));
+									}
+								}
+								else
+								{
+									$('#modalMessage').text('Unknown Error by creation service binding.');
+								}
+							},
+							function(error)
+							{
+								$('.modal-form .small-progress').hide().next().next().show().next().show();
+								$('#modalMessage').text(error);
+							});
+						}
 					}
 					else
 					{
+						$('.modal-form .small-progress').hide().next().next().show().next().show();
 						$('#modalMessage').text(result.description ? result.description : JSON.stringify(result.error));
 					}
 				}
 				else
 				{
-					$('#modalMessage').text('Unknown Error');	
+					$('.modal-form .small-progress').hide().next().next().show().next().show();
+					$('#modalMessage').text('Unknown Error');
 				}
 			},
 			function(error)
