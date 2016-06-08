@@ -674,6 +674,7 @@
 		
 		confirmButton('#deleteApp', function(done)
 		{
+			$('.delete-message').text('');
 			var app = $('#appsBody tr.selected').get(0).item;
 			CF.async({url : '/v2/apps/' + app.metadata.guid, method : 'DELETE'}, function(result)
 			{
@@ -683,6 +684,7 @@
 				}
 				else
 				{
+					$('.delete-message').text('');
 					_IntervalTimer.end('refresh_app_list');
 					var space = $('#' + _global.hash.space).get(0);
 					$('#refreshAppList').css('animation-name', 'progress').attr('data-state', 'on');
