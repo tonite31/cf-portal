@@ -183,10 +183,6 @@
 	
 	pumpkinForList.addWork('getUsersForCheck', function(params)
 	{
-		var progress = $('#' + params.tableName + ' tbody tr:first').show();
-		
-		$('#' + params.tableName + ' tbody').html('').append(progress);
-		
 		var next = this.next;
 		var error = this.error;
 		
@@ -200,7 +196,10 @@
 					for(var i=0; i<userList.length; i++)
 					{
 						if($('#' + params.tableName + ' tbody tr[data-guid="' + userList[i].metadata.guid + '"]').length > 0)
+						{
+							$('#' + params.tableName + ' tbody tr[data-guid="' + userList[i].metadata.guid + '"] .' + this.type).get(0).checked = true;
 							continue;
+						}
 						
 						var template = $('#userRowTemplate').html();
 						template = template.replace('{guid}', userList[i].metadata.guid).replace('{username}', userList[i].entity.username);
@@ -217,6 +216,8 @@
 								input.checked = true;
 						}
 					}
+					
+					var check = this.check;
 					
 					$('#' + params.tableName + ' tbody tr input[type="checkbox"]').off('change').on('change', function()
 					{
@@ -239,10 +240,16 @@
 						}
 						else
 						{
-							if(params.dataName == 'spaces')
+							if(params.dataName == 'spaces' || check)
 								params.type = 'developers';
 							else
 								params.type = 'billing_managers';
+						}
+						
+						if(check)
+						{
+							params.dataName = 'spaces';
+							params.guid = $('#spaceSelect').val();
 						}
 						
 						var progress = '<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>';
@@ -320,6 +327,9 @@
 	
 	var loadOrganizationMembers = function(guid)
 	{
+		var progress = $('#orgTable tbody tr:first').show();
+		$('#orgTable tbody').html('').append(progress);
+		
 		var workList = [{name : 'getUsersForCheck', params : {guid : guid, tableName : 'orgTable', dataName : 'organizations', type : 'managers'}},
                         {name : 'getUsersForCheck', params : {guid : guid, tableName : 'orgTable', dataName : 'organizations', type : 'billing_managers'}},
                         {name : 'getUsersForCheck', params : {guid : guid, tableName : 'orgTable', dataName : 'organizations', type : 'auditors'}}];
@@ -373,40 +383,47 @@
 	
 	var loadSpaceMembers = function(guid)
 	{
+		var progress = $('#orgTable tbody tr:first').show();
+		$('#orgTable tbody').html('').append(progress);
+		
 		var workList = [{name : 'getUsersForCheck', params : {guid : guid, tableName : 'spaceTable', dataName : 'spaces', type : 'managers'}},
                         {name : 'getUsersForCheck', params : {guid : guid, tableName : 'spaceTable', dataName : 'spaces', type : 'developers'}},
-                        {name : 'getUsersForCheck', params : {guid : guid, tableName : 'spaceTable', dataName : 'spaces', type : 'auditors'}},
-                        {name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'managers', check : true}},
-                        {name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'billing_managers', check : true}},
-                        {name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'auditors', check : true}}];
+                        {name : 'getUsersForCheck', params : {guid : guid, tableName : 'spaceTable', dataName : 'spaces', type : 'auditors'}}];
 		
 		pumpkinForList.executeAsync(workList, function()
 		{
-			$('#spaceTable tbody tr').show();
-			$('#spaceTable tbody tr:first').hide();
-			
-			$('#spaceTable tbody .glyphicon-remove').each(function()
+			var workList = [{name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'managers', check : true}},
+	                        {name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'billing_managers', check : true}},
+	                        {name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'auditors', check : true}}];
+			pumpkinForList.state = 0;
+			pumpkinForList.executeAsync(workList, function()
 			{
-				var tr = $(this).parent().parent();
-				var user = tr.get(0).item;
-				confirmSpan(this, function(done)
+				$('#spaceTable tbody tr').show();
+				$('#spaceTable tbody tr:first').hide();
+				
+				$('#spaceTable tbody .glyphicon-remove').each(function()
 				{
-					var guid = $('#spaceSelect option:selected').val();
-					var workList = [];
-					workList.push({name : 'update', params : {tableName : 'spaceTable', dataName : 'spaces', type : 'auditors', guid : guid, userGuid : user.metadata.guid, method : 'DELETE'}});
-					workList.push({name : 'update', params : {tableName : 'spaceTable', dataName : 'spaces', type : 'managers', guid : guid, userGuid : user.metadata.guid, method : 'DELETE'}});
-					workList.push({name : 'update', params : {tableName : 'spaceTable', dataName : 'spaces', type : 'developers', guid : guid, userGuid : user.metadata.guid, method : 'DELETE'}});
-					updateMemberAssociation.execute(workList, function()
+					var tr = $(this).parent().parent();
+					var user = tr.get(0).item;
+					confirmSpan(this, function(done)
 					{
-						tr.remove();
-						done();
-					},
-					function(workName, error)
-					{
-						var errorTr = $('<tr><td colspan="5" class="error" style="text-align: right;">' + error + ' <span class="glyphicon glyphicon-remove"></span></td></tr>').insertAfter(tr);
-						errorTr.find('.glyphicon').on('click', function()
+						var guid = $('#spaceSelect option:selected').val();
+						var workList = [];
+						workList.push({name : 'update', params : {tableName : 'spaceTable', dataName : 'spaces', type : 'auditors', guid : guid, userGuid : user.metadata.guid, method : 'DELETE'}});
+						workList.push({name : 'update', params : {tableName : 'spaceTable', dataName : 'spaces', type : 'managers', guid : guid, userGuid : user.metadata.guid, method : 'DELETE'}});
+						workList.push({name : 'update', params : {tableName : 'spaceTable', dataName : 'spaces', type : 'developers', guid : guid, userGuid : user.metadata.guid, method : 'DELETE'}});
+						updateMemberAssociation.execute(workList, function()
 						{
-							$(this).parent().parent().remove();
+							tr.remove();
+							done();
+						},
+						function(workName, error)
+						{
+							var errorTr = $('<tr><td colspan="5" class="error" style="text-align: right;">' + error + ' <span class="glyphicon glyphicon-remove"></span></td></tr>').insertAfter(tr);
+							errorTr.find('.glyphicon').on('click', function()
+							{
+								$(this).parent().parent().remove();
+							});
 						});
 					});
 				});
