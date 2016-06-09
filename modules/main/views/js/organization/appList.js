@@ -4,6 +4,8 @@
 	var UPDATE_SCALE_SUCCESS_MESSAGE_TIME = 3; //앱의 인스턴스와 메모리 업데이트를 성공적으로 마친경우 메시지 표시 시간.
 	var appRefreshTimer = null;
 	
+	var selectedAppGuid = null;
+	
 	var pumpkin = new Pumpkin();
 	pumpkin.addWork('getAppList', function(params)
 	{
@@ -38,7 +40,7 @@
 							else
 								template = template.replace('{stateColor}', 'text-danger').replace('{stateIcon}', 'glyphicon-stop').replace('{state}', 'Down');
 							
-							template = template.replace('{name}', appList[i].entity.name).replace(/{disk}/gi, appList[i].entity.disk_quota).replace(/{instance}/gi, appList[i].entity.instances).replace(/{memory}/gi, appList[i].entity.memory);
+							template = template.replace('{guid}', appList[i].metadata.guid).replace('{name}', appList[i].entity.name).replace(/{disk}/gi, appList[i].entity.disk_quota).replace(/{instance}/gi, appList[i].entity.instances).replace(/{memory}/gi, appList[i].entity.memory);
 							
 							var app = $(template).hide();
 							appList[i].element = app;
@@ -272,14 +274,30 @@
 			if(appList.length > 0)
 			{
 				bindScaleEvent();
-				if(!isTimerRefresh)
-					setAppDetails();
+				setAppDetails();
 				
-				var selectedApp = $('#appsBody tr.selected');
-				if(selectedApp.length == 0)
-					$('#appsProgress').parent().parent().next().click();
-				else
+				if(!isTimerRefresh)
+				{
+					var selectedApp = $('#appsBody tr.selected');
+					if(selectedApp.length == 0)
+					{
+						if(selectedAppGuid)
+						{
+							selectedApp = $('tr[data-guid="' + selectedAppGuid + '"]');
+						}
+						else
+						{
+							selectedApp = $('#appsProgress').parent().parent().next();
+						}
+					}
+
 					selectedApp.click();
+					selectedAppGuid = selectedApp.get(0).item.metadata.guid;
+				}
+				else
+				{
+					$('tr[data-guid="' + selectedAppGuid + '"]').addClass('selected');
+				}
 				
 				$('#appDetailTab').show();
 				
@@ -377,6 +395,8 @@
 	{
 		$('#appsBody tr').off('click').on('click', function()
 		{
+			selectedAppGuid = this.item.metadata.guid;
+			
 			$('#appsBody tr').removeClass('selected');
 			$(this).addClass('selected');
 			
