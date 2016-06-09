@@ -183,7 +183,7 @@
 	
 	pumpkinForList.addWork('getUsersForCheck', function(params)
 	{
-		var progress = $('#' + params.tableName + ' tbody tr:first');
+		var progress = $('#' + params.tableName + ' tbody tr:first').show();
 		
 		$('#' + params.tableName + ' tbody').html('').append(progress);
 		
@@ -210,9 +210,12 @@
 						
 						$('#' + params.tableName + ' tbody').append(row);
 						
-						var input = $(row).find('.' + this.type).get(0);
-						if(input)
-							input.checked = true;
+						if(!this.check)
+						{
+							var input = $(row).find('.' + this.type).get(0);
+							if(input)
+								input.checked = true;
+						}
 					}
 					
 					$('#' + params.tableName + ' tbody tr input[type="checkbox"]').off('change').on('change', function()
@@ -273,7 +276,7 @@
 				$('#' + params.tableName + ' tbody').append('<tr><td class="error" colspan="5" style="text-align: center;">Unknown Error.</td></tr>');
 				error();
 			}
-		}.bind({type : params.type}),
+		}.bind({type : params.type, check : params.check}),
 		function(error)
 		{
 			progress.hide();
@@ -372,7 +375,10 @@
 	{
 		var workList = [{name : 'getUsersForCheck', params : {guid : guid, tableName : 'spaceTable', dataName : 'spaces', type : 'managers'}},
                         {name : 'getUsersForCheck', params : {guid : guid, tableName : 'spaceTable', dataName : 'spaces', type : 'developers'}},
-                        {name : 'getUsersForCheck', params : {guid : guid, tableName : 'spaceTable', dataName : 'spaces', type : 'auditors'}}];
+                        {name : 'getUsersForCheck', params : {guid : guid, tableName : 'spaceTable', dataName : 'spaces', type : 'auditors'}},
+                        {name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'managers', check : true}},
+                        {name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'billing_managers', check : true}},
+                        {name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'auditors', check : true}}];
 		
 		pumpkinForList.executeAsync(workList, function()
 		{
