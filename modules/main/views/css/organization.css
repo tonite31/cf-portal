@@ -134,7 +134,7 @@
 	color: red;
 }
 
-#orgName:HOVER .glyphicon-pencil, #spaceName .glyphicon-pencil
+#orgName:HOVER .glyphicon-pencil, #spaceName:HOVER .glyphicon-pencil
 {
 	display: inline;
 }
