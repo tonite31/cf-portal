@@ -380,6 +380,10 @@
 								$('#modalMessage').text(error);
 							});
 						}
+						else
+						{
+							$('#selectPlanDialog').modal('hide');
+						}
 					}
 					else
 					{

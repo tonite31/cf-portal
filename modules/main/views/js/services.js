@@ -158,8 +158,13 @@
 	
 	var getServices = function()
 	{
-		var progress = $('#serviceTable tbody tr:first').show();
-		$('#serviceTable tbody').html('').append(progress);
+		var origin = $('#serviceTable');
+		var clone = origin.clone();
+		clone.insertAfter(origin);
+		origin.remove();
+		
+		var progress = clone.find('tbody tr:first').show();
+		clone.find('tbody').html('').append(progress);
 		
 		var guid = $('#spaceSelect').val();
 		CF.async({url : '/v2/spaces/' + guid + '/service_instances'}, function(result)
@@ -234,21 +239,21 @@
 							if(!imageUrl)
 								template.find('img').remove();
 							
-							$('#serviceTable tbody').append(template);
+							clone.find('tbody').append(template);
 							
 							done();
 						},
 						function(workName, error)
 						{
-							$('#serviceTable tbody').append('<tr><td colspan="5" style="text-align: center; color: red;">' + error + '</td></tr>');
+							clone.find('tbody').append('<tr><td colspan="5" style="text-align: center; color: red;">' + error + '</td></tr>');
 						});
 					},
 					function()
 					{
 						if(serviceList.length == 0)
-							$('#serviceTable tbody').append('<tr><td colspan="5" style="text-align:center;">no services</td></tr>');
+							clone.find('tbody').append('<tr><td colspan="5" style="text-align:center;">no services</td></tr>');
 						
-						$('#serviceTable tbody tr').show();
+						clone.find('tbody tr').show();
 						progress.hide();
 						
 						setDetails();
@@ -256,20 +261,20 @@
 				}
 				else
 				{
-					$('.progress-row').hide();
-					$('#serviceTable tbody').append('<tr><td colspan="5" style="text-align: center; color: red;">' + (result.description ? result.description : JSON.stringify(result.error)) + '</td></tr>');
+					clone.find('.progress-row').hide();
+					clone.find('tbody').append('<tr><td colspan="5" style="text-align: center; color: red;">' + (result.description ? result.description : JSON.stringify(result.error)) + '</td></tr>');
 				}
 			}
 			else
 			{
-				$('.progress-row').hide();
-				$('#serviceTable tbody').append('<tr><td colspan="5" style="text-align: center; color: red;">Unknown Error</td></tr>');
+				clone.find('.progress-row').hide();
+				clone.find('tbody').append('<tr><td colspan="5" style="text-align: center; color: red;">Unknown Error</td></tr>');
 			}
 		},
 		function(error)
 		{
-			$('.progress-row').hide();
-			$('#serviceTable tbody').append('<tr><td colspan="5" style="text-align: center; color: red;">' + error + '</td></tr>');
+			clone.find('.progress-row').hide();
+			clone.find('tbody').append('<tr><td colspan="5" style="text-align: center; color: red;">' + error + '</td></tr>');
 		});
 	};
 	
@@ -527,7 +532,15 @@
 	{
 		pumpkin.execute(['getOrgs', 'getSpaces'], function()
 		{
-			getServices();
+			if(!$('#spaceSelect').val())
+			{
+				$('#spaceSelect').html('<option value="" disabled selected>no spaces</option>');
+				$('#serviceTable tbody').append('<tr><td colspan="5" style="text-align:center;">no services</td></tr>').find('tr:first').hide();
+			}
+			else
+			{
+				getServices();
+			}
 		});
 		
 		$('#orgSelect').on('change', function()
@@ -536,7 +549,15 @@
 			$('#spaceSelect').html('<option value="" disabled selected>Spaces Loading...</option>');
 			pumpkin.execute([{name : 'getSpaces', params : {guid : $(this).val()}}], function()
 			{
-				getServices();
+				if(!$('#spaceSelect').val())
+				{
+					$('#spaceSelect').html('<option value="" disabled selected>no spaces</option>');
+					$('#serviceTable tbody').append('<tr><td colspan="5" style="text-align:center;">no services</td></tr>').find('tr:first').hide();
+				}
+				else
+				{
+					getServices();
+				}
 			});
 		});
 		
