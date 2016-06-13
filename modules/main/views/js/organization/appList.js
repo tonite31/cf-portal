@@ -466,6 +466,8 @@
 	
 	_ee.on('hashchange', function()
 	{
+		selectedAppGuid = null;
+		
 		_IntervalTimer.end('refresh_app_list');
 		$('.refresh-app-list-description').text('');
 		
