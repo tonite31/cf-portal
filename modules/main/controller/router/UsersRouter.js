@@ -400,7 +400,6 @@ module.exports = function(app)
 		                 {name : 'getQuotaByName', params : {name : 'personal'}},
 		                 {name : 'createOrg', params : {name : email + '_Org'}},
 		                 {name : 'setOrgUsers', params : {username : email}},
-		                 {name : 'setOrgRole', params : {type : 'managers', username : _config.admin.username}},
 		                 {name : 'setOrgRole', params : {type : 'managers', username : email}},
 		                 {name : 'createSpace', params : {name : 'dev'}},
 		                 {name : 'setSpaceRole', params : {type : 'managers', username : email}},
