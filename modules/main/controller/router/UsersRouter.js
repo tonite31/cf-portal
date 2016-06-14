@@ -214,7 +214,7 @@ pumpkin.addWork('createSpace', function(params)
 			if(result.code == 40002)
 			{
 				//임시코드 만약 영역이 있으면 그놈으로 권한 주고 이동.
-				this.data.client.request('/v2/spaces?q=name:' + params.name, 'GET', null, null, function(result)
+				this.data.client.request('/v2/spaces?q=name:' + params.name + '&q=organization_guid:' + this.data.orgId, 'GET', null, null, function(result)
 				{
 					if(result)
 					{
@@ -249,9 +249,20 @@ pumpkin.addWork('createSpace', function(params)
 	}.bind(this));
 });
 
+pumpkin.addWork('setOrgUsers', function(params)
+{
+	this.data.client.request('/v2/organizations/' + this.data.orgId + '/users', 'PUT', null, {username : params.username}, function(result)
+	{
+		this.next();
+	}.bind(this), function(error){
+		this.error(error);
+	}.bind(this));
+});
+
 pumpkin.addWork('setSpaceRole', function(params)
 {
-	this.data.client.request('/v2/users/' + this.data.userId + '/' + params.type + '/' + this.data.spaceId, 'PUT', null, null, function(result)
+	this.data.client.request('/v2/spaces/' + this.data.spaceId + '/' + params.type, 'PUT', null, {username : params.username}, function(result)
+//	this.data.client.request('/v2/users/' + this.data.userId + '/' + params.type + '/' + this.data.spaceId, 'PUT', null, null, function(result)
 	{
 		this.next(result);
 	}.bind(this), function(error){
@@ -261,7 +272,8 @@ pumpkin.addWork('setSpaceRole', function(params)
 
 pumpkin.addWork('deleteSpaceRole', function(params)
 {
-	this.data.client.request('/v2/users/' + params.userId + '/' + params.type + '/' + params.spaceId, 'DELETE', null, null, function(result)
+	this.data.client.request('/v2/spaces/' + this.data.spaceId + '/' + params.type + '/' + this.data.userId, 'DELETE', null, null, function(result)
+//	this.data.client.request('/v2/users/' + params.userId + '/' + params.type + '/' + params.spaceId, 'DELETE', null, null, function(result)
 	{
 		this.next();
 	}.bind(this), function(error){
@@ -387,10 +399,12 @@ module.exports = function(app)
 		                 {name : 'createUser', params : {username : email, password : password}},
 		                 {name : 'getQuotaByName', params : {name : 'personal'}},
 		                 {name : 'createOrg', params : {name : email + '_Org'}},
+		                 {name : 'setOrgUsers', params : {username : email}},
+		                 {name : 'setOrgRole', params : {type : 'managers', username : _config.admin.username}},
 		                 {name : 'setOrgRole', params : {type : 'managers', username : email}},
 		                 {name : 'createSpace', params : {name : 'dev'}},
-		                 {name : 'setSpaceRole', params : {type : 'managed_spaces'}},
-		                 {name : 'setSpaceRole', params : {type : 'spaces'}}], done, error);
+		                 {name : 'setSpaceRole', params : {type : 'managers', username : email}},
+		                 {name : 'setSpaceRole', params : {type : 'developers', username : email}}], done, error);
 	});
 	
 	app.post('/users/withdrawal', function(req, res, next)
