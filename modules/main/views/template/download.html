@@ -20,6 +20,12 @@
 <script>
 $(document).ready(function()
 {
+	var username = $('#username').attr('data-username');
+	if(username == '#' + '{username}')
+	{
+		$('#mainMenus').attr('style', 'display: none !important;');
+	}
+	
 	$('#osSelect').on('change', function()
 	{
 		var value = $(this).val();
@@ -45,13 +51,13 @@ $(document).ready(function()
 		<p>
 			<select id="osSelect" class="select">
 				<option>Choose your OS</option>
-				<option value="https://cli.run.pivotal.io/stable?release=windows32&source=pws">Windows 32 bit</option>
-				<option value="https://cli.run.pivotal.io/stable?release=windows64&source=pws">Windows 64 bit</option>
-				<option value="https://cli.run.pivotal.io/stable?release=macosx64&source=pws">Mac OS X 64 bit</option>
-				<option value="https://cli.run.pivotal.io/stable?release=debian64&source=pws">Linux 64 bit(.deb)</option>
-				<option value="https://cli.run.pivotal.io/stable?release=debian32&source=pws">Linux 32 bit(.deb)</option>
-				<option value="https://cli.run.pivotal.io/stable?release=redhat64&source=pws">Linux 64 bit(.rpm)</option>
-				<option value="https://cli.run.pivotal.io/stable?release=redhat32&source=pws">Linux 32 bit(.rpm)</option>
+				<option value="https://cli.run.pivotal.io/stable?release=windows32&version=6.17.0&source=github-rel">Windows 32 bit</option>
+				<option value="https://cli.run.pivotal.io/stable?release=windows64&version=6.17.0&source=github-rel">Windows 64 bit</option>
+				<option value="https://cli.run.pivotal.io/stable?release=macosx64&version=6.17.0&source=github-rel">Mac OS X 64 bit</option>
+				<option value="https://cli.run.pivotal.io/stable?release=debian64&version=6.17.0&source=github-rel">Linux 64 bit(.deb)</option>
+				<option value="https://cli.run.pivotal.io/stable?release=debian32&version=6.17.0&source=github-rel">Linux 32 bit(.deb)</option>
+				<option value="https://cli.run.pivotal.io/stable?release=redhat64&version=6.17.0&source=github-rel">Linux 64 bit(.rpm)</option>
+				<option value="https://cli.run.pivotal.io/stable?release=redhat32&version=6.17.0&source=github-rel">Linux 32 bit(.rpm)</option>
 			</select>
 			<a id="link" class="btn btn-primary" style="display:none;">Download</a>
 		</p>

@@ -12,6 +12,7 @@
 		$('#modalMessage').text('');
 		
 		plan.service = service;
+		$('.modal-form .small-progress').hide().next().next().show().next().show();
 		$('#selectPlanDialog').modal('show').get(0).item = plan;
 		
 		$('#modalTitle').html(service.entity.label + ' <small>' + service.entity.description + '</small>');
@@ -331,6 +332,8 @@
 		
 		formSubmit($('.modal-form'), function(data)
 		{
+			$('#modalMessage').text('');
+			
 			var plan = $('#selectPlanDialog').get(0).item;
 			data.service_plan_guid = plan.metadata.guid;
 			data.parameters = {};
@@ -347,43 +350,85 @@
 			
 			$('.modal-form .small-progress').css('display', 'inline-block').next().next().hide().next().hide();
 			
-			CF.async({url : '/v2/service_instances', method : 'POST', form : data}, function(result)
+			CF.async({url : '/v2/service_instances?q=space_guid:' + data.space_guid, method : 'GET'}, function(result)
 			{
 				if(result)
 				{
-					if(result.entity)
+					if(result.resources)
 					{
-						if(data.appGuid)
+						var list = result.resources;
+						console.log(list);
+						for(var i=0; i<list.length; i++)
 						{
-							CF.async({url : '/v2/service_bindings', method : 'POST', form : {service_instance_guid : result.metadata.guid, app_guid : data.appGuid}}, function(result)
+							if(list[i].entity.name == data.name)
 							{
 								$('.modal-form .small-progress').hide().next().next().show().next().show();
-								if(result)
+								$('#modalMessage').text('The service instance name is taken: ' + data.name);
+								return;
+							}
+						}
+						
+						CF.async({url : '/v2/service_instances', method : 'POST', form : data}, function(result)
+						{
+							if(result)
+							{
+								if(result.entity)
 								{
-									if(result.entity)
+									if(data.appGuid)
 									{
-										$('#selectPlanDialog').modal('hide');
+										CF.async({url : '/v2/service_bindings', method : 'POST', form : {service_instance_guid : result.metadata.guid, app_guid : data.appGuid}}, function(result)
+										{
+											$('.modal-form .small-progress').hide().next().next().show().next().show();
+											if(result)
+											{
+												if(result.entity)
+												{
+													$('#selectPlanDialog').modal('hide');
+												}
+												else
+												{
+													$('#modalMessage').text(result.description ? result.description : JSON.stringify(result.error));
+												}
+											}
+											else
+											{
+												$('#modalMessage').text('Unknown Error by creation service binding.');
+											}
+										},
+										function(error)
+										{
+											$('.modal-form .small-progress').hide().next().next().show().next().show();
+											$('#modalMessage').text(error);
+										});
 									}
 									else
 									{
-										$('#modalMessage').text(result.description ? result.description : JSON.stringify(result.error));
+										$('#selectPlanDialog').modal('hide');
 									}
 								}
 								else
 								{
-									$('#modalMessage').text('Unknown Error by creation service binding.');
+									if(result.description.indexOf('taken') != -1)
+									{
+										$('#modalMessage').text('');
+										$('#selectPlanDialog').modal('hide');
+										return;
+									}
+									
+									$('.modal-form .small-progress').hide().next().next().show().next().show();
+									$('#modalMessage').text(result.description ? result.description : JSON.stringify(result.error));
 								}
-							},
-							function(error)
+							}
+							else
 							{
 								$('.modal-form .small-progress').hide().next().next().show().next().show();
-								$('#modalMessage').text(error);
-							});
-						}
-						else
+								$('#modalMessage').text('Unknown Error');
+							}
+						},
+						function(error)
 						{
-							$('#selectPlanDialog').modal('hide');
-						}
+							$('#modalMessage').text(error);
+						});
 					}
 					else
 					{

@@ -81,7 +81,7 @@ module.exports = function(app)
 		
 		if(path.match(/^\/[a-z0-9\-\_\/]*$/))
 		{
-			if(cf.isLogin())
+			if(cf.isLogin() || path.indexOf('download') != -1)
 			{
 				rendering(req, res);
 			}

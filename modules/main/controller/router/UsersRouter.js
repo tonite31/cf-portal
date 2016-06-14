@@ -466,10 +466,11 @@ module.exports = function(app)
 						list.push({name : 'createUser', params : {username : email, password : '1111'}});
 						list.push({name : 'getQuotaByName', params : {name : 'personal'}});
 						list.push({name : 'createOrg', params : {name : email + '_Org'}});
+						list.push({name : 'setOrgUsers', params : {username : email}});
 						list.push({name : 'setOrgRole', params : {type : 'managers', username : email}});
 						list.push({name : 'createSpace', params : {name : 'dev'}});
-						list.push({name : 'setSpaceRole', params : {type : 'managed_spaces'}});
-						list.push({name : 'setSpaceRole', params : {type : 'spaces'}});
+						list.push({name : 'setSpaceRole', params : {type : 'managers', username : email}});
+						list.push({name : 'setSpaceRole', params : {type : 'spaces', username : email}});
 					}
 					else
 					{
