@@ -397,7 +397,7 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 		{
 			if(body)
 			{
-				if(body.indexOf && (body.indexOf('CF-InvalidAuthToken') != -1 || body.indexOf('Invalid authorization')))
+				if(body.indexOf && (body.indexOf('CF-InvalidAuthToken') != -1 || body.indexOf('Invalid authorization') != -1))
 				{
 					//login이 풀린것.
 					this.login(function()

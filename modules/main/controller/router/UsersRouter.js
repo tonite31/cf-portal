@@ -134,35 +134,19 @@ pumpkin.addWork('createOrg', function(params)
 			{
 				if(data.code == 30002)
 				{
-					//임시코드 만약 조직이 있으면 그놈으로 권한 주고 이동.
-					this.data.client.request('/v2/organizations?q=name:' + params.name, 'GET', null, null, function(result)
+					this.data.client.request('/v2/organizations', 'POST', null, {name : params.name + '2', quota_definition_guid : params.metadata.guid}, function(data)
 					{
-						if(result)
+						if(data.entity)
 						{
-							if(result.resources)
-							{
-								this.data.orgId = result.resources[0].metadata.guid;
-								this.next({orgId : this.data.orgId});
-							}
-							else
-							{
-								this.error(result);
-							}
+							this.data.orgId = data.metadata.guid;
+							this.next({orgId : data.metadata.guid});
 						}
+						else
+						{
+							this.error(data);
+						}
+							
 					}.bind(this));
-//					this.data.client.request('/v2/organizations', 'POST', null, {name : params.name + '2', quota_definition_guid : params.metadata.guid}, function(data)
-//					{
-//						if(data.entity)
-//						{
-//							this.data.orgId = data.metadata.guid;
-//							this.next({orgId : data.metadata.guid});
-//						}
-//						else
-//						{
-//							this.error(data);
-//						}
-//							
-//					}.bind(this));
 				}
 				else
 				{
@@ -213,21 +197,18 @@ pumpkin.addWork('createSpace', function(params)
 		{
 			if(result.code == 40002)
 			{
-				//임시코드 만약 영역이 있으면 그놈으로 권한 주고 이동.
-				this.data.client.request('/v2/spaces?q=name:' + params.name + '&q=organization_guid:' + this.data.orgId, 'GET', null, null, function(result)
+				this.data.client.request('/v2/spaces', 'POST', null, {name : params.name + '2', quota_definition_guid : params.metadata.guid}, function(data)
 				{
-					if(result)
+					if(data.entity)
 					{
-						if(result.resources)
-						{
-							this.data.spaceId = result.resources[0].metadata.guid;
-							this.next({spaceId : this.data.spaceId});
-						}
-						else
-						{
-							this.error(result);
-						}
+						this.data.orgId = data.metadata.guid;
+						this.next({orgId : data.metadata.guid});
 					}
+					else
+					{
+						this.error(data);
+					}
+						
 				}.bind(this));
 			}
 			else if(result.entity)

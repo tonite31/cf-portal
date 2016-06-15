@@ -350,84 +350,43 @@
 			
 			$('.modal-form .small-progress').css('display', 'inline-block').next().next().hide().next().hide();
 			
-			CF.async({url : '/v2/service_instances?q=space_guid:' + data.space_guid, method : 'GET'}, function(result)
+			CF.async({url : '/v2/service_instances', method : 'POST', form : data}, function(result)
 			{
 				if(result)
 				{
-					if(result.resources)
+					if(result.entity)
 					{
-						var list = result.resources;
-						for(var i=0; i<list.length; i++)
+						if(data.appGuid)
 						{
-							if(list[i].entity.name == data.name)
+							CF.async({url : '/v2/service_bindings', method : 'POST', form : {service_instance_guid : result.metadata.guid, app_guid : data.appGuid}}, function(result)
 							{
 								$('.modal-form .small-progress').hide().next().next().show().next().show();
-								$('#modalMessage').text('The service instance name is taken: ' + data.name);
-								return;
-							}
-						}
-						
-						CF.async({url : '/v2/service_instances', method : 'POST', form : data}, function(result)
-						{
-							if(result)
-							{
-								if(result.entity)
+								if(result)
 								{
-									if(data.appGuid)
+									if(result.entity)
 									{
-										CF.async({url : '/v2/service_bindings', method : 'POST', form : {service_instance_guid : result.metadata.guid, app_guid : data.appGuid}}, function(result)
-										{
-											$('.modal-form .small-progress').hide().next().next().show().next().show();
-											if(result)
-											{
-												if(result.entity)
-												{
-													$('#selectPlanDialog').modal('hide');
-												}
-												else
-												{
-													$('#modalMessage').text(result.description ? result.description : JSON.stringify(result.error));
-												}
-											}
-											else
-											{
-												$('#modalMessage').text('Unknown Error by creation service binding.');
-											}
-										},
-										function(error)
-										{
-											$('.modal-form .small-progress').hide().next().next().show().next().show();
-											$('#modalMessage').text(error);
-										});
+										$('#selectPlanDialog').modal('hide');
 									}
 									else
 									{
-										$('#selectPlanDialog').modal('hide');
+										$('#modalMessage').text(result.description ? result.description : JSON.stringify(result.error));
 									}
 								}
 								else
 								{
-									if(result.description.indexOf('taken') != -1)
-									{
-										$('#modalMessage').text('');
-										$('#selectPlanDialog').modal('hide');
-										return;
-									}
-									
-									$('.modal-form .small-progress').hide().next().next().show().next().show();
-									$('#modalMessage').text(result.description ? result.description : JSON.stringify(result.error));
+									$('#modalMessage').text('Unknown Error by creation service binding.');
 								}
-							}
-							else
+							},
+							function(error)
 							{
 								$('.modal-form .small-progress').hide().next().next().show().next().show();
-								$('#modalMessage').text('Unknown Error');
-							}
-						},
-						function(error)
+								$('#modalMessage').text(error);
+							});
+						}
+						else
 						{
-							$('#modalMessage').text(error);
-						});
+							$('#selectPlanDialog').modal('hide');
+						}
 					}
 					else
 					{
