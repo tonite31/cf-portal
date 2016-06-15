@@ -208,8 +208,8 @@ pumpkin.addWork('createSpace', function(params)
 				{
 					if(data.entity)
 					{
-						this.data.orgId = data.metadata.guid;
-						this.next({orgId : data.metadata.guid});
+						this.data.spaceId = data.metadata.guid;
+						this.next({orgId : this.data.orgId, spaceId : data.metadata.guid});
 					}
 					else
 					{
@@ -221,7 +221,7 @@ pumpkin.addWork('createSpace', function(params)
 			else if(result.entity)
 			{
 				this.data.spaceId = result.metadata.guid;
-				this.next({spaceId : result.metadata.guid});
+				this.next({orgId : this.data.orgId, spaceId : result.metadata.guid});
 			}
 			else
 			{
@@ -375,7 +375,7 @@ module.exports = function(app)
 		
 		var done = function(result)
 		{
-			res.send({code : 201});
+			res.send({code : 201, data : result});
 		};
 
 		var error = function(name, error)
@@ -387,11 +387,57 @@ module.exports = function(app)
 		                 {name : 'createUser', params : {username : email, password : password}},
 		                 {name : 'getQuotaByName', params : {name : 'personal'}},
 		                 {name : 'createOrg', params : {name : email + '_Org'}},
-		                 {name : 'setOrgUsers', params : {username : email}},
-		                 {name : 'setOrgRole', params : {type : 'managers', username : email}},
-		                 {name : 'createSpace', params : {name : 'dev'}},
-		                 {name : 'setSpaceRole', params : {type : 'managers', username : email}},
-		                 {name : 'setSpaceRole', params : {type : 'developers', username : email}}], done, error);
+		                 {name : 'createSpace', params : {name : 'dev'}}], done, error);
+	});
+	
+	app.post('/users/setOrgRole', function(req, res, next)
+	{
+		var username = req.body.email;
+		var orgId = req.body.orgId;
+		
+		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
+		pumpkin.setData({client : client, orgId : orgId});
+		
+		var done = function(result)
+		{
+			res.send({code : 201});
+		};
+
+		var error = function(name, error)
+		{
+			res.status(500).send({error : error});
+		};
+		
+		console.log("왔다 : ", username, orgId);
+		
+		pumpkin.execute([{name : 'login', params : {username : _config.admin.username, password : _config.admin.password}},
+		                 {name : 'setOrgUsers', params : {username : username}},
+		                 {name : 'setOrgRole', params : {type : 'managers', username : username}}], done, error);
+	});
+	
+	app.post('/users/setSpaceRole', function(req, res, next)
+	{
+		var username = req.body.email;
+		var spaceId = req.body.spaceId;
+		
+		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
+		pumpkin.setData({client : client, spaceId : spaceId});
+		
+		var done = function(result)
+		{
+			res.send({code : 201});
+		};
+
+		var error = function(name, error)
+		{
+			res.status(500).send({error : error});
+		};
+		
+		console.log("왔다 : ", username, spaceId);
+		
+		pumpkin.execute([{name : 'login', params : {username : _config.admin.username, password : _config.admin.password}},
+		                 {name : 'setSpaceRole', params : {type : 'managers', username : username}},
+		                 {name : 'setSpaceRole', params : {type : 'developers', username : username}}], done, error);
 	});
 	
 	app.post('/users/withdrawal', function(req, res, next)

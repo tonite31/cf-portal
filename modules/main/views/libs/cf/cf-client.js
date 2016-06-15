@@ -85,6 +85,7 @@ var CF = {};
 		        }
 		        else
 		        {
+		        	console.log("에러");
 		        	if(error)
 		        		error(xmlhttp.responseText);
 		        }
@@ -120,6 +121,7 @@ var CF = {};
 					location.href = '/signin';
 				else
 				{
+					console.log("에러 : ", error);
 					if(errorCallback)
 						errorCallback(JSON.parse(error.responseText));
 				}
