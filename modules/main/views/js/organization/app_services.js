@@ -259,22 +259,22 @@
 					},
 					function()
 					{
-						$(context).find('.service-table .credentials').on('click', function()
-						{
-							if(!this.isShown)
-							{
-								$(this).find('span:first').text('Hide credentials');
-								$(this).parent().next().show();
-								
-								this.isShown = true;
-							}
-							else
-							{
-								$(this).find('span:first').text('Show credentials');
-								$(this).parent().next().hide();
-								this.isShown = false;
-							}
-						});
+//						$(context).find('.service-table .credentials').on('click', function()
+//						{
+//							if(!this.isShown)
+//							{
+//								$(this).find('span:first').text('Hide credentials');
+//								$(this).parent().next().show();
+//								
+//								this.isShown = true;
+//							}
+//							else
+//							{
+//								$(this).find('span:first').text('Show credentials');
+//								$(this).parent().next().hide();
+//								this.isShown = false;
+//							}
+//						});
 						
 						if(serviceList.length == 0)
 						{
