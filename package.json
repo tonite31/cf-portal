@@ -14,7 +14,7 @@
     "method-override": "*",
     "node-uuid": "^1.4.7",
     "nodejs-imp": "0.0.5",
-    "nodejs-pumpkin": "0.0.4",
+    "nodejs-pumpkin": "^0.1.0",
     "nodemailer": "^2.3.2",
     "redis": "^2.6.0-1",
     "request": "^2.69.0"

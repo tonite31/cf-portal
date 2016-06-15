@@ -357,7 +357,6 @@
 					if(result.resources)
 					{
 						var list = result.resources;
-						console.log(list);
 						for(var i=0; i<list.length; i++)
 						{
 							if(list[i].entity.name == data.name)
