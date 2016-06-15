@@ -310,10 +310,8 @@
 	                        {name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'billing_managers', check : true}},
 	                        {name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'auditors', check : true}}];
 			pumpkinForList.state = 0;
-			console.log("여긴 오ㅑㅆ냐");
 			pumpkinForList.executeAsync(workList, function()
 			{
-				console.log("여기에 안와서 그런거겠지");
 				clone.find('tbody tr').show();
 				clone.find('tbody tr:first').hide();
 				
