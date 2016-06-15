@@ -86,99 +86,6 @@
 		var error = this.error;
 		
 		getUsersByType(params, 'auditors');
-		
-//		console.log(params.guid);
-//		CF.async({url : '/v2/' + params.dataName + '/' + params.guid + '/users'}, function(result)
-//		{
-//			console.log("여기는 : ", result);
-//			if($('#' + params.tableName).attr('data-uuid') != uuid)
-//			{
-//				return;
-//			}
-//			
-//			params.uuid = uuid;
-//			
-//			if(result)
-//			{
-//				if(result.resources)
-//				{
-//					var userList = result.resources;
-//					for(var i=0; i<userList.length; i++)
-//					{
-//						var template = $('#userRowTemplate').html();
-//						template = template.replace('{guid}', userList[i].metadata.guid).replace('{username}', userList[i].entity.username);
-//						
-//						var row = $(template).hide();
-//						row.get(0).item = userList[i];
-//						
-//						$('#' + params.tableName + ' tbody').append(row);
-//					}
-//					
-//					$('#' + params.tableName + ' tbody tr input[type="checkbox"]').on('change', function()
-//					{
-//						var userGuid = $(this).parent().parent().get(0).item.metadata.guid;
-//						params.userGuid = userGuid;
-//						
-//						if(this.checked == true)
-//							params.method = 'PUT';
-//						else
-//							params.method = 'DELETE';
-//						
-//						var type = $(this).attr('class');
-//						if(type == 'managers')
-//						{
-//							params.type = 'managers';
-//						}
-//						else if(type == 'auditors')
-//						{
-//							params.type = 'auditors';
-//						}
-//						else
-//						{
-//							if(params.dataName == 'spaces')
-//								params.type = 'developers';
-//							else
-//								params.type = 'billing_managers';
-//						}
-//						
-//						var progress = '<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>';
-//						$(this).hide();
-//						$(progress).insertBefore(this);
-//						
-//						var that = this;
-//						updateMemberAssociation.execute([{name : 'update', params : params}], function()
-//						{
-//							$(that).show().prev().remove();
-//						},
-//						function(workName, error)
-//						{
-//							$(that).prev().remove();
-//							$('<span style="color: red;">' + error + '</span>').insertBefore(that);
-//						});
-//					});
-//					
-//					next(params);
-//				}
-//				else
-//				{
-//					progress.hide();
-//					$('#' + params.tableName + ' tbody').append('<tr><td class="error" colspan="5" style="text-align: center;">' + (result.description ? result.description : JSON.stringify(result.error)) + '</td></tr>');
-//					error();
-//				}
-//			}
-//			else
-//			{
-//				progress.hide();
-//				$('#' + params.tableName + ' tbody').append('<tr><td class="error" colspan="5" style="text-align: center;">Unknown Error.</td></tr>');
-//				error();
-//			}
-//		},
-//		function(error)
-//		{
-//			progress.hide();
-//			$('#' + params.tableName + ' tbody').append('<tr><td class="error" colspan="5" style="text-align: center;">' + error + '</td></tr>');
-//			error();
-//		});
 	});
 	
 	pumpkinForList.addWork('getUsersForCheck', function(params)
@@ -383,8 +290,15 @@
 	
 	var loadSpaceMembers = function(guid)
 	{
-		var progress = $('#orgTable tbody tr:first').show();
-		$('#orgTable tbody').html('').append(progress);
+		var spaceTable = $('#spaceTable');
+		
+		var clone = spaceTable.clone();
+		clone.insertAfter(spaceTable);
+		
+		spaceTable.remove();
+		
+		var progress = clone.find('tbody tr:first').show();
+		clone.find('tbody').html('').append(progress);
 		
 		var workList = [{name : 'getUsersForCheck', params : {guid : guid, tableName : 'spaceTable', dataName : 'spaces', type : 'managers'}},
                         {name : 'getUsersForCheck', params : {guid : guid, tableName : 'spaceTable', dataName : 'spaces', type : 'developers'}},
@@ -396,12 +310,14 @@
 	                        {name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'billing_managers', check : true}},
 	                        {name : 'getUsersForCheck', params : {guid : $('#orgSelect').val(), tableName : 'spaceTable', dataName : 'organizations', type : 'auditors', check : true}}];
 			pumpkinForList.state = 0;
+			console.log("여긴 오ㅑㅆ냐");
 			pumpkinForList.executeAsync(workList, function()
 			{
-				$('#spaceTable tbody tr').show();
-				$('#spaceTable tbody tr:first').hide();
+				console.log("여기에 안와서 그런거겠지");
+				clone.find('tbody tr').show();
+				clone.find('tbody tr:first').hide();
 				
-				$('#spaceTable tbody .glyphicon-remove').each(function()
+				clone.find('tbody .glyphicon-remove').each(function()
 				{
 					var tr = $(this).parent().parent();
 					var user = tr.get(0).item;

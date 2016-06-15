@@ -73,6 +73,11 @@
 							
 							$(org.element).children('ul').append(space);
 						}
+						
+						if(spaceList.length == 0)
+						{
+							$('.org-container').html('<div class="alert alert-warning">no spaces.</div>');
+						}
 					}
 					else
 					{

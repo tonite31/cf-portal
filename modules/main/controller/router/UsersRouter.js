@@ -56,8 +56,12 @@ pumpkin.addWork('createUser', function(params)
 		}
 		else
 		{
-			this.data.userId = result.id;
-			this.next(result);	
+			var id = result.id;
+			this.data.client.request('/v2/users', 'POST', null, {guid : result.id}, function()
+			{
+				this.data.userId = id;
+				this.next(result);
+			}.bind(this));
 		}
 		
 	}.bind(this),
@@ -69,13 +73,16 @@ pumpkin.addWork('createUser', function(params)
 
 pumpkin.addWork('deleteUser', function(params)
 {
-	this.data.client.deleteUser(params.userId, function(result)
+	this.data.client.request('/v2/users/' + params.userId + '?async=true', 'DELETE', null, null, function(data)
 	{
-		this.next();
-	}.bind(this),
-	function(error)
-	{
-		this.error(error);
+		this.data.client.deleteUser(params.userId, function(result)
+		{
+			this.next();
+		}.bind(this),
+		function(error)
+		{
+			this.error(error);
+		}.bind(this));
 	}.bind(this));
 });
 
@@ -408,9 +415,7 @@ module.exports = function(app)
 			var userId = result.userId;
 			var username = req.session.cfdata.username;
 			
-			pumpkin.execute([{name : 'deleteAllOrgRole', params : {userId : userId, username : username}}, 
-			                 {name : 'deleteAllSpaceRole', params : {userId : userId, username : username}},
-			                 {name : 'deleteUser', params : {userId : userId}}], done, error);
+			pumpkin.execute([{name : 'deleteUser', params : {userId : userId}}], done, error);
 		},
 		function(error)
 		{
