@@ -408,8 +408,6 @@ module.exports = function(app)
 			res.status(500).send({error : error});
 		};
 		
-		console.log("왔다 : ", username, orgId);
-		
 		pumpkin.execute([{name : 'login', params : {username : _config.admin.username, password : _config.admin.password}},
 		                 {name : 'setOrgUsers', params : {username : username}},
 		                 {name : 'setOrgRole', params : {type : 'managers', username : username}}], done, error);
@@ -432,8 +430,6 @@ module.exports = function(app)
 		{
 			res.status(500).send({error : error});
 		};
-		
-		console.log("왔다 : ", username, spaceId);
 		
 		pumpkin.execute([{name : 'login', params : {username : _config.admin.username, password : _config.admin.password}},
 		                 {name : 'setSpaceRole', params : {type : 'managers', username : username}},
