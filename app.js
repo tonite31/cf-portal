@@ -10,6 +10,22 @@ var session = require('express-session');
 
 global._config = require('./config');
 
+var vcapServices = process.env.VCAP_SERVICES;
+if(vcapServices)
+{
+	var redisService = vcapServices['redis-service'];
+	if(redisService)
+	{
+		var credentials = redisService[0].credentials;
+		_config.redis.host = credentials.host;
+		_config.redis.port = credentials.port;
+		_config.redis.password = credentials.password;
+	}
+}
+
+if(process.env.CF_ENDPOINT)
+	_config.endpoint = process.env.CF_ENDPOINT;
+
 if(!_config.endpoint)
 {
 	console.log('API endpoint is not found.');
