@@ -119,10 +119,16 @@
 		confirmButton(row.find('.unmap'), function(done)
 		{
 			var that = this;
-			CF.async({url : mappingUrl, method : 'DELETE'}, function(result)
+			CF.async({url : mappingUrl + '/apps/' + appGuid, method : 'DELETE'}, function(result)
 			{
-				$('tr[data-guid="' + appGuid + '"] .app-routes a[href="' + url + '"]').parent().remove();
+				var p = $('tr[data-guid="' + appGuid + '"] .app-routes a[href="' + url + '"]').parent();
+				var td = p.parent();
+				p.remove();
+				
 				$(that).parent().parent().remove();
+				
+				if(td.get(0).children.length == 0)
+					td.html('no routes');
 			},
 			function(error)
 			{
@@ -149,7 +155,11 @@
 					$(context).find('.routes-form .map-progress').hide().next().show().next().show();
 					
 					//Append url to app list.
-					$('tr[data-guid="' + appGuid + '"] .app-routes').append('<p><a target="_blank" href="' + url + '">' + url + '</a></p>');
+					var td = $('tr[data-guid="' + appGuid + '"] .app-routes');
+					if(td.html() == 'no routes')
+						td.html('');
+					
+					td.append('<p><a target="_blank" href="' + url + '">' + url + '</a></p>');
 					return;
 				}
 				else

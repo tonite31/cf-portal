@@ -13,6 +13,7 @@ global._config = require('./config');
 var vcapServices = process.env.VCAP_SERVICES;
 if(vcapServices)
 {
+	vcapServices = JSON.parse(vcapServices);
 	var redisService = vcapServices['redis-service'];
 	if(redisService)
 	{
