@@ -719,6 +719,8 @@
 				}
 				else
 				{
+					selectedAppGuid = null;
+					
 					$('.delete-message').text('');
 					_IntervalTimer.end('refresh_app_list');
 					var space = $('#' + _global.hash.space).get(0);

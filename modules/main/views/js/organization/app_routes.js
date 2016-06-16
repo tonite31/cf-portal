@@ -121,7 +121,7 @@
 			var that = this;
 			CF.async({url : mappingUrl, method : 'DELETE'}, function(result)
 			{
-				$('#' + appGuid).find('.app-routes a[href="' + url + '"]').parent().remove();
+				$('tr[data-guid="' + appGuid + '"] .app-routes a[href="' + url + '"]').parent().remove();
 				$(that).parent().parent().remove();
 			},
 			function(error)
@@ -149,7 +149,7 @@
 					$(context).find('.routes-form .map-progress').hide().next().show().next().show();
 					
 					//Append url to app list.
-					$('#' + appGuid).find('.app-routes').append('<p><a target="_blank" href="' + url + '">' + url + '</a></p>');
+					$('tr[data-guid="' + appGuid + '"] .app-routes').append('<p><a target="_blank" href="' + url + '">' + url + '</a></p>');
 					return;
 				}
 				else
