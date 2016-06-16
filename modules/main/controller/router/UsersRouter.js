@@ -56,8 +56,12 @@ pumpkin.addWork('createUser', function(params)
 		}
 		else
 		{
-			this.data.userId = result.id;
-			this.next(result);	
+			var id = result.id;
+			this.data.client.request('/v2/users', 'POST', null, {guid : result.id}, function()
+			{
+				this.data.userId = id;
+				this.next(result);
+			}.bind(this));
 		}
 		
 	}.bind(this),
@@ -69,13 +73,16 @@ pumpkin.addWork('createUser', function(params)
 
 pumpkin.addWork('deleteUser', function(params)
 {
-	this.data.client.deleteUser(params.userId, function(result)
+	this.data.client.request('/v2/users/' + params.userId + '?async=true', 'DELETE', null, null, function(data)
 	{
-		this.next();
-	}.bind(this),
-	function(error)
-	{
-		this.error(error);
+		this.data.client.deleteUser(params.userId, function(result)
+		{
+			this.next();
+		}.bind(this),
+		function(error)
+		{
+			this.error(error);
+		}.bind(this));
 	}.bind(this));
 });
 
@@ -134,35 +141,19 @@ pumpkin.addWork('createOrg', function(params)
 			{
 				if(data.code == 30002)
 				{
-					//임시코드 만약 조직이 있으면 그놈으로 권한 주고 이동.
-					this.data.client.request('/v2/organizations?q=name:' + params.name, 'GET', null, null, function(result)
+					this.data.client.request('/v2/organizations', 'POST', null, {name : params.name + '2', quota_definition_guid : params.metadata.guid}, function(data)
 					{
-						if(result)
+						if(data.entity)
 						{
-							if(result.resources)
-							{
-								this.data.orgId = result.resources[0].metadata.guid;
-								this.next({orgId : this.data.orgId});
-							}
-							else
-							{
-								this.error(result);
-							}
+							this.data.orgId = data.metadata.guid;
+							this.next({orgId : data.metadata.guid});
 						}
+						else
+						{
+							this.error(data);
+						}
+							
 					}.bind(this));
-//					this.data.client.request('/v2/organizations', 'POST', null, {name : params.name + '2', quota_definition_guid : params.metadata.guid}, function(data)
-//					{
-//						if(data.entity)
-//						{
-//							this.data.orgId = data.metadata.guid;
-//							this.next({orgId : data.metadata.guid});
-//						}
-//						else
-//						{
-//							this.error(data);
-//						}
-//							
-//					}.bind(this));
 				}
 				else
 				{
@@ -213,27 +204,24 @@ pumpkin.addWork('createSpace', function(params)
 		{
 			if(result.code == 40002)
 			{
-				//임시코드 만약 영역이 있으면 그놈으로 권한 주고 이동.
-				this.data.client.request('/v2/spaces?q=name:' + params.name, 'GET', null, null, function(result)
+				this.data.client.request('/v2/spaces', 'POST', null, {name : params.name + '2', quota_definition_guid : params.metadata.guid}, function(data)
 				{
-					if(result)
+					if(data.entity)
 					{
-						if(result.resources)
-						{
-							this.data.spaceId = result.resources[0].metadata.guid;
-							this.next({spaceId : this.data.spaceId});
-						}
-						else
-						{
-							this.error(result);
-						}
+						this.data.spaceId = data.metadata.guid;
+						this.next({orgId : this.data.orgId, spaceId : data.metadata.guid});
 					}
+					else
+					{
+						this.error(data);
+					}
+						
 				}.bind(this));
 			}
 			else if(result.entity)
 			{
 				this.data.spaceId = result.metadata.guid;
-				this.next({spaceId : result.metadata.guid});
+				this.next({orgId : this.data.orgId, spaceId : result.metadata.guid});
 			}
 			else
 			{
@@ -249,9 +237,20 @@ pumpkin.addWork('createSpace', function(params)
 	}.bind(this));
 });
 
+pumpkin.addWork('setOrgUsers', function(params)
+{
+	this.data.client.request('/v2/organizations/' + this.data.orgId + '/users', 'PUT', null, {username : params.username}, function(result)
+	{
+		this.next();
+	}.bind(this), function(error){
+		this.error(error);
+	}.bind(this));
+});
+
 pumpkin.addWork('setSpaceRole', function(params)
 {
-	this.data.client.request('/v2/users/' + this.data.userId + '/' + params.type + '/' + this.data.spaceId, 'PUT', null, null, function(result)
+	this.data.client.request('/v2/spaces/' + this.data.spaceId + '/' + params.type, 'PUT', null, {username : params.username}, function(result)
+//	this.data.client.request('/v2/users/' + this.data.userId + '/' + params.type + '/' + this.data.spaceId, 'PUT', null, null, function(result)
 	{
 		this.next(result);
 	}.bind(this), function(error){
@@ -261,7 +260,8 @@ pumpkin.addWork('setSpaceRole', function(params)
 
 pumpkin.addWork('deleteSpaceRole', function(params)
 {
-	this.data.client.request('/v2/users/' + params.userId + '/' + params.type + '/' + params.spaceId, 'DELETE', null, null, function(result)
+	this.data.client.request('/v2/spaces/' + this.data.spaceId + '/' + params.type + '/' + this.data.userId, 'DELETE', null, null, function(result)
+//	this.data.client.request('/v2/users/' + params.userId + '/' + params.type + '/' + params.spaceId, 'DELETE', null, null, function(result)
 	{
 		this.next();
 	}.bind(this), function(error){
@@ -375,7 +375,7 @@ module.exports = function(app)
 		
 		var done = function(result)
 		{
-			res.send({code : 201});
+			res.send({code : 201, data : result});
 		};
 
 		var error = function(name, error)
@@ -387,10 +387,53 @@ module.exports = function(app)
 		                 {name : 'createUser', params : {username : email, password : password}},
 		                 {name : 'getQuotaByName', params : {name : 'personal'}},
 		                 {name : 'createOrg', params : {name : email + '_Org'}},
-		                 {name : 'setOrgRole', params : {type : 'managers', username : email}},
-		                 {name : 'createSpace', params : {name : 'dev'}},
-		                 {name : 'setSpaceRole', params : {type : 'managed_spaces'}},
-		                 {name : 'setSpaceRole', params : {type : 'spaces'}}], done, error);
+		                 {name : 'createSpace', params : {name : 'dev'}}], done, error);
+	});
+	
+	app.post('/users/setOrgRole', function(req, res, next)
+	{
+		var username = req.body.email;
+		var orgId = req.body.orgId;
+		
+		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
+		pumpkin.setData({client : client, orgId : orgId});
+		
+		var done = function(result)
+		{
+			res.send({code : 201});
+		};
+
+		var error = function(name, error)
+		{
+			res.status(500).send({error : error});
+		};
+		
+		pumpkin.execute([{name : 'login', params : {username : _config.admin.username, password : _config.admin.password}},
+		                 {name : 'setOrgUsers', params : {username : username}},
+		                 {name : 'setOrgRole', params : {type : 'managers', username : username}}], done, error);
+	});
+	
+	app.post('/users/setSpaceRole', function(req, res, next)
+	{
+		var username = req.body.email;
+		var spaceId = req.body.spaceId;
+		
+		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
+		pumpkin.setData({client : client, spaceId : spaceId});
+		
+		var done = function(result)
+		{
+			res.send({code : 201});
+		};
+
+		var error = function(name, error)
+		{
+			res.status(500).send({error : error});
+		};
+		
+		pumpkin.execute([{name : 'login', params : {username : _config.admin.username, password : _config.admin.password}},
+		                 {name : 'setSpaceRole', params : {type : 'managers', username : username}},
+		                 {name : 'setSpaceRole', params : {type : 'developers', username : username}}], done, error);
 	});
 	
 	app.post('/users/withdrawal', function(req, res, next)
@@ -414,9 +457,7 @@ module.exports = function(app)
 			var userId = result.userId;
 			var username = req.session.cfdata.username;
 			
-			pumpkin.execute([{name : 'deleteAllOrgRole', params : {userId : userId, username : username}}, 
-			                 {name : 'deleteAllSpaceRole', params : {userId : userId, username : username}},
-			                 {name : 'deleteUser', params : {userId : userId}}], done, error);
+			pumpkin.execute([{name : 'deleteUser', params : {userId : userId}}], done, error);
 		},
 		function(error)
 		{
@@ -453,10 +494,11 @@ module.exports = function(app)
 						list.push({name : 'createUser', params : {username : email, password : '1111'}});
 						list.push({name : 'getQuotaByName', params : {name : 'personal'}});
 						list.push({name : 'createOrg', params : {name : email + '_Org'}});
+						list.push({name : 'setOrgUsers', params : {username : email}});
 						list.push({name : 'setOrgRole', params : {type : 'managers', username : email}});
 						list.push({name : 'createSpace', params : {name : 'dev'}});
-						list.push({name : 'setSpaceRole', params : {type : 'managed_spaces'}});
-						list.push({name : 'setSpaceRole', params : {type : 'spaces'}});
+						list.push({name : 'setSpaceRole', params : {type : 'managers', username : email}});
+						list.push({name : 'setSpaceRole', params : {type : 'spaces', username : email}});
 					}
 					else
 					{

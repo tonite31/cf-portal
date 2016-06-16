@@ -148,5 +148,34 @@
 				}
 			});
 		});
+		
+		confirmButton($('#deleteSpace'), function(done)
+		{
+			$('#deleteSpace').parent().find('.message').remove();
+			CF.async({url : '/v2/spaces/' + _global.hash.space, method : 'DELETE'}, function(result)
+			{
+				if(result && result.code)
+				{
+					done();
+					$('<span style="font-size: 12px; color: red; margin-right: 10px;" class="message">' + (result.description ? result.description : JSON.stringify(result.error)) + '</span>').insertBefore($('#deleteSpace'));
+				}
+				else
+				{
+					done();
+					
+					$('#' + _global.hash.space).remove();
+					
+					var id = $('#orgList ul > li:first').attr('id');
+					if(id)
+					{
+						location.hash = 'space=' + id;
+					}
+					else
+					{
+						$('.org-container').html('<div class="alert alert-warning">no spaces.</div>');
+					}
+				}
+			});
+		});
 	});
 })();

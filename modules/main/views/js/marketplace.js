@@ -12,6 +12,7 @@
 		$('#modalMessage').text('');
 		
 		plan.service = service;
+		$('.modal-form .small-progress').hide().next().next().show().next().show();
 		$('#selectPlanDialog').modal('show').get(0).item = plan;
 		
 		$('#modalTitle').html(service.entity.label + ' <small>' + service.entity.description + '</small>');
@@ -331,6 +332,8 @@
 		
 		formSubmit($('.modal-form'), function(data)
 		{
+			$('#modalMessage').text('');
+			
 			var plan = $('#selectPlanDialog').get(0).item;
 			data.service_plan_guid = plan.metadata.guid;
 			data.parameters = {};
@@ -379,6 +382,10 @@
 								$('.modal-form .small-progress').hide().next().next().show().next().show();
 								$('#modalMessage').text(error);
 							});
+						}
+						else
+						{
+							$('#selectPlanDialog').modal('hide');
 						}
 					}
 					else

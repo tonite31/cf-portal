@@ -184,6 +184,23 @@
 			
 			template.get(0).item = {serviceInstance : serviceInstance, servicePlan : servicePlan, service : service};
 			
+			$(template).find('.credentials').on('click', function()
+			{
+				if(!this.isShown)
+				{
+					$(this).find('span:first').text('Hide credentials');
+					$(this).parent().next().show();
+					
+					this.isShown = true;
+				}
+				else
+				{
+					$(this).find('span:first').text('Show credentials');
+					$(this).parent().next().hide();
+					this.isShown = false;
+				}
+			});
+			
 			var unbindButton = template.find('.unbind');
 			confirmButton(unbindButton, function(done)
 			{
@@ -242,23 +259,6 @@
 					},
 					function()
 					{
-						$(context).find('.service-table .credentials').on('click', function()
-						{
-							if(!this.isShown)
-							{
-								$(this).find('span:first').text('Hide credentials');
-								$(this).parent().next().show();
-								
-								this.isShown = true;
-							}
-							else
-							{
-								$(this).find('span:first').text('Show credentials');
-								$(this).parent().next().hide();
-								this.isShown = false;
-							}
-						});
-						
 						if(serviceList.length == 0)
 						{
 							$(context).find('.service-table tbody').append('<tr><td colspan="4" style="text-align: center;">no service bindings</td></tr>');
@@ -394,6 +394,8 @@
 			data.app_guid = app.metadata.guid;
 			$(context).find('.bind-progress').css('display', 'inline-block').next().hide().next().hide();
 			$(context).find('.service-select').attr('disabled', '');
+			$(context).find('.bind-service-message').text('');
+			
 			CF.async({url : '/v2/service_bindings', method : 'POST', headers : {'Content-Type' : 'application/x-www-form-urlencoded'}, form : data}, function(result)
 			{
 				if(result)
@@ -402,6 +404,7 @@
 					{
 						bindingService(context, result, function()
 						{
+							$(context).find('.service-table tbody td[colspan]').parent().remove();
 							$(context).find('.bind-progress').hide().next().show().next().show();
 							$(context).find('.service-select').val('').removeAttr('disabled');
 							$(context).find('.service-select option[value="' + data.service_instance_guid + '"]').remove();
@@ -409,16 +412,22 @@
 					}
 					else
 					{
+						$(context).find('.bind-progress').hide().next().show().next().show();
+						$(context).find('.service-select').val('').removeAttr('disabled');
 						$(context).find('.bind-service-message').text(result.description ? result.description : JSON.stringify(result.error));
 					}
 				}
 				else
 				{
+					$(context).find('.bind-progress').hide().next().show().next().show();
+					$(context).find('.service-select').val('').removeAttr('disabled');
 					$(context).find('.bind-service-message').text('Service binding is failed.');
 				}
 			},
 			function(error)
 			{
+				$(context).find('.bind-progress').hide().next().show().next().show();
+				$(context).find('.service-select').val('').removeAttr('disabled');
 				$(context).find('.bind-service-message').text(error);
 			});
 		});

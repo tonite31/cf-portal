@@ -31,6 +31,56 @@ var login = function(id, password)
 	});	
 };
 
+var pumpkin = new Pumpkin();
+pumpkin.addWork('signup', function(data)
+{
+	var next = this.next;
+	CF.users('signup', {email : data.username, password : data.password}, function(result)
+	{
+		result.data.email = data.username;
+		next(result.data);
+	},
+	function(error)
+	{
+		$('#signProgress').hide().next().next().next().show().next().show();
+		$('#signinForm .result-desc').text(error.error).css('color', '');
+	});
+});
+
+pumpkin.addWork('setOrgRole', function(data)
+{
+	$('#signinForm .result-desc').text('Setting a role of organization to your account.').css('color', 'rgb(51, 122, 183)');
+	
+	console.log("데이터 : ", data);
+	var next = this.next;
+	CF.users('setOrgRole', data, function(result)
+	{
+		next(data);
+	},
+	function(error)
+	{
+		$('#signProgress').hide().next().next().next().show().next().show();
+		$('#signinForm .result-desc').text(error.error).css('color', '');
+	});
+});
+
+pumpkin.addWork('setSpaceRole', function(data)
+{
+	$('#signinForm .result-desc').text('Setting a role of space to your account.').css('color', 'rgb(51, 122, 183)');
+	
+	console.log("데이터 : ", data);
+	var next = this.next;
+	CF.users('setSpaceRole', data, function(result)
+	{
+		next(result);
+	},
+	function(error)
+	{
+		$('#signProgress').hide().next().next().next().show().next().show();
+		$('#signinForm .result-desc').text(error.error).css('color', '');
+	});
+});
+
 $(document).ready(function()
 {
 	$('.navbar').hide();
@@ -54,7 +104,7 @@ $(document).ready(function()
 				$('#signinForm .result-desc').text('Please, wait for sign up.').css('color', '#337ab7');
 				$('#signProgress').css('display', 'inline-block').parent().find('input').hide();
 				
-				CF.users('signup', {email : data.username, password : data.password}, function(result)
+				pumpkin.execute([{name : 'signup', params : data}, 'setOrgRole', 'setSpaceRole'], function(result)
 				{
 					if(result && result.code == 201)
 					{
@@ -65,11 +115,6 @@ $(document).ready(function()
 						$('#signProgress').hide().next().next().next().show().next().show();
 						$('#signinForm .result-desc').text(JSON.stringify(result)).css('color', '');
 					}
-				},
-				function(error)
-				{
-					$('#signProgress').hide().next().next().next().show().next().show();
-					$('#signinForm .result-desc').text(error.error).css('color', '');
 				});
 			}
 		}

@@ -105,6 +105,9 @@
 		$('#backgroundProgress').show();
 		pumpkin.execute(['getOrgList', 'getSpaceList'], function()
 		{
+			if($('#orgList ul > li:first').length == 0)
+				$('.org-container').html('<div class="alert alert-warning">no spaces.</div>');
+			
 			$('#backgroundProgress').hide();
 			_ee.emit('orgList_done');
 		}, function(workName, error)

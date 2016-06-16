@@ -1,5 +1,95 @@
 (function()
 {
+	var pumpkin = new Pumpkin();
+	pumpkin.addWork('createSpace', function(params)
+	{
+		var next = this.next;
+		CF.async({url : '/v2/spaces', method : 'POST', form : params.data}, function(result)
+		{
+			if(result)
+			{
+				if(result.entity)
+				{
+					$('#createSpaceMessage').prev().hide().next().next().show().next().show();
+					
+					var el = $('<li id=' + result.metadata.guid + '><a href="#space=' + result.metadata.guid + '" class="space-name">' + result.entity.name + '</a></li>');
+					el.get(0).item = result;
+					$('#' + params.data.organization_guid).append(el);
+					
+					$('#createSpaceDialog').modal('hide');
+					
+					next(result);
+				}
+				else
+				{
+					$('#createSpaceMessage').text(result.description ? result.description : JSON.stringify(result.error));
+				}
+			}
+			else
+			{
+				$('#createSpaceMessage').text('Unknown Error');
+			}
+		},
+		function(error)
+		{
+			$('#createSpaceMessage').text(error);
+		});
+	});
+	
+	pumpkin.addWork('setSpaceManager', function(space)
+	{
+		var next = this.next;
+		next(space);
+		CF.async({url : '/v2/spaces/' + space.metadata.guid + '/managers', method : 'PUT', form : {username : $('#username').attr('data-username')}}, function(result)
+		{
+			if(result)
+			{
+				if(result.entity)
+				{
+				}
+				else
+				{
+					$('#createSpaceMessage').text(result.description ? result.description : JSON.stringify(result.error));
+				}
+			}
+			else
+			{
+				$('#createSpaceMessage').text('Unknown Error');
+			}
+		},
+		function(error)
+		{
+			$('#createSpaceMessage').text(error);
+		});
+	});
+	
+	pumpkin.addWork('setSpaceDeveloper', function(space)
+	{
+		var next = this.next;
+		CF.async({url : '/v2/spaces/' + space.metadata.guid + '/developers', method : 'PUT', form : {username : $('#username').attr('data-username')}}, function(result)
+		{
+			if(result)
+			{
+				if(result.entity)
+				{
+					next(space);
+				}
+				else
+				{
+					$('#createSpaceMessage').text(result.description ? result.description : JSON.stringify(result.error));
+				}
+			}
+			else
+			{
+				$('#createSpaceMessage').text('Unknown Error');
+			}
+		},
+		function(error)
+		{
+			$('#createSpaceMessage').text(error);
+		});
+	});
+	
 	$(document).ready(function()
 	{
 		$('#createSpaceDialog').modal('hide');
@@ -7,7 +97,7 @@
 		$('#createSpace').on('click', function()
 		{
 			$('#createSpaceOrganization').html('<option value="">Organizations Loading...</option>');
-			$('#createSpaceDialog .modal-form input[type="text"]').val();
+			$('#createSpaceDialog .modal-form input[type="text"]').val('');
 			
 			var html = '<option value="">Select a organization to create space</option>';
 			$('#orgList > li').each(function()
@@ -24,32 +114,10 @@
 		formSubmit('#createSpaceDialog .modal-form', function(data)
 		{
 			$('#createSpaceMessage').prev().css('display', 'inline-block').next().next().hide().next().hide();
-			CF.async({url : '/v2/spaces', method : 'POST', form : data}, function(result)
+			
+			pumpkin.execute([{name : 'createSpace', params : {data : data}}, 'setSpaceManager', 'setSpaceDeveloper'], function(space)
 			{
-				$('#createSpaceMessage').prev().hide().next().next().show().next().show();
-				if(result)
-				{
-					if(result.entity)
-					{
-						var space = $('<li id=' + result.metadata.guid + '><a href="#space=' + result.metadata.guid + '" class="space-name">' + result.entity.name + '</a></li>');
-						space.get(0).item = result;
-						$('#' + data.organization_guid).append(space);
-						
-						$('#createSpaceDialog').modal('hide');
-					}
-					else
-					{
-						$('#createSpaceMessage').text(result.description ? result.description : JSON.stringify(result.error));
-					}
-				}
-				else
-				{
-					$('#createSpaceMessage').text('Unknown Error');
-				}
-			},
-			function(error)
-			{
-				$('#createSpaceMessage').text(error);
+				
 			});
 		});
 		

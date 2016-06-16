@@ -84,6 +84,8 @@ Pumpkin.prototype.execute = function(list, done, error, index, params)
 
 Pumpkin.prototype.executeAsync = function(list, done, error, index, params)
 {
+	var context = this;
+	
 	if(list)
 	{
 		var name = '';
@@ -99,16 +101,21 @@ Pumpkin.prototype.executeAsync = function(list, done, error, index, params)
 			}
 			
 			if(index == 0)
-				this.state = 0;
+			{
+				context = new Pumpkin();
+				context.id = new Date().getTime();
+				context.state = this.state;
+				context.data = this.data;
+				context.works = this.works;
+			}
 			
 			if(list.length == 0)
 			{
 				if(typeof done == 'function')
-					done.call(this, params);
+					done.call(context, params);
 			}
 			else if(index < list.length)
 			{
-				var that = this;
 				name = list[index];
 				if(typeof name == 'object')
 				{
@@ -121,18 +128,18 @@ Pumpkin.prototype.executeAsync = function(list, done, error, index, params)
 					name = name.name;
 				}
 				
-				var work = this.works[name];
+				var work = context.works[name];
 				if(work)
 				{
 					try
 					{
-						work.call({data : this.data, next : function()
+						work.call({data : context.data, next : function()
 						{
-							that.state++;
-							if(that.state == list.length)
+							context.state++;
+							if(context.state == list.length)
 							{
 								if(typeof done == 'function')
-									done.call(that, params);
+									done.call(context, params);
 							}
 						}, error : function(err)
 						{
@@ -146,12 +153,12 @@ Pumpkin.prototype.executeAsync = function(list, done, error, index, params)
 					}
 					finally
 					{
-						this.executeAsync(list, done, error, index+1, params);
+						context.executeAsync(list, done, error, index+1, params);
 					}
 				}
 				else
 				{
-					this.executeAsync(list, done, error, index+1, null);
+					context.executeAsync(list, done, error, index+1, null);
 				}
 			}
 		}

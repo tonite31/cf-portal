@@ -466,6 +466,8 @@
 	
 	_ee.on('hashchange', function()
 	{
+		selectedAppGuid = null;
+		
 		_IntervalTimer.end('refresh_app_list');
 		$('.refresh-app-list-description').text('');
 		
@@ -493,9 +495,17 @@
 	{
 		var space = null;
 		if(_global.hash.space)
+		{
 			space = $('#' + _global.hash.space).get(0);
+			if(!space)
+			{
+				space = $('#orgList li li').get(0);
+			}
+		}
 		else
+		{
 			space = $('#orgList li li').get(0);
+		}
 		
 		if(space)
 		{

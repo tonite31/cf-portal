@@ -113,6 +113,9 @@ var confirmButton = function(selector, callback)
 				$(this).hide();
 				callback.call(this, function()
 				{
+					that.isConfirm = false;
+					$(that).text(that.origin).val(that.origin);
+					
 					$(that).prev().remove();
 					$(that).show();
 				});
