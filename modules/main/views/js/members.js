@@ -128,8 +128,8 @@
 					
 					$('#' + params.tableName + ' tbody tr input[type="checkbox"]').off('change').on('change', function()
 					{
-						var userGuid = $(this).parent().parent().get(0).item.metadata.guid;
-						params.userGuid = userGuid;
+						var username = $(this).parent().parent().get(0).item.entity.username;
+						params.username = username;
 						
 						if(this.checked == true)
 							params.method = 'PUT';
@@ -205,7 +205,7 @@
 		var next = this.next;
 		var error = this.error;
 		
-		CF.async({url : '/v2/' + params.dataName + '/' + params.guid + '/' + params.type + '/' + params.userGuid, method : params.method}, function(result)
+		CF.async({url : '/v2/' + params.dataName + '/' + params.guid + '/' + params.type, method : params.method, form : {username : params.username}}, function(result)
 		{
 			if(result)
 			{
@@ -323,9 +323,9 @@
 					{
 						var guid = $('#spaceSelect option:selected').val();
 						var workList = [];
-						workList.push({name : 'update', params : {tableName : 'spaceTable', dataName : 'spaces', type : 'auditors', guid : guid, userGuid : user.metadata.guid, method : 'DELETE'}});
-						workList.push({name : 'update', params : {tableName : 'spaceTable', dataName : 'spaces', type : 'managers', guid : guid, userGuid : user.metadata.guid, method : 'DELETE'}});
-						workList.push({name : 'update', params : {tableName : 'spaceTable', dataName : 'spaces', type : 'developers', guid : guid, userGuid : user.metadata.guid, method : 'DELETE'}});
+						workList.push({name : 'update', params : {tableName : 'spaceTable', dataName : 'spaces', type : 'auditors', guid : guid, username : user.entity.username, method : 'DELETE'}});
+						workList.push({name : 'update', params : {tableName : 'spaceTable', dataName : 'spaces', type : 'managers', guid : guid, username : user.entity.username, method : 'DELETE'}});
+						workList.push({name : 'update', params : {tableName : 'spaceTable', dataName : 'spaces', type : 'developers', guid : guid, username : user.entity.username, method : 'DELETE'}});
 						updateMemberAssociation.execute(workList, function()
 						{
 							tr.remove();
@@ -420,10 +420,10 @@
 						var forEach = new ForEach();
 						forEach.async(result, function(user, index)
 						{
-							if($('td:contains(' + user.entity.username + ')').length > 0)
+							if($('#orgTable td:contains(' + user.entity.username + ')').length > 0)
 								return;
 								
-							var params = {dataName : 'organizations', guid : data.org, type : 'auditors', userGuid : user.metadata.guid, method : 'PUT'};
+							var params = {dataName : 'organizations', guid : data.org, type : 'auditors', username : user.entity.username, method : 'PUT'};
 							updateMemberAssociation.execute([{name : 'update', params : params}], function()
 							{
 								var template = $('#userRowTemplate').html();
@@ -431,12 +431,13 @@
 								
 								var row = $(template);
 								row.get(0).item = user;
+								row.find('input[class="auditors"]').get(0).checked = true;
 								
 								$('#orgTable tbody').append(row);
 								$('#orgTable tbody tr:last input[type="checkbox"]').on('change', function()
 								{
-									var userGuid = $(this).parent().parent().get(0).item.metadata.guid;
-									params.userGuid = userGuid;
+									var userGuid = $(this).parent().parent().get(0).item.entity.username;
+									params.username = username;
 									
 									if(this.checked == true)
 										params.method = 'PUT';

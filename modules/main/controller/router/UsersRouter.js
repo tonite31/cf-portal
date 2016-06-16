@@ -503,6 +503,7 @@ module.exports = function(app)
 					else
 					{
 						pumpkin.data.userId = result.resources[0].id;
+						list.push({name : 'setOrgUsers', params : {username : email}});
 					}
 					
 					pumpkin.data.orgId = orgId;

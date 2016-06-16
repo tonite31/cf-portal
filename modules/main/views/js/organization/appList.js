@@ -9,6 +9,7 @@
 	var pumpkin = new Pumpkin();
 	pumpkin.addWork('getAppList', function(params)
 	{
+		$('#deleteApp').show();
 		var that = this;
 		CF.async({url : params.appsUrl}, function(result)
 		{
@@ -24,6 +25,8 @@
 					if(appList.length == 0)
 					{
 						$('#startApp').hide();
+						$('#stopApp').hide();
+						$('#restartApp').hide();
 						$('#deleteApp').hide();
 						$('#appsBody').append('<tr><td colspan="7" style="text-align: center;">no applications</td></tr>');
 					}
