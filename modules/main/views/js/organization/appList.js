@@ -22,6 +22,7 @@
 					$('#appsBody').append(progressTr);
 					
 					var appList = result.resources;
+					$('#appsBody').get(0).item = appList;
 					if(appList.length == 0)
 					{
 						$('#startApp').hide();
@@ -659,6 +660,8 @@
 			{
 				$(that).prev().remove();
 				$(that).next().show().next().show();
+				
+				_ee.emit('setAppList_done', $('#appsBody').get(0).item);
 			},
 			function()
 			{
@@ -679,6 +682,8 @@
 				$(that).prev().remove();
 				$(that).prev().show();
 				$(that).next().hide();
+				
+				_ee.emit('setAppList_done', $('#appsBody').get(0).item);
 			},
 			function()
 			{
