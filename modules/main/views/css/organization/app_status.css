@@ -18,11 +18,6 @@
 	text-align: center;
 }
 
-.status-table tr td:LAST-CHILD
-{
-	text-align: left;
-}
-
 .status-table .progress-message
 {
 	font-size: 15px;
