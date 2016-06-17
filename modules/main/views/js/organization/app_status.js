@@ -31,7 +31,6 @@
 					$(context).find('.status-table tbody').html('');
 					for(var key in result)
 					{
-						console.log(result[key]);
 						var body = '';
 						body += '<tr>';
 						body += '<td>' + key + '</td>';
