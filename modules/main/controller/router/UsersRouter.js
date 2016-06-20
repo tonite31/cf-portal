@@ -492,13 +492,13 @@ module.exports = function(app)
 					if(result.totalResults == 0)
 					{
 						list.push({name : 'createUser', params : {username : email, password : '1111'}});
-						list.push({name : 'getQuotaByName', params : {name : 'personal'}});
-						list.push({name : 'createOrg', params : {name : email + '_Org'}});
-						list.push({name : 'setOrgUsers', params : {username : email}});
-						list.push({name : 'setOrgRole', params : {type : 'managers', username : email}});
-						list.push({name : 'createSpace', params : {name : 'dev'}});
-						list.push({name : 'setSpaceRole', params : {type : 'managers', username : email}});
-						list.push({name : 'setSpaceRole', params : {type : 'spaces', username : email}});
+//						list.push({name : 'getQuotaByName', params : {name : 'personal'}});
+//						list.push({name : 'createOrg', params : {name : email + '_Org'}});
+//						list.push({name : 'setOrgUsers', params : {username : email}});
+//						list.push({name : 'setOrgRole', params : {type : 'managers', username : email}});
+//						list.push({name : 'createSpace', params : {name : 'dev'}});
+//						list.push({name : 'setSpaceRole', params : {type : 'managers', username : email}});
+//						list.push({name : 'setSpaceRole', params : {type : 'spaces', username : email}});
 					}
 					else
 					{
@@ -692,17 +692,18 @@ module.exports = function(app)
 			return;
 		}
 		
-		var id = req.body.id;
+		var id = req.body.guid;
 		
 		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
 		client.setUserInfo(_config.admin.username, _config.admin.password);
 		client.login(function()
 		{
-			client.deleteUser(id, function(result)
+			pumpkin.setData({client : client});
+			pumpkin.execute([{name : 'deleteUser', params : {userId : id}}], function(result)
 			{
 				res.send(result);
 			},
-			function(err)
+			function(workName, err)
 			{
 				res.status(500).send({error : err});
 			});

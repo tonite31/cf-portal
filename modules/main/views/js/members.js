@@ -232,6 +232,50 @@
 		});
 	});
 	
+	var deleteMember = function()
+	{
+		var tr = $(this).parent().parent();
+		var user = tr.get(0).item;
+		confirmSpan(this, function(done)
+		{
+			//여기서 모든 스페이스의 association을 다 제거 해주는건? - 추후 개발하는걸로.
+			CF.users('delete', {guid : user.metadata.guid}, function(result)
+			{
+				if(result)
+				{
+					if(result.code)
+					{
+						var errorTr = $('<tr><td colspan="5" class="error" style="text-align: right;">' + (result.description ? result.description : JSON.stringify(result.error)) + ' <span class="glyphicon glyphicon-remove"></span></td></tr>').insertAfter(tr);
+						errorTr.find('.glyphicon').on('click', function()
+						{
+							$(this).parent().parent().remove();
+						});
+					}
+					else
+					{
+						tr.remove();
+					}
+				}
+				else
+				{
+					tr.remove();
+				}
+				
+				done();
+			},
+			function(error)
+			{
+				var errorTr = $('<tr><td colspan="5" class="error" style="text-align: right;">' + error + ' <span class="glyphicon glyphicon-remove"></span></td></tr>').insertAfter(tr);
+				errorTr.find('.glyphicon').on('click', function()
+				{
+					$(this).parent().parent().remove();
+				});
+				
+				done();
+			});
+		});
+	};
+	
 	var loadOrganizationMembers = function(guid)
 	{
 		var progress = $('#orgTable tbody tr:first').show();
@@ -246,45 +290,7 @@
 			$('#orgTable tbody tr').show();
 			$('#orgTable tbody tr:first').hide();
 			
-			$('#orgTable tbody .glyphicon-remove').each(function()
-			{
-				var tr = $(this).parent().parent();
-				var user = tr.get(0).item;
-				confirmSpan(this, function(done)
-				{
-					//여기서 모든 스페이스의 association을 다 제거 해주는건? - 추후 개발하는걸로.
-					CF.async({url : '/v2/organizations/' + guid + '/users/' + user.metadata.guid, method : 'DELETE'}, function(result)
-					{
-						if(result)
-						{
-							if(result.code)
-							{
-								var errorTr = $('<tr><td colspan="5" class="error" style="text-align: right;">' + (result.description ? result.description : JSON.stringify(result.error)) + ' <span class="glyphicon glyphicon-remove"></span></td></tr>').insertAfter(tr);
-								errorTr.find('.glyphicon').on('click', function()
-								{
-									$(this).parent().parent().remove();
-								});
-							}
-						}
-						else
-						{
-							tr.remove();
-						}
-						
-						done();
-					},
-					function(error)
-					{
-						var errorTr = $('<tr><td colspan="5" class="error" style="text-align: right;">' + error + ' <span class="glyphicon glyphicon-remove"></span></td></tr>').insertAfter(tr);
-						errorTr.find('.glyphicon').on('click', function()
-						{
-							$(this).parent().parent().remove();
-						});
-						
-						done();
-					});
-				});
-			});
+			$('#orgTable tbody .glyphicon-remove').each(deleteMember);
 		});
 	};
 	
@@ -423,15 +429,16 @@
 							if($('#orgTable td:contains(' + user.entity.username + ')').length > 0)
 								return;
 								
-							var params = {dataName : 'organizations', guid : data.org, type : 'auditors', username : user.entity.username, method : 'PUT'};
-							updateMemberAssociation.execute([{name : 'update', params : params}], function()
-							{
+//							var params = {dataName : 'organizations', guid : data.org, type : 'auditors', username : user.entity.username, method : 'PUT'};
+//							updateMemberAssociation.execute([{name : 'update', params : params}], function()
+//							{
 								var template = $('#userRowTemplate').html();
 								template = template.replace('{guid}', user.metadata.guid).replace('{username}', user.entity.username);
 								
 								var row = $(template);
 								row.get(0).item = user;
 								row.find('input[class="auditors"]').get(0).checked = true;
+								row.find('.glyphicon-remove').each(deleteMember);
 								
 								$('#orgTable tbody').append(row);
 								$('#orgTable tbody tr:last input[type="checkbox"]').on('change', function()
@@ -476,12 +483,11 @@
 										$('<span style="color: red;">' + error + '</span>').insertBefore(that);
 									});
 								});
-							},
-							function(workName, error)
-							{
-								console.error(error.stack);
-								$('#message').text(error);
-							});
+//							},
+//							function(workName, error)
+//							{
+//								$('#message').text(error.description ? error.description : JSON.stringify(error));
+//							});
 						});
 					}
 				}
