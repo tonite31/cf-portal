@@ -1,6 +1,6 @@
 {
   "name": "cf-portal",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "description": "CloudFoundry Web UI",
   "main": "app.js",
   "dependencies": {

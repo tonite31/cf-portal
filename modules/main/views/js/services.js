@@ -503,6 +503,7 @@
 	{
 		$('#serviceTable tbody tr').on('click', function()
 		{
+			$("#settings .message").text('');
 			$('.detailProgress').show();
 			
 			$('.tab-pane.active').removeClass('active');
@@ -587,6 +588,7 @@
 		
 		formSubmit($('#settings form'), function(data)
 		{
+			$("#settings .message").text('');
 			$('#settings input[type="submit"]').hide().next().hide();
 			$('#settings .small-progress').css('display', 'inline-block');
 			
@@ -623,6 +625,7 @@
 		
 		confirmButton($('#deleteServiceInstance'), function(done)
 		{
+			$("#settings .message").text('');
 			$('#settings input[type="submit"]').hide();
 			
 			var serviceInstance = $('#settings input[name="name"]').get(0).item;

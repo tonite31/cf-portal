@@ -65,8 +65,7 @@ CFClient.prototype.login = function(done, error)
 				{
 					var info = JSON.parse(body);
 					this.endpoint.authorization = info.authorization_endpoint;
-					this.endpoint.logging_socket = info.logging_endpoint;
-					this.endpoint.logging = 'https://' + info.logging_endpoint.replace('wss://', '').replace(':443', '');
+					this.endpoint.logging = info.logging_endpoint;
 					this.endpoint.routing = info.routing_endpoint;
 					
 					param = {};

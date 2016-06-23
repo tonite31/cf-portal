@@ -49,6 +49,43 @@
 </tr>
 </script>
 
+<script>
+$(document).ready(function()
+{
+// 	var loggingEndpoint = '#{loggingEndpoint}';
+// 	var token = '#{accessToken}';
+// 	console.log("토큰 : ", token, loggingEndpoint);
+	
+// 	$.ajax({url : loggingEndpoint.replace('wss', 'https').replace(':443', '') + '/set-cookie', type : 'POST', headers: {
+//         "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+//     },
+//     credentials: "include",
+//     data: "CookieName=authorization&CookieValue=bearer+" + encodeURIComponent(token), success : function(e)
+//   	{
+//     	console.log("호 : ", loggingEndpoint.replace(':443', ':4443'));
+
+//     	var r = new WebSocket(loggingEndpoint.replace(':443', ':4443') + '/tail/?app=090096a4-0b3c-48d1-a448-958369ab7d9d');
+    	
+//     	r.onopen    = function()  { console.log('websocket opened'); };
+//         r.onclose   = function()  { console.log('websocket closed'); }
+//         r.onmessage = function(m)
+//         {
+//         	var r = new FileReader;
+//         	r.onload = function(e)
+//         	{
+//         		var result = String.fromCharCode.apply(null, new Uint8Array(e.target.result));
+//         		console.log(result);
+//         	};
+        	
+//         	r.readAsArrayBuffer(m.data);
+//         };
+//     },
+//     error : function(err){
+//     	console.log("에 : ", err);
+//     }});
+});
+</script>
+
 <div class="org-body">
 	<div class="org-list">
 		<ul class="list-group" id="orgList"></ul>

@@ -206,9 +206,10 @@ var rendering = function(req, res)
 	param['1'] = 'index';
 	
 	param.username = req.session.cfdata.username;
-	if(req.session.cfdata.endpoint)
+	if(req.session.cfdata.uaaToken)
 	{
-		param.tailLogServer = req.session.cfdata.endpoint.logging_socket;
+		param.accessToken = req.session.cfdata.uaaToken.access_token;
+		param.loggingEndpoint = req.session.cfdata.endpoint.logging;
 	}
 	
 	param.endpoint = _config.endpoint;

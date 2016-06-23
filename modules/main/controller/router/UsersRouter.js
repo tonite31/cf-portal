@@ -73,16 +73,21 @@ pumpkin.addWork('createUser', function(params)
 
 pumpkin.addWork('deleteUser', function(params)
 {
+	this.data.client.deleteUser(params.userId, function(result)
+	{
+		this.next();
+	}.bind(this),
+	function(error)
+	{
+		this.error(error);
+	}.bind(this));
+});
+
+pumpkin.addWork('deleteUserFromOrg', function(params)
+{
 	this.data.client.request('/v2/users/' + params.userId + '?async=true', 'DELETE', null, null, function(data)
 	{
-		this.data.client.deleteUser(params.userId, function(result)
-		{
-			this.next();
-		}.bind(this),
-		function(error)
-		{
-			this.error(error);
-		}.bind(this));
+		this.next(params);
 	}.bind(this));
 });
 
@@ -457,7 +462,7 @@ module.exports = function(app)
 			var userId = result.userId;
 			var username = req.session.cfdata.username;
 			
-			pumpkin.execute([{name : 'deleteUser', params : {userId : userId}}], done, error);
+			pumpkin.execute([{name : 'deleteUserFromOrg', params : {userId : userId}}, 'deleteUser'], done, error);
 		},
 		function(error)
 		{
@@ -481,53 +486,93 @@ module.exports = function(app)
 		client.setUserInfo(_config.admin.username, _config.admin.password);
 		client.login(function(result)
 		{
-			forEach(targetList, function(email, index)
+			client.request('/v2/organizations/' + orgId + '/managers', 'GET', null, null, function(result)
 			{
-				var done = this.async();
-				
-				email = email.trim();
-				client.getUser(email, function(result)
+				if(result)
 				{
-					var list = [];
-					if(result.totalResults == 0)
+					if(result.resources)
 					{
-						list.push({name : 'createUser', params : {username : email, password : '1111'}});
-//						list.push({name : 'getQuotaByName', params : {name : 'personal'}});
-//						list.push({name : 'createOrg', params : {name : email + '_Org'}});
-//						list.push({name : 'setOrgUsers', params : {username : email}});
-//						list.push({name : 'setOrgRole', params : {type : 'managers', username : email}});
-//						list.push({name : 'createSpace', params : {name : 'dev'}});
-//						list.push({name : 'setSpaceRole', params : {type : 'managers', username : email}});
-//						list.push({name : 'setSpaceRole', params : {type : 'spaces', username : email}});
+						var check = false;
+						var list = result.resources;
+						for(var i=0; i<list.length; i++)
+						{
+							console.log("홉 : ", list[i].entity.username, req.session.cfdata.username);
+							if(list[i].entity.username == req.session.cfdata.username)
+							{
+								check = true;
+								break;
+							}
+						}
+						
+						if(check)
+						{
+							forEach(targetList, function(email, index)
+							{
+								var done = this.async();
+								
+								email = email.trim();
+								client.getUser(email, function(result)
+								{
+									var list = [];
+									if(result.totalResults == 0)
+									{
+										list.push({name : 'createUser', params : {username : email, password : '1111'}});
+//												list.push({name : 'getQuotaByName', params : {name : 'personal'}});
+//												list.push({name : 'createOrg', params : {name : email + '_Org'}});
+//												list.push({name : 'setOrgUsers', params : {username : email}});
+//												list.push({name : 'setOrgRole', params : {type : 'managers', username : email}});
+//												list.push({name : 'createSpace', params : {name : 'dev'}});
+//												list.push({name : 'setSpaceRole', params : {type : 'managers', username : email}});
+//												list.push({name : 'setSpaceRole', params : {type : 'spaces', username : email}});
+									}
+									else
+									{
+										pumpkin.data.userId = result.resources[0].id;
+										list.push({name : 'setOrgUsers', params : {username : email}});
+									}
+									
+									pumpkin.data.orgId = orgId;
+									list.push({name : 'sendInviteMail', params : {hostname : req.headers.host, target : email}});
+									list.push({name : 'setOrgRole', params : {type : 'auditors', username : email}});
+									
+									pumpkin.execute(list, function(result)
+									{
+										resultList.push({entity : {username : email}, metadata : {guid : pumpkin.data.userId}});
+										done();
+									},
+									function(name, error)
+									{
+										res.status(500).send({error : error});
+									});
+								},
+								function(error)
+								{
+									res.status(500).send({error : error});
+								});
+							},
+							function()
+							{
+								res.send(resultList);
+							});
+						}
+						else
+						{
+							res.status(500).send({error : 'You are not authorized to perform the requested action'});
+						}
 					}
 					else
 					{
-						pumpkin.data.userId = result.resources[0].id;
-						list.push({name : 'setOrgUsers', params : {username : email}});
+						res.status(500).send({error : (result.description ? result.description : JSON.stringify(result.error))});
 					}
-					
-					pumpkin.data.orgId = orgId;
-					list.push({name : 'sendInviteMail', params : {hostname : req.headers.host, target : email}});
-					list.push({name : 'setOrgRole', params : {type : 'auditors', username : email}});
-					
-					pumpkin.execute(list, function(result)
-					{
-						resultList.push({entity : {username : email}, metadata : {guid : pumpkin.data.userId}});
-						done();
-					},
-					function(name, error)
-					{
-						res.status(500).send({error : error});
-					});
-				},
-				function(error)
+				}
+				else
 				{
-					res.status(500).send({error : error});
-				});
+					res.status(500).send({error : 'Unknown Error'});
+				}
 			},
-			function()
+			function(err)
 			{
-				res.send(resultList);
+				res.status(500).send({error : err});
 			});
 		}, function(error)
 		{
@@ -605,7 +650,7 @@ module.exports = function(app)
 			return;
 		}
 		
-		var username = req.body.username;
+		var username = req.session.cfdata.username;
 		
 		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
 		client.setUserInfo(_config.admin.username, _config.admin.password);
@@ -682,7 +727,7 @@ module.exports = function(app)
 		});
 	});
 	
-	app.post('/users/delete', function(req, res, next)
+	app.post('/users/deleteFromOrg', function(req, res, next)
 	{
 		var cf = new CFClient(req.session.cfdata);
 		if(!cf.isLogin())
@@ -693,17 +738,57 @@ module.exports = function(app)
 		}
 		
 		var id = req.body.guid;
+		var orgId = req.body.orgId;
 		
 		var client = new CFClient({endpoint : req.session.cfdata.endpoint});
 		client.setUserInfo(_config.admin.username, _config.admin.password);
 		client.login(function()
 		{
-			pumpkin.setData({client : client});
-			pumpkin.execute([{name : 'deleteUser', params : {userId : id}}], function(result)
+			client.request('/v2/organizations/' + orgId + '/managers', 'GET', null, null, function(result)
 			{
-				res.send(result);
+				if(result)
+				{
+					if(result.resources)
+					{
+						var check = false;
+						var list = result.resources;
+						for(var i=0; i<list.length; i++)
+						{
+							if(list[i].entity.username == req.session.cfdata.username)
+							{
+								check = true;
+								break;
+							}
+						}
+						
+						if(check)
+						{
+							pumpkin.setData({client : client});
+							pumpkin.execute([{name : 'deleteUserFromOrg', params : {userId : id}}], function(result)
+							{
+								res.send(result);
+							},
+							function(workName, err)
+							{
+								res.status(500).send({error : err});
+							});
+						}
+						else
+						{
+							res.status(500).send({error : 'You are not authorized to perform the requested action'});
+						}
+					}
+					else
+					{
+						res.status(500).send({error : (result.description ? result.description : JSON.stringify(result.error))});
+					}
+				}
+				else
+				{
+					res.status(500).send({error : 'Unknown Error'});
+				}
 			},
-			function(workName, err)
+			function(err)
 			{
 				res.status(500).send({error : err});
 			});

@@ -238,8 +238,8 @@
 		var user = tr.get(0).item;
 		confirmSpan(this, function(done)
 		{
-			//여기서 모든 스페이스의 association을 다 제거 해주는건? - 추후 개발하는걸로.
-			CF.users('delete', {guid : user.metadata.guid}, function(result)
+			//유저를 삭제하는것이 아닌 현 org에서만 제외하는것.
+			CF.users('deleteFromOrg', {guid : user.metadata.guid, orgId : $('#orgSelect').val()}, function(result)
 			{
 				if(result)
 				{

@@ -3,7 +3,7 @@
 	$(document).ready(function()
 	{
 		$('.profile-progress').show();
-		CF.users('getUser', {username : $('#username').attr('data-username')}, function(result)
+		CF.users('getUser', null, function(result)
 		{
 			$('.profile-progress').hide();
 			if(result)

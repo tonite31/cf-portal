@@ -10,7 +10,14 @@ var fs = require('fs');
 		{
 			if(fs.lstatSync(dir + '/' + files[i]).isDirectory())
 			{
-				loader(dir + '/' + files[i]);
+				try
+				{
+					loader(dir + '/' + files[i]);
+				}
+				catch(err)
+				{
+					console.log(err.stack);
+				}
 			}
 			else
 			{
@@ -18,7 +25,14 @@ var fs = require('fs');
 					continue;
 				
 				var router = require(dir + '/' + files[i]);
-				router(_app);
+				try
+				{
+					router(_app);
+				}
+				catch(err)
+				{
+					console.log(err.stack);
+				}
 			}	
 		}
 	};
