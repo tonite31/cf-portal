@@ -95,6 +95,20 @@
 						<tbody>
 						</tbody>
 					</table>
+					
+					<form class="binding-form">
+						<div class="input-group">
+							<select class="select" id="appSelect" name="app_guid" required>
+								<option value="" disabled selected>Apps Loading...</option>
+							</select>
+						</div>
+						<div class="input-group" style="width: 500px;">
+							<span class="glyphicon glyphicon-refresh small-progress"></span>
+							<input type="submit" class="btn btn-primary" value="Bind">
+							<span class="bind-cancel">Cancel</span>
+							<span class="message bind-message"></span>
+						</div>
+					</form>
 				</div>
 				<div role="tabpanel" class="tab-pane fade" id="plan">
 					<table class="detail-table plans-table">
@@ -112,7 +126,7 @@
 				<div role="tabpanel" class="tab-pane fade" id="settings">
 					<form>
 						<div class="input-group" style="width: 500px;">
-							<input type="text" class="form-control" name="name" placeholder="Service instance name">
+							<input type="text" class="form-control" name="name" placeholder="Service instance name" required>
 						</div>
 						<div>
 							<span class="glyphicon glyphicon-refresh small-progress"></span>

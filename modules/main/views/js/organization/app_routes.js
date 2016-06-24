@@ -72,6 +72,7 @@
 		{
 			if(result)
 			{
+				console.log(result);
 				if(result.resources)
 				{
 					var forEach = new ForEach();
@@ -237,18 +238,38 @@
 					{
 						if(result.resources.length == 1)
 						{
-							mapRoute(context, app.metadata.guid, result.resources[0].metadata.guid, data);
+							if(result.resources[0].entity.host == data.host)
+							{
+								$(context).find('.map-message').text('Duplicated hostname');
+							}
+							else
+							{
+								mapRoute(context, app.metadata.guid, result.resources[0].metadata.guid, data);
+							}
+							
+							$(context).find('.routes-form input[type="text"]').removeAttr('disabled');
+							$(context).find('.routes-form select').removeAttr('disabled');
+							$(context).find('.routes-form .map-progress').hide().next().show().next().show();
+							
 							return;
 						}
 					}
 					else
 					{
+						$(context).find('.routes-form input[type="text"]').removeAttr('disabled');
+						$(context).find('.routes-form select').removeAttr('disabled');
+						$(context).find('.routes-form .map-progress').hide().next().show().next().show();
 						$(context).find('.map-message').text(result.description ? result.description : JSON.stringify(result.error));
+						return;
 					}
 				}
 				else
 				{
+					$(context).find('.routes-form input[type="text"]').removeAttr('disabled');
+					$(context).find('.routes-form select').removeAttr('disabled');
+					$(context).find('.routes-form .map-progress').hide().next().show().next().show();
 					$(context).find('.map-message').text('Unknown Error');
+					return;
 				}
 
 				//만약 스페이스 라우트 목록에 라우트가 없다면 새로운 라우트를 먼저 만들고.

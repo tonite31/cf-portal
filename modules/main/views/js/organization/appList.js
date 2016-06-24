@@ -157,8 +157,13 @@
 	
 	var bindScaleEvent = function()
 	{
-		$('#appsBody input[data-id]').on('keyup', function()
+		$('#appsBody input[data-id]').on('keyup click', function(e)
 		{
+			if(!e.keyCode)
+			{
+				e.stopImmediatePropagation();
+			}
+			
 			var prev = $(this).attr('data-value');
 			if(prev != $(this).val())
 			{
@@ -350,6 +355,7 @@
 								}
 								else
 								{
+									target.text(prev);
 									message.text(result.description ? result.description : JSON.stringify(result.error)).css('color', 'red');
 									setTimeout(function()
 									{
@@ -359,6 +365,7 @@
 							}
 							else
 							{
+								target.text(prev);
 								message.text('Unknown Error.').css('color', 'red');
 								setTimeout(function()
 								{
@@ -368,7 +375,7 @@
 						});
 					});
 					
-					$(target).off('keydown').on('keydown', function(e)
+					$(target).off('mouseup').on('mouseup', function(e)
 					{
 						if(e.keyCode == 13)
 						{

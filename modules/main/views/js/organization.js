@@ -14,6 +14,7 @@
 					
 					var el = $('<li id=' + result.metadata.guid + '><a href="#space=' + result.metadata.guid + '" class="space-name">' + result.entity.name + '</a></li>');
 					el.get(0).item = result;
+					el.get(0).item.organization = $('#' + params.data.organization_guid).parent().get(0).item;
 					$('#' + params.data.organization_guid).append(el);
 					
 					$('#createSpaceDialog').modal('hide');

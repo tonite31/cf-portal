@@ -1,5 +1,21 @@
 (function()
 {
+	var addParameter = function()
+	{
+		var clone = $(this).parent().clone().removeClass('.parameters');
+		clone.find('input[type="text"]').val('');
+		clone.insertAfter($(this).parent());
+		
+		$(this).removeClass('glyphicon-plus').addClass('glyphicon-minus');
+		$(this).off('click').on('click', function()
+		{
+			$(this).parent().remove();
+		});
+		
+		clone.find('.glyphicon').off('click').on('click', addParameter);
+		clone.find('input:first').focus();
+	};
+	
 	var selectPlan = function(service, plan)
 	{
 		var first = $('.parameters:first');
@@ -14,6 +30,8 @@
 		plan.service = service;
 		$('.modal-form .small-progress').hide().next().next().show().next().show();
 		$('#selectPlanDialog').modal('show').get(0).item = plan;
+		
+		$('.modal-form .parameters .glyphicon').off('click').on('click', addParameter);
 		
 		$('#modalTitle').html(service.entity.label + ' <small>' + service.entity.description + '</small>');
 		$('#modalPlanName').text('Selected plan : ' + plan.entity.name);
@@ -419,23 +437,5 @@
 			$('.modal-form select').html('');
 			$('#modalMessage').text('');
 		});
-		
-		var addParameter = function()
-		{
-			var clone = $(this).parent().clone().removeClass('.parameters');
-			clone.find('input[type="text"]').val('');
-			clone.insertAfter($(this).parent());
-			
-			$(this).removeClass('glyphicon-plus').addClass('glyphicon-minus');
-			$(this).off('click').on('click', function()
-			{
-				$(this).parent().remove();
-			});
-			
-			clone.find('.glyphicon').off('click').on('click', addParameter);
-			clone.find('input:first').focus();
-		};
-		
-		$('.modal-form .parameters .glyphicon').on('click', addParameter);
 	});
 })();

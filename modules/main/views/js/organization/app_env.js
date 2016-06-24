@@ -1,5 +1,7 @@
 (function()
 {
+	var environment = null;
+	
 	var deleteButton = function(selector, callback)
 	{
 		$(selector).css('transition', 'opacity 0.2s');
@@ -42,7 +44,7 @@
 		});
 	};
 	
-	var setUserProvided = function(context, app, environment)
+	var setUserProvided = function(context, app)
 	{
 		$(context).find('.user-provided-container').html('');
 		for(var key in environment)
@@ -95,7 +97,8 @@
 						{
 							if(result.entity)
 							{
-								setUserProvided(context, app, result.entity.environment_json);
+								environment = result.entity.environment_json;
+								setUserProvided(context, app);
 							}
 							else
 							{
@@ -138,11 +141,12 @@
 				
 				CF.async(param, function(result)
 				{
+					environment = result.entity.environment_json;
 					if(result)
 					{
 						if(result.entity)
 						{
-							setUserProvided(context, app, result.entity.environment_json);
+							setUserProvided(context, app);
 						}
 						else
 						{
@@ -169,7 +173,7 @@
 	{
 		$(context).find('.envProgress').show().next().hide();
 		
-		var environment = app.entity.environment_json;
+		environment = app.entity.environment_json;
 		setUserProvided(context, app, environment);
 		
 		CF.async({url : '/v2/apps/' + app.metadata.guid + '/env'}, function(result)
@@ -194,6 +198,13 @@
 		formSubmit($(context).find('.env-form'), function(data)
 		{
 			$(context).find('.env-form .env-progress').css('display', 'inline-block').next().hide().next().hide();
+			
+			if(environment.hasOwnProperty(data.key))
+			{
+				$(context).find('.env-form .env-progress').hide().next().show().next().show();
+				$(context).find('.env-service-message').text('Duplicated key');
+				return;
+			}
 			
 			environment[data.key] = data.value;
 			

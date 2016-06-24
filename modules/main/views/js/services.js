@@ -73,6 +73,42 @@
 		});
 	});
 	
+	pumpkin.addWork('getApps', function(params)
+	{
+		var next = this.next;
+		CF.async({url : '/v2/spaces/' + params.guid + '/apps'}, function(result)
+		{
+			if(result)
+			{
+				if(result.resources)
+				{
+					var html = '';
+					var appList = result.resources;
+					for(var i=0; i<appList.length; i++)
+					{
+						html += '<option value="' + appList[i].metadata.guid + '">' + appList[i].entity.name + '</option>';
+					}
+					
+					$('#appSelect').html('<option value="">Select a app</option>' + html).removeAttr('disabled');
+				}
+				else
+				{
+					$('#appSelect option:first').text(result.description ? result.description : JSON.stringify(result.error));
+				}
+			}
+			else
+			{
+				$('#appSelect option:first').text('Unknown Error');
+			}
+			
+			next();
+		},
+		function(error)
+		{
+			$('#appSelect option:first').text(error);
+		});
+	});
+	
 	var getServiceInstanceDetail = new Pumpkin();
 	getServiceInstanceDetail.addWork('getServicePlan', function(service)
 	{
@@ -340,11 +376,26 @@
 								$(that).next().text(result.description ? result.description : JSON.stringify(result.error));
 							}
 						}
+
+						var item = $('#serviceTable tbody tr.selected').get(0).item;
+						for(var i=0; i<item.bindings.length; i++)
+						{
+							if(item.bindings[i].metadata.url == binding.metadata.url)
+							{
+								item.bindings.splice(i, 1);
+								break;
+							}
+						}
+						
+						var boundApp = $('#serviceTable tbody tr.selected td:nth-child(3)').text();
+						boundApp = new Number(boundApp);
+						$('#serviceTable tbody tr.selected td:nth-child(3)').text(--boundApp);
+						
+						$(that).parent().parent().remove();
 						
 						if($('.binding-table tbody tr').length == 0)
 							$('.binding-table tbody').append('<tr><td colspan="2" style="text-align: center;">no bound apps.</td></tr>');
 						
-						$(that).parent().parent().remove();
 						done();
 					},
 					function(error)
@@ -529,6 +580,59 @@
 		});
 	};
 	
+	var bindingService = function(binding, callback)
+	{
+		var template = $('#boundAppRowTemplate').html();
+		template = template.replace('{name}', binding.entity.name);
+		template = $(template);
+		template.get(0).item = binding;
+		
+		$('#bindings .binding-table tbody td[colspan="2"]').parent().remove();
+		$('#bindings .binding-table tbody').append(template);
+		
+		confirmButton(template.find('.unbind'), function(done)
+		{
+			var that = this;
+			CF.async({url : binding.metadata.url, method : 'DELETE'}, function(result)
+			{
+				if(result)
+				{
+					if(result.code)
+					{
+						$(that).next().text(result.description ? result.description : JSON.stringify(result.error));
+					}
+				}
+
+				var item = $('#serviceTable tbody tr.selected').get(0).item;
+				for(var i=0; i<item.bindings.length; i++)
+				{
+					if(item.bindings[i].metadata.url == binding.metadata.url)
+					{
+						item.bindings.splice(i, 1);
+						break;
+					}
+				}
+				
+				var boundApp = $('#serviceTable tbody tr.selected td:nth-child(3)').text();
+				boundApp = new Number(boundApp);
+				$('#serviceTable tbody tr.selected td:nth-child(3)').text(--boundApp);
+				
+				$(that).parent().parent().remove();
+				
+				if($('.binding-table tbody tr').length == 0)
+					$('.binding-table tbody').append('<tr><td colspan="2" style="text-align: center;">no bound apps.</td></tr>');
+				
+				done();
+			},
+			function(error)
+			{
+				$(that).next().text(error);
+			});
+		});
+		
+		callback();
+	};
+	
 	$(document).ready(function()
 	{
 		pumpkin.execute(['getOrgs', 'getSpaces'], function()
@@ -558,6 +662,11 @@
 				else
 				{
 					getServices();
+					
+					pumpkin.execute([{name : 'getApps', params : {guid : $('#spaceSelect').val()}}], function()
+					{
+						
+					});
 				}
 			});
 		});
@@ -583,7 +692,60 @@
 			else
 			{
 				getServices();
+				
+				pumpkin.execute([{name : 'getApps', params : {guid : this.val()}}], function()
+				{
+					
+				});
 			}
+		});
+		
+		formSubmit($('#bindings form'), function(data)
+		{
+			$("#bindings .bind-message").text('');
+			$('#bindings input[type="submit"]').hide().next().hide();
+			$('#bindings .small-progress').css('display', 'inline-block');
+			
+			var serviceInstance = $('#settings input[name="name"]').get(0).item;
+			data.service_instance_guid = serviceInstance.metadata.guid;
+			
+			CF.async({url : '/v2/service_bindings', method : 'POST', headers : {'Content-Type' : 'application/x-www-form-urlencoded'}, form : data}, function(result)
+			{
+				if(result)
+				{
+					if(result.entity)
+					{
+						result.entity.name = $('#appSelect option:selected').text();
+						bindingService(result, function()
+						{
+							var boundApp = $('#serviceTable tbody tr.selected td:nth-child(3)').text();
+							boundApp = new Number(boundApp);
+							$('#serviceTable tbody tr.selected td:nth-child(3)').text(++boundApp);
+							
+							$('#bindings .small-progress').hide().next().show().next().show();
+							$('#appSelect').val('').removeAttr('disabled');
+						});
+					}
+					else
+					{
+						$('#bindings .small-progress').hide().next().show().next().show();
+						$('#appSelect').val('').removeAttr('disabled');
+						$("#bindings .bind-message").text(result.description ? result.description : JSON.stringify(result.error));
+					}
+				}
+				else
+				{
+					$('#bindings .small-progress').hide().next().show().next().show();
+					$('#appSelect').val('').removeAttr('disabled');
+					$("#bindings .bind-message").text('Service binding is failed.');
+				}
+			},
+			function(error)
+			{
+				$('#bindings .small-progress').hide().next().show().next().show();
+				$('#appSelect').val('').removeAttr('disabled');
+				$("#bindings .bind-message").text(error);
+			});
 		});
 		
 		formSubmit($('#settings form'), function(data)
@@ -642,6 +804,8 @@
 						return;
 					}
 				}
+				
+				var item = $('#serviceTable tbody tr.selected').get(0).item;
 				
 				$('#serviceDetails').hide();
 				$('#settings input[type="submit"]').show();

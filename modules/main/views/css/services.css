@@ -158,3 +158,54 @@ p.message
 {
 	margin: 5px 0;
 }
+
+.binding-form
+{
+	margin-top: 10px;
+}
+
+.binding-form .input-group
+{
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.binding-form input[type='submit']
+{
+	margin: 0 10px;
+}
+
+.binding-form input[type='text']
+{
+	padding: 21.5px;
+    border: 1px solid #F2f2f2;
+    box-shadow: none;
+}
+
+.bind-cancel
+{
+	cursor: pointer;
+}
+
+.bind-cancel:HOVER
+{
+	text-decoration: underline;	
+}
+
+.bind-progress
+{
+	margin: 0 10px;
+	
+	display: none;
+	
+	animation-name: progress;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.bind-message
+{
+	font-size: 12px;
+	color: red;
+}
