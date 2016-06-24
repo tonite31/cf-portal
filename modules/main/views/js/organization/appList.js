@@ -590,7 +590,7 @@
 				if(result.entity && result.entity.state == 'STOPPED')
 				{
 					app.entity.state = result.entity.state;
-					td.html('<span class="text-primary glyphicon glyphicon-pause"></span> <span>Stopped</span>').css('color', '');
+					td.html('<span class="text-muted glyphicon glyphicon-pause"></span> <span>Stopped</span>').css('color', '');
 					next();
 				}
 				else
