@@ -1,0 +1,46 @@
+.documents-table
+{
+	width: 100%;
+	margin-top: 10px;
+}
+
+.documents-table thead {
+	border-top: 1px solid #c2c9cb;
+	border-bottom: 1px solid #c2c9cb;
+}
+
+.documents-table tbody tr {
+	border-bottom: 1px solid #dce2e3;
+}
+
+.documents-table th, .documents-table td {
+	font-size: 12px;
+	padding: 15px;
+	text-align: center;
+}
+
+.documents-table td:FIRST-CHILD
+{
+	text-align: left;
+	font-size: 15px;
+}
+
+.docs > div
+{
+	margin: 70px 0;
+}
+
+.docs > div:FIRST-CHILD
+{
+	margin-bottom: 30px;
+}
+
+.docs > div:nth-child(2)
+{
+	margin-top: 30px;
+}
+
+.docs > div p
+{
+	padding: 5px 0;
+}

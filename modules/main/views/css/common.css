@@ -245,3 +245,13 @@ input[disabled], select[disabled]
 {
 	color: white;
 }
+
+.container-body
+{
+	position: absolute;
+	top: 71px;
+	bottom: 40px;
+	left: 0;
+	right: 0;
+	overflow: auto;
+}

@@ -578,6 +578,8 @@
 				$('html, body').animate({scrollTop:document.body.scrollHeight});
 			});
 		});
+		
+		$('#serviceTable tbody tr:nth-child(2)').click();
 	};
 	
 	var bindingService = function(binding, callback)
