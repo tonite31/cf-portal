@@ -375,7 +375,7 @@
 						});
 					});
 					
-					$(target).off('mouseup').on('mouseup', function(e)
+					$(target).off('keydown').on('keydown', function(e)
 					{
 						if(e.keyCode == 13)
 						{

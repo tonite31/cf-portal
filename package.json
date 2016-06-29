@@ -26,9 +26,6 @@
   "author": {
     "name": "Alprensia"
   },
-  "engines": {
-    "node": "4.2.2"
-  },
   "license": "SEE LICENSE IN https://github.com/tonite31/pumpkin/blob/master/LICENSE",
   "repository": {
     "type": "git",

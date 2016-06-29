@@ -128,7 +128,7 @@
 				
 				$(that).parent().parent().remove();
 				
-				if(td.get(0).children.length == 0)
+				if(td.get(0) && td.get(0).children.length == 0)
 					td.html('no routes');
 			},
 			function(error)
@@ -137,7 +137,8 @@
 			});
 		});
 		
-		$(context).find('.routes-table tbody').append(row);
+		if($(context).find('.routes-table tbody a[href="' + url + '"]').length == 0)
+			$(context).find('.routes-table tbody').append(row);
 	};
 	
 	var mapRoute = function(context, appGuid, routeGuid, data)
@@ -160,7 +161,8 @@
 					if(td.html() == 'no routes')
 						td.html('');
 					
-					td.append('<p><a target="_blank" href="' + url + '">' + url + '</a></p>');
+					if(td.find('a[href="' + url + '"]').length == 0)
+						td.append('<p><a target="_blank" href="' + url + '">' + url + '</a></p>');
 					return;
 				}
 				else
@@ -238,14 +240,7 @@
 					{
 						if(result.resources.length == 1)
 						{
-							if(result.resources[0].entity.host == data.host)
-							{
-								$(context).find('.map-message').text('Duplicated hostname');
-							}
-							else
-							{
-								mapRoute(context, app.metadata.guid, result.resources[0].metadata.guid, data);
-							}
+							mapRoute(context, app.metadata.guid, result.resources[0].metadata.guid, data);
 							
 							$(context).find('.routes-form input[type="text"]').removeAttr('disabled');
 							$(context).find('.routes-form select').removeAttr('disabled');
