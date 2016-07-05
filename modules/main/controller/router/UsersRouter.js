@@ -496,7 +496,6 @@ module.exports = function(app)
 						var list = result.resources;
 						for(var i=0; i<list.length; i++)
 						{
-							console.log("홉 : ", list[i].entity.username, req.session.cfdata.username);
 							if(list[i].entity.username == req.session.cfdata.username)
 							{
 								check = true;
@@ -528,10 +527,11 @@ module.exports = function(app)
 									else
 									{
 										pumpkin.data.userId = result.resources[0].id;
-										list.push({name : 'setOrgUsers', params : {username : email}});
 									}
 									
+									
 									pumpkin.data.orgId = orgId;
+									list.push({name : 'setOrgUsers', params : {username : email}});
 									list.push({name : 'sendInviteMail', params : {hostname : req.headers.host, target : email}});
 									list.push({name : 'setOrgRole', params : {type : 'auditors', username : email}});
 									

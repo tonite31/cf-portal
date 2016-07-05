@@ -25,7 +25,7 @@
 			else
 				$('#quotaProgress').removeClass('progress-bar-warning').removeClass('progress-bar-danger');
 			
-			$('#quotaProgress').removeClass('active').addClass('active').css('width', p + '%').text(text);
+			$('#quotaProgress').removeClass('active').addClass('active').css('width', (p == 1 ? 2 : p) + '%').text(text);
 		}
 	};
 	

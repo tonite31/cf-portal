@@ -483,6 +483,50 @@
 										$('<span style="color: red;">' + error + '</span>').insertBefore(that);
 									});
 								});
+								
+								$('#spaceTable tbody').append(row);
+								$('#spaceTable tbody tr:last input[type="checkbox"]').on('change', function()
+								{
+									var userGuid = $(this).parent().parent().get(0).item.entity.username;
+									params.username = username;
+									
+									if(this.checked == true)
+										params.method = 'PUT';
+									else
+										params.method = 'DELETE';
+									
+									var type = $(this).attr('class');
+									if(type == 'managers')
+									{
+										params.type = 'managers';
+									}
+									else if(type == 'auditors')
+									{
+										params.type = 'auditors';
+									}
+									else
+									{
+										if(params.dataName == 'spaces')
+											params.type = 'developers';
+										else
+											params.type = 'billing_managers';
+									}
+									
+									var progress = '<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>';
+									$(this).hide();
+									$(progress).insertBefore(this);
+									
+									var that = this;
+									updateMemberAssociation.execute([{name : 'update', params : params}], function()
+									{
+										$(that).show().prev().remove();
+									},
+									function(workName, error)
+									{
+										$(that).prev().remove();
+										$('<span style="color: red;">' + error + '</span>').insertBefore(that);
+									});
+								});
 //							},
 //							function(workName, error)
 //							{
