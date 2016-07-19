@@ -133,15 +133,18 @@
 								$('<span>$' + planList[i].entity.extra.costs[0].amount.usd + ' / ' + planList[i].entity.extra.costs[0].unit + '</span>').insertAfter(nameTh.find('.plan-name'));
 							
 							var bullets = planList[i].entity.extra.bullets;
-							var html = '<ul>';
-							for(var j=0; j<bullets.length; j++)
+							if(bullets)
 							{
-								html += '<li>' + bullets[j] + '</li>';
+								var html = '<ul>';
+								for(var j=0; j<bullets.length; j++)
+								{
+									html += '<li>' + bullets[j] + '</li>';
+								}
+								
+								html += '</ul>';
+								
+								td.append(html);
 							}
-							
-							html += '</ul>';
-							
-							td.append(html);
 						}
 						
 						var div = $('<div style="text-align: center;"><button type="button" class="btn btn-primary select-plan">Select this plan</button><p class="message"></p></div></td>');

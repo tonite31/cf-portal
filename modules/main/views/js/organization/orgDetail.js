@@ -12,7 +12,8 @@
 		if(appQuotaSum != null && organizationQuota != null)
 		{
 			var text = '';
-			var p = Math.floor((appQuotaSum / organizationQuota) * 100);
+			var p = (appQuotaSum / organizationQuota) * 100;
+			p = p.toFixed(2);
 			if(p < 10)
 				text = p + '%';
 			else
@@ -25,7 +26,9 @@
 			else
 				$('#quotaProgress').removeClass('progress-bar-warning').removeClass('progress-bar-danger');
 			
-			$('#quotaProgress').removeClass('active').addClass('active').css('width', (p == 1 ? 2 : p) + '%').text(text);
+			console.log("흠 : ", p);
+			
+			$('#quotaProgress').removeClass('active').addClass('active').css('width', (p < 1 ? 3 : p) + '%').text(text);
 		}
 	};
 	

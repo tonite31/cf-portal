@@ -93,9 +93,12 @@ if(_config.redis && _config.redis.host && _config.redis.port)
 	var RedisStore = require('connect-redis')(session);
 	//var redis = require("redis").createClient({host : '10.250.64.199', port : 6379});
 	var redis = require("redis").createClient(_config.redis);
+	
 	redis.on('connect', function()
 	{
 		console.log('connected to redis!!');
+		
+		global._redis = redis;
 	});
 	
 	app.use(session({
@@ -107,6 +110,7 @@ if(_config.redis && _config.redis.host && _config.redis.port)
 }
 else
 {
+	global._redis = null;
 	app.use(session({ secret: 'halloween', resave: true, saveUninitialized: true}));
 }
 
@@ -154,34 +158,3 @@ imp.setBinderModules(BinderLoader.modules);
 
 var routerLoader = require(_path.libs + "/RouterLoader");
 routerLoader(_path.modules);
-
-//var typeList = ['get', 'post', 'put', 'delete'];
-//for(var i=0; i<typeList.length; i++)
-//{
-//	(function(type)
-//	{
-//		app[type]('/*', function(req, res, next)
-//		{
-//			var check = false;
-//			var routerList = routerLoader[type];
-//			if(routerList)
-//			{
-//				for(var key in routerList)
-//				{
-//					var regx = new RegExp(key, "gi");
-//					if(regx.exec(req.path))
-//					{
-//						routerLoader[type][key](req, res, next);
-//						check = true;
-//						break;
-//					}
-//				}
-//			}
-//			
-//			if(!check)
-//			{
-//				res.status(404).end("Not Found");
-//			}
-//		});
-//	})(typeList[i]);
-//}

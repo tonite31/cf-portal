@@ -99,6 +99,9 @@ CFClient.prototype.login = function(done, error)
 							else
 							{
 								this.uaaToken = data;
+								
+								if(_redis)
+									_redis.set('cfdata', JSON.stringify(data));
 								done();
 							}
 						}

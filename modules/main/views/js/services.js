@@ -292,7 +292,8 @@
 						clone.find('tbody tr').show();
 						progress.hide();
 						
-						setDetails();
+						if(serviceList.length > 0)
+							setDetails();
 					});
 				}
 				else
@@ -695,7 +696,7 @@
 			{
 				getServices();
 				
-				pumpkin.execute([{name : 'getApps', params : {guid : this.val()}}], function()
+				pumpkin.execute([{name : 'getApps', params : {guid : $(this).val()}}], function()
 				{
 					
 				});
