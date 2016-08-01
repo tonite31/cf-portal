@@ -26,8 +26,6 @@
 			else
 				$('#quotaProgress').removeClass('progress-bar-warning').removeClass('progress-bar-danger');
 			
-			console.log("흠 : ", p);
-			
 			$('#quotaProgress').removeClass('active').addClass('active').css('width', (p < 1 ? 3 : p) + '%').text(text);
 		}
 	};

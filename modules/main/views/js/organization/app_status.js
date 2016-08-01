@@ -15,13 +15,13 @@
 					$(context).find('.status-table tbody').html('');
 					if(result.code == 200003)
 					{
-						$(context).find('.status-table tbody').append('<tr><td colspan="6" style="text-align: center;">There are no running instances of this app.</td></tr>');
+						$(context).find('.status-table tbody').append('<tr><td colspan="7" style="text-align: center;">There are no running instances of this app.</td></tr>');
 						if(error)
 							error('There are no running instances of this app.');
 					}
 					else
 					{
-						$(context).find('.status-table tbody').append('<tr><td colspan="6" style="text-align: center;">' + result.description ? result.description : JSON.stringify(result.error) + '</td></tr>');
+						$(context).find('.status-table tbody').append('<tr><td colspan="7" style="text-align: center;">' + result.description ? result.description : JSON.stringify(result.error) + '</td></tr>');
 						if(error)
 							error(result.description ? result.description : JSON.stringify(result.error));
 					}
@@ -74,7 +74,7 @@
 				if(error)
 					error('There are no running instances of this app.');
 				
-				$(context).find('.status-table tbody').append('<tr><td colspan="6" style="text-align: center;">There are no running instances of this app.</td></tr>');
+				$(context).find('.status-table tbody').append('<tr><td colspan="7" style="text-align: center;">There are no running instances of this app.</td></tr>');
 			}
 		},
 		function(err)

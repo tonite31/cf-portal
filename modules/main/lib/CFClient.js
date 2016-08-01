@@ -10,6 +10,10 @@ var CFClient = function(data)
 	else
 		this.endpoint = data.endpoint;
 	
+	this.endpoint.api = this.endpoint.api.trim();
+	if(this.endpoint.api.lastIndexOf('/') == this.endpoint.api.length-1)
+		this.endpoint.api = this.endpoint.api.substring(0, this.endpoint.api.length-1);
+	
 	this.uaaToken = data.uaaToken;
 	this.username = data.username;
 	this.oldPassword = data.oldPassword;
@@ -52,6 +56,7 @@ CFClient.prototype.login = function(done, error)
 		var param = {};
 		param.url = this.endpoint.api + '/v2/info';
 		param.method = 'get';
+
 		request(param, function(err, response, body)
 		{
 			if(err)
