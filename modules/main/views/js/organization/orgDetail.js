@@ -39,7 +39,21 @@
 				if(result.entity)
 				{
 					organizationQuota = result.entity.memory_limit;
-					updateOrgQuota();
+					CF.async({url : '/v2/apps?q=organization_guid:' + space.organization.metadata.guid}, function(result)
+					{
+						if(result)
+						{
+							appQuotaSum = 0;
+							var appList = result.resources;
+							for(var i=0; i<appList.length; i++)
+							{
+								if(appList[i].entity.state != 'STOPPED')
+									appQuotaSum += appList[i].entity.memory * appList[i].entity.instances;
+							}
+							
+							updateOrgQuota();
+						}
+					});
 				}
 				else
 				{
@@ -71,17 +85,17 @@
 		}, 1000 * ORG_QUOTA_REFRESH_TIME);
 	});
 	
-	_ee.on('setAppList_done', function(appList)
-	{
-		appQuotaSum = 0;
-		for(var i=0; i<appList.length; i++)
-		{
-			if(appList[i].entity.state != 'STOPPED')
-				appQuotaSum += appList[i].entity.memory * appList[i].entity.instances;
-		}
-		
-		updateOrgQuota();
-	});
+//	_ee.on('setAppList_done', function(appList)
+//	{
+//		appQuotaSum = 0;
+//		for(var i=0; i<appList.length; i++)
+//		{
+//			if(appList[i].entity.state != 'STOPPED')
+//				appQuotaSum += appList[i].entity.memory * appList[i].entity.instances;
+//		}
+//		
+//		updateOrgQuota();
+//	});
 	
 	$(document).ready(function()
 	{
