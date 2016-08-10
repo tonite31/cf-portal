@@ -75,7 +75,7 @@
 				var mode = $(this).attr('data-mode');
 				if(mode == 'edit')
 				{
-					environment[key] = $(this).parent().parent().next().text();
+					environment[key] = $(this).parent().parent().next().find('textarea').val();
 					
 					$(this).removeAttr('data-mode');
 					$(this).parent().parent().next().removeAttr('contenteditable');
@@ -87,7 +87,7 @@
 					var param = {};
 					param.url = '/v2/apps/' + app.metadata.guid;
 					param.method = 'PUT';
-					param.headers = {'Content-Type' : 'application/x-www-form-urlencoded'};
+					param.headers = {'Content-Type' : 'application/json'};
 					param.form = {};
 					param.form['environment_json'] = environment;
 					
@@ -121,7 +121,9 @@
 				else
 				{
 					$(this).attr('data-mode', 'edit');
-					$(this).parent().parent().next().attr('contenteditable', '').focus();
+					var text = $(this).parent().parent().next().text();
+					$(this).parent().parent().next().html('<textarea style="width: 100%;">' + text + '</textarea>');
+					$(this).parent().parent().next().find('textarea').focus();
 					$(this).removeClass('glyphicon-pencil').addClass('glyphicon glyphicon-save');
 				}
 			});
@@ -211,7 +213,7 @@
 			var param = {};
 			param.url = '/v2/apps/' + app.metadata.guid;
 			param.method = 'PUT';
-			param.headers = {'Content-Type' : 'application/x-www-form-urlencoded'};
+			param.headers = {'Content-Type' : 'application/json'};
 			param.form = {};
 			param.form['environment_json'] = environment;
 			
