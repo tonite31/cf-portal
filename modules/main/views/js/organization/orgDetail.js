@@ -45,10 +45,13 @@
 						{
 							appQuotaSum = 0;
 							var appList = result.resources;
-							for(var i=0; i<appList.length; i++)
+							if(appList)
 							{
-								if(appList[i].entity.state != 'STOPPED')
-									appQuotaSum += appList[i].entity.memory * appList[i].entity.instances;
+								for(var i=0; i<appList.length; i++)
+								{
+									if(appList[i].entity.state != 'STOPPED')
+										appQuotaSum += appList[i].entity.memory * appList[i].entity.instances;
+								}
 							}
 							
 							updateOrgQuota();
