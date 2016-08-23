@@ -427,14 +427,14 @@
 				}
 			}
 			
+			detail.remove();
+			
 			$('head').find('*[data-type="details"]').remove();
 			$('head').append('<script data-type="details" src="/modules/main/views/js/organization/app_' + type + '.js"></script>');
 			$('head').append('<link data-type="details" href="/modules/main/views/css/organization/app_' + type + '.css" rel="stylesheet">');
 			_ee.emit('app_detail_' + type, context, app);
 			
 			context.show();
-			
-			detail.remove();
 			
 			$('#appDetailTab a[role="tab"]').off('click').on('click', function(e)
 			{
