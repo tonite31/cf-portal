@@ -1,11 +1,101 @@
 var request = require('request');
 var uuid = require('node-uuid');
 var async = require('async');
+var uuid = require('node-uuid');
 
 var CFClient = require('../../lib/CFClient');
 
 module.exports = function(app)
 {
+	app.post('/create_dashboard_link', function(req, res, next)
+	{
+		var url = _config[req.body.type];
+		if(url.lastIndexOf('/') != url.length-1)
+			url += '/';
+		
+		if(!req.session.tokens)
+			req.session.tokens = {};
+		
+		var secret = uuid.v4();
+		
+		if(req.session.tokens[req.body.credentials.password])
+		{
+			secret = req.session.tokens[req.body.credentials.password];
+		}
+		else
+		{
+			req.session.tokens[req.body.credentials.password] = {secret : secret};
+		}
+		
+		var param = {};
+		param.url = url + 'token';
+		param.method = 'post';
+		param.form = {secret : secret, credentials : req.body.credentials};
+		
+		request(param, function(err, response, body)
+		{
+			if(err)
+			{
+				
+			}
+			else
+			{
+				var token = body;
+				res.end(url + '?token=' + token);
+			}
+		});
+	});
+	
+//	app.post('/create_dashboard_link', function(req, res, next)
+//	{
+//		if(!req.session.dashboard)
+//			req.session.dashboard = {};
+//		
+//		var url = _config[req.body.type];
+//		if(url.lastIndexOf('/') != url.length-1)
+//			url += '/';
+//		
+//		if(req.session.dashboard[req.body.credentials.password])
+//		{
+//			res.end(url + '?token=' + req.session.dashboard[req.body.credentials.password].token + '&refresh=true');
+//			return;
+//		}
+//		
+//		var param = {};
+//		param.url = url + 'dashboard_token';
+//		param.form = {credentials : req.body.credentials};
+//		param.method = 'POST';
+//		
+//		request(param, function(err, response, body)
+//		{
+//			if(err)
+//			{
+//				console.error('Error: ', err);
+//			    res.status(500).send({error : err});
+//			}
+//			else
+//			{
+//				req.session.dashboard[req.body.credentials.password] = req.body.credentials;
+//				req.session.dashboard[req.body.credentials.password].token = body;
+//				
+//				res.end(url + '?token=' + body);
+//			}
+//		});
+//	});
+	
+	app.post('/get_dashboard_credentials', function(req, res, next)
+	{
+		var token = req.body.token;
+		for(var key in req.session.dashboard)
+		{
+			if(req.session.dashboard[key].token == token)
+			{
+				res.send(req.session.dashboard[key]);
+				break;
+			}
+		}
+	});
+	
 	app.post('/signout.do', function(req, res, next)
 	{
 		if(req.session.cfdata)
@@ -213,6 +303,8 @@ var rendering = function(req, res)
 	}
 	
 	param.endpoint = _config.endpoint;
+	param.redisDashboard = _config.redisDashboard;
+	param.swiftDashboard = _config.swiftDashboard;
 	
 	for(var i=1; i<split.length; i++)
 	{
