@@ -6,6 +6,12 @@
 	</div>
 </div>
 
+<script>
+var _dashboard = {};
+_dashboard.redis = '#{redisDashboard}';
+_dashboard.swift = '#{swiftDashboard}';
+</script>
+
 <script type="text/template" id="appServiceTemplate">
 <tr>
 	<td>
@@ -18,6 +24,7 @@
 		<div style="display: none;">{credentials}</div>
 	</td>
 	<td>
+		{dashboard}
 		<a target="_blank" href="{manageUrl}"><span class="glyphicon glyphicon-link"></span> Manage</a>
 		<a target="_blank" href="{supportUrl}"><span class="glyphicon glyphicon-link"></span> Support</a>
 		<a target="_blank" href="{docsUrl}"><span class="glyphicon glyphicon-link"></span> Docs</a>
