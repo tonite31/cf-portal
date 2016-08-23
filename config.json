@@ -1,14 +1,14 @@
 {
 	"endpoint" : "",
 	"admin" : {
-		"username" : "",
-		"password" : ""
+		"username" : "ghama",
+		"password" : "!2tjssuxkd"
 	},
 	"redis" : {
 	},
 	"smtps" : {
-		"username" : "",
-		"password" : "",
-		"host" : ""
+		"username" : "skcfportal@gmail.com",
+		"password" : "skcc12345",
+		"host" : "smpt.gmail.com"
 	}
 }
