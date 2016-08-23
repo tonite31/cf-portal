@@ -26,6 +26,10 @@ if(vcapServices)
 
 if(process.env.CF_ENDPOINT)
 	_config.endpoint = process.env.CF_ENDPOINT;
+if(process.env.REDIS_DASHBOARD)
+	_config.redisDashboard = process.env.REDIS_DASHBOARD;
+if(process.env.SWIFT_DASHBOARD)
+	_config.swiftDashboard = process.env.SWIFT_DASHBOARD;
 
 if(!_config.endpoint)
 {
@@ -97,7 +101,6 @@ if(_config.redis && _config.redis.host && _config.redis.port)
 	redis.on('connect', function()
 	{
 		console.log('connected to redis!!');
-		
 		global._redis = redis;
 	});
 	
@@ -105,13 +108,17 @@ if(_config.redis && _config.redis.host && _config.redis.port)
 	    store: new RedisStore({client: redis}),
 	    secret: 'cf portal',
 	    saveUninitialized: true,
-	    resave: false
+	    resave: false,
+	    cookie: { 
+    	  expires: new Date(Date.now() + 180 * 10000), 
+    	  maxAge: 180*10000
+    	}
 	}));
 }
 else
 {
 	global._redis = null;
-	app.use(session({ secret: 'halloween', resave: true, saveUninitialized: true}));
+	app.use(session({ secret: 'halloween', resave: true, saveUninitialized: true, cookie: {expires: new Date(Date.now() + 180 * 10000), maxAge: 180*10000}}));
 }
 
 app.use(methodOverride());
