@@ -223,7 +223,7 @@
 								service.entity.extra = extra;
 								
 								img = extra.imageUrl;
-								name = extra.displayName;
+//								name = extra.displayName;
 								longDescription = extra.longDescription;
 							}
 							
