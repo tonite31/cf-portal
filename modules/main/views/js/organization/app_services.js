@@ -155,6 +155,33 @@
 					.replace('{name}', serviceInstance.entity.name)
 					.replace('{credentials}', credentialsToHtml(credentials));
 			
+			if(service)
+			{
+				try
+				{
+					if(service.entity.label.indexOf('redis') != -1)
+					{
+						template = template.replace('{dashboard}', '<a target="_blank" data-dashboard="redisDashboard" href="#"><span class="glyphicon glyphicon-link"></span> Dashboard</a>');
+					}
+					else if(service.entity.label.indexOf('Object-Storage') != -1)
+					{
+						template = template.replace('{dashboard}', '<a target="_blank" data-dashboard="swiftDashboard" href="#"><span class="glyphicon glyphicon-link"></span> Dashboard</a>');
+					}
+					else
+					{
+						template = template.replace('{dashboard}', '');
+					}
+				}
+				catch(err)
+				{
+					console.error(err.stack);
+				}
+			}
+			else
+			{
+				template = template.replace('{dashboard}', '');
+			}
+			
 			var imageUrl = '';
 			var supportUrl = '';
 			var docsUrl = '';
@@ -181,6 +208,34 @@
 			}
 			
 			template = $(template.replace('{imgUrl}', imageUrl).replace('{description}', description).replace('{supportUrl}', supportUrl).replace('{docsUrl}', docsUrl));
+			
+			$(template).find('a[data-dashboard]').on('click', function(e)
+			{
+				try
+				{
+					var that = this;
+					var result = $.ajax({url : '/create_dashboard_link', type : 'post', data : {type : $(this).attr('data-dashboard'), credentials : credentials}});
+					result.done(function(data)
+					{
+						window.open(data);
+					});
+					result.fail(function(error)
+					{
+						console.log("에러 : ", error);
+						$('<span style="color: red; font-size: 12px;">' + error + '</span>').insertAfter(that);
+						setTimeout(function()
+						{
+							$(that).prev().remove();
+						}, 1000 * 10);
+					});
+				}
+				catch(err)
+				{
+					console.error(err);
+				}
+				
+				e.preventDefault();
+			});
 			
 			template.get(0).item = {serviceInstance : serviceInstance, servicePlan : servicePlan, service : service};
 			
