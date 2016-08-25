@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="@{libs}/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="@{css}/common.css">
 
+<script src="/socket.io/socket.io.js"></script>
 <script src="@{libs}/jquery-2.2.3.min.js"></script>
 <script src="@{libs}/bootstrap/js/bootstrap.min.js"></script>
 <script src="@{libs}/form.js"></script>
@@ -32,6 +33,17 @@ window.onhashchange = function()
 		_ee.emit('hashchange');
 	}
 };
+
+var socket = io('http://localhost:3000');
+socket.on('welcome', function(socketId)
+{
+	_global.socketId = socketId;
+});
+
+socket.on('taillog', function(data)
+{
+	_ee.emit('taillog', data);
+});
 
 $(document).ready(function()
 {
@@ -82,7 +94,7 @@ ${#{1}}
 	</div>
 </div>
 <footer class="footer">
-	<span>v2.0.12</span>
+	<span>v2.1.0</span>
 	<span class="divider"></span>
 	<span>API Endpoint : #{endpoint}</span>
 	<span class="divider"></span>

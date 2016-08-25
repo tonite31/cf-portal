@@ -15,7 +15,7 @@
 	font-size: 12px;
 }
 
-.small-progress
+#logs .small-progress
 {
 	display: inline-block;
 	animation-name: none;
@@ -34,4 +34,17 @@
 .logs-date
 {
 	color: #1a739e;
+}
+
+.taillog
+{
+	position: absolute;
+	width: 100%;
+	text-align: center;
+}
+
+.taillog label, .taillog input
+{
+	margin:0;
+	vertical-align: middle;
 }

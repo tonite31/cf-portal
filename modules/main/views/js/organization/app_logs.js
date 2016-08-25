@@ -20,6 +20,12 @@
 		}, error, true);
 	};
 	
+	var socketId = null;
+	_ee.on('taillog', function(data)
+	{
+		$('.logs-container pre').append('<p>' + data + '</p>');
+	});
+	
 	_ee.once('app_detail_logs', function(context, app)
 	{
 		$(context).find('.logsProgress').show().next().hide();
@@ -46,6 +52,21 @@
 			{
 				$(that).css('animation-name', 'none').prev().text(error);
 			});
+		});
+		
+		$(context).find('#taillogChecker').on('click', function()
+		{
+			if(this.checked)
+			{
+				$('.logs-container pre').html('');
+				$.ajax({url : '/cf_logs_tail', type : 'post', data : {url : '/tail/?app=' + app.metadata.guid, socketId : _global.socketId}}).done();
+				$(context).find('.small-progress').hide();
+			}
+			else
+			{
+				$.ajax({url : '/cf_logs_tail_close', type : 'post', data : {socketId : _global.socketId}}).done();
+				$(context).find('.small-progress').show();
+			}
 		});
 	});
 })();

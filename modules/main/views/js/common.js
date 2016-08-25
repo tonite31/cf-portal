@@ -52,7 +52,6 @@ var _global = {};
 var _ee = new EventEmitter();
 var common_board = function(type, msg)
 {
-	console.log("머지 : ", type, msg);
 	alert('[' + type + ']' + msg);
 //	var span = $('<div class="' + type + '">' + msg + '</div>');
 //	

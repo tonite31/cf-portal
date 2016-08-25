@@ -68,6 +68,32 @@ var server = app.listen(process.env.PORT || 3000, function()
 	console.log('Listening on port %d', server.address().port);
 });
 
+_io = require('socket.io')(server);
+_io.clients = {};
+_io.logSockets = {};
+_io.on('connection', function (socket)
+{
+	_io.clients[socket.id] = socket;
+	socket.emit('welcome', socket.id);
+	socket.on('close_taillog', function()
+	{
+		if(_io.logSockets && _io.logSockets[socket.id])
+		{
+			_io.logSockets[socket.id].close();
+			delete _io.logSockets[socket.id];
+		}
+	});
+	
+	socket.on('disconnect', function()
+	{
+		if(_io.logSockets && _io.logSockets[socket.id])
+		{
+			_io.logSockets[socket.id].close();
+			delete _io.logSockets[socket.id];
+		}
+	});
+});
+
 /**
  * set template engine.
  */

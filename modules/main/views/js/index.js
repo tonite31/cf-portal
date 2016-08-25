@@ -51,7 +51,6 @@ pumpkin.addWork('setOrgRole', function(data)
 {
 	$('#signinForm .result-desc').text('Setting a role of organization to your account.').css('color', 'rgb(51, 122, 183)');
 	
-	console.log("데이터 : ", data);
 	var next = this.next;
 	CF.users('setOrgRole', data, function(result)
 	{
@@ -68,7 +67,6 @@ pumpkin.addWork('setSpaceRole', function(data)
 {
 	$('#signinForm .result-desc').text('Setting a role of space to your account.').css('color', 'rgb(51, 122, 183)');
 	
-	console.log("데이터 : ", data);
 	var next = this.next;
 	CF.users('setSpaceRole', data, function(result)
 	{

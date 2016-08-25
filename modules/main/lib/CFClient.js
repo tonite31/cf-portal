@@ -1,4 +1,5 @@
 var request = require('request');
+var WebSocket = require('ws');
 
 var CFClient = function(data)
 {
@@ -379,7 +380,7 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 	
 	var param = {};
 	if(url.indexOf('/recent') == 0)
-		param.url = this.endpoint.logging + url;
+		param.url = this.endpoint.logging.replace('wss', 'https').replace(':443', '') + url;
 	else
 		param.url = this.endpoint.api + url;
 	
@@ -445,6 +446,32 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 			}
 		}
 	}.bind(this));
+};
+
+CFClient.prototype.getTailLog = function(url, socketId, done, error)
+{
+	try
+	{
+		if(!url)
+		{
+			error('URL is undefined.');
+			return;
+		}
+		
+		var socket = new WebSocket(this.endpoint.logging + url,
+		{
+	        headers: {
+	            'Authorization': this.uaaToken.token_type + ' ' + this.uaaToken.access_token
+	        }
+	    });
+		
+		done(socket);
+	}
+	catch(err)
+	{
+		console.log(err);
+		error(err);
+	}
 };
 
 module.exports = CFClient;

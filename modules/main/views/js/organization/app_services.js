@@ -221,7 +221,6 @@
 					});
 					result.fail(function(error)
 					{
-						console.log("에러 : ", error);
 						$('<span style="color: red; font-size: 12px;">' + error + '</span>').insertAfter(that);
 						setTimeout(function()
 						{

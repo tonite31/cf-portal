@@ -43,7 +43,77 @@ module.exports = function(app)
 				var token = body;
 				res.end(url + '?token=' + token);
 			}
+		});                                                                                                                                                                                                                                                                                   
+	});
+	
+	var clean = function(data)
+	{
+		data = data.split('\n\n');
+	    if (data.length > 1) {
+	        data.splice(0, 1);
+	    }
+	    var length = data.length;
+	    for (var i = 0; i < length; i++) {
+	        var value = data[i];
+	        value = value.substr(2, value.length - 1);
+	        var end = value.indexOf(String.fromCharCode(16));
+	        data[i] = value.substr(0, end);
+	    }
+	    return data.join('\n\n');
+	};
+	
+	app.post('/cf_logs_tail', function(req, res, next)
+	{
+		var cf = new CFClient(req.session.cfdata);
+		if(!cf.isLogin())
+		{
+			res.statusCode = 302;
+			res.end('signin');
+			return;
+		}
+
+		var socketId = req.body.socketId;
+		var url = req.body.url;
+		if(!url)
+		{
+			res.status(500).send({error : 'Url is undefind'});
+			return;
+		}
+		
+		cf.getTailLog(url, socketId, function(socket)
+		{
+			_io.logSockets[socketId] = socket;
+			socket.on('open', function () {
+		        console.log('log socket connected');
+		    });
+		    socket.on('close', function () {
+		        console.log('log socket disconnected');
+		    });
+		    socket.on('message', function (data) {
+		    	_io.to(socketId).emit('taillog', clean(data.toString()));
+		    });
+		    socket.on('error', function () {
+		    	_io.to(socketId).emit('taillog', '-- socket error' + JSON.stringify(arguments));
+		    });
+		    
+			res.end();
+		}, function(error)
+		{
+			console.log(error);
+			res.status(500).send({error : error});
 		});
+	});
+	
+	app.post('/cf_logs_tail_close', function(req, res, next)
+	{
+		var socketId = req.body.socketId;
+		if(_io.logSockets && _io.logSockets[socketId])
+		{
+			_io.logSockets[socketId].close();
+			delete _io.logSockets[socketId];
+		}
+		
+		res.end();
 	});
 	
 //	app.post('/create_dashboard_link', function(req, res, next)
