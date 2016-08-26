@@ -17,7 +17,7 @@
 
 <script type="text/template" id="appItemTemplate">
 <tr data-guid="{guid}">
-	<td><span class="{stateColor} glyphicon {stateIcon}"></span> <span>{state}</span></td>
+	<td><span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span></td>
 	<td class="app-name"><span>{name}</span> <span class="glyphicon glyphicon-pencil"></span><span class="app-name-message"></span></td>
 	<td class="app-routes">Routes loading...</td>
 	<td>{disk}</td>
@@ -47,43 +47,6 @@
 		<span class="glyphicon glyphicon-remove"></span>
 	</td>
 </tr>
-</script>
-
-<script>
-$(document).ready(function()
-{
-// 	var loggingEndpoint = '#{loggingEndpoint}';
-// 	var token = '#{accessToken}';
-// 	console.log("토큰 : ", token, loggingEndpoint);
-	
-// 	$.ajax({url : loggingEndpoint.replace('wss', 'https').replace(':443', '') + '/set-cookie', type : 'POST', headers: {
-//         "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
-//     },
-//     credentials: "include",
-//     data: "CookieName=authorization&CookieValue=bearer+" + encodeURIComponent(token), success : function(e)
-//   	{
-//     	console.log("호 : ", loggingEndpoint.replace(':443', ':4443'));
-
-//     	var r = new WebSocket(loggingEndpoint.replace(':443', ':4443') + '/tail/?app=090096a4-0b3c-48d1-a448-958369ab7d9d');
-    	
-//     	r.onopen    = function()  { console.log('websocket opened'); };
-//         r.onclose   = function()  { console.log('websocket closed'); }
-//         r.onmessage = function(m)
-//         {
-//         	var r = new FileReader;
-//         	r.onload = function(e)
-//         	{
-//         		var result = String.fromCharCode.apply(null, new Uint8Array(e.target.result));
-//         		console.log(result);
-//         	};
-        	
-//         	r.readAsArrayBuffer(m.data);
-//         };
-//     },
-//     error : function(err){
-//     	console.log("에 : ", err);
-//     }});
-});
 </script>
 
 <div class="org-body">
@@ -123,7 +86,7 @@ $(document).ready(function()
 				</div>
 				<button type="button" class="btn btn-primary" id="startApp" style="display: none;" title="Start app"><span class="glyphicon glyphicon-play"></span></button>
 				<button type="button" class="btn btn-danger" id="stopApp" style="display: none;" title="Stop app"><span class="glyphicon glyphicon-stop"></span></button>
-				<button type="button" class="btn btn-primary" id="restartApp" style="display: none;" title="Restart app"><span class="glyphicon glyphicon-repeat"></span></button>
+				<button type="button" class="btn btn-primary" id="restartApp" style="display: none;" title="Restage app"><span class="glyphicon glyphicon-repeat"></span></button>
 				<span style="float: right;">
 					<span class="delete-message"></span>
 					<button type="button" class="btn btn-danger" id="deleteApp" title="Delete app">Delete</button>

@@ -28,6 +28,11 @@
 	margin: 0 10px;
 }
 
+#services table img
+{
+	max-width: 100px;
+}
+
 .service-name
 {
 	font-weight: bold;

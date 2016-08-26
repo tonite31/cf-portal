@@ -40,7 +40,7 @@
 	font-size: 12px;
 }
 
-.small-progress
+#status .small-progress
 {
 	display: inline-block;
 	animation-name: none;

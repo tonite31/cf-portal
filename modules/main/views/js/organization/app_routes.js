@@ -72,7 +72,6 @@
 		{
 			if(result)
 			{
-				console.log(result);
 				if(result.resources)
 				{
 					var forEach = new ForEach();
@@ -137,8 +136,8 @@
 			});
 		});
 		
-		if($(context).find('.routes-table tbody a[href="' + url + '"]').length == 0)
-			$(context).find('.routes-table tbody').append(row);
+		if($(context).find('#routes .routes-table tbody a[href="' + url + '"]').length == 0)
+			$(context).find('#routes .routes-table tbody').append(row);
 	};
 	
 	var mapRoute = function(context, appGuid, routeGuid, data)
@@ -152,9 +151,9 @@
 					var url = 'http://' + data.host + '.' + data.domain;
 					addRouteMapping(context, appGuid, url, result.metadata.url);
 					
-					$(context).find('.routes-form input[type="text"]').removeAttr('disabled').val('');
-					$(context).find('.routes-form select').removeAttr('disabled').val('');
-					$(context).find('.routes-form .map-progress').hide().next().show().next().show();
+					$(context).find('#routes .routes-form input[type="text"]').removeAttr('disabled').val('');
+					$(context).find('#routes .routes-form select').removeAttr('disabled').val('');
+					$(context).find('#routes .routes-form .map-progress').hide().next().show().next().show();
 					
 					//Append url to app list.
 					var td = $('tr[data-guid="' + appGuid + '"] .app-routes');
@@ -167,38 +166,38 @@
 				}
 				else
 				{
-					$(context).find('.map-message').text(result.description ? result.description : JSON.stringify(result.error));
+					$(context).find('#routes .map-message').text(result.description ? result.description : JSON.stringify(result.error));
 				}
 			}
 			else
 			{
-				$(context).find('.map-message').text('Route mapping fail.');
+				$(context).find('#routes .map-message').text('Route mapping fail.');
 			}
 			
-			$(context).find('.routes-form input[type="text"]').removeAttr('disabled');
-			$(context).find('.routes-form select').removeAttr('disabled');
-			$(context).find('.routes-form .map-progress').hide().next().show().next().show();
+			$(context).find('#routes .routes-form input[type="text"]').removeAttr('disabled');
+			$(context).find('#routes .routes-form select').removeAttr('disabled');
+			$(context).find('#routes .routes-form .map-progress').hide().next().show().next().show();
 		},
 		function(error)
 		{
-			$(context).find('.map-message').text(error);
+			$(context).find('#routes .map-message').text(error);
 			
-			$(context).find('.routes-form input[type="text"]').removeAttr('disabled');
-			$(context).find('.routes-form select').removeAttr('disabled');
-			$(context).find('.routes-form .map-progress').hide().next().show().next().show();
+			$(context).find('#routes .routes-form input[type="text"]').removeAttr('disabled');
+			$(context).find('#routes .routes-form select').removeAttr('disabled');
+			$(context).find('#routes .routes-form .map-progress').hide().next().show().next().show();
 		});
 	};
 	
 	_ee.once('app_detail_routes', function(context, app)
 	{
-		$(context).find('.routesProgress').show().next().hide();
-		$(context).find('.routesMessage').text('').hide();
-		$(context).find('input[name="host"]').val('');
+		$(context).find('#routes .routesProgress').show().next().hide();
+		$(context).find('#routes .routesMessage').text('').hide();
+		$(context).find('#routes input[name="host"]').val('');
 		
 		pumpkin.setData({app : app, urlList : []});
 		pumpkin.execute(['getRouteMappings'], function()
 		{
-			$(context).find('.routes-table tbody').html('');
+			$(context).find('#routes .routes-table tbody').html('');
 			var mappingList = this.data.routeMappings;
 			var forEach = new ForEach();
 			forEach.async(mappingList, function(mapping, index)
@@ -211,26 +210,26 @@
 			},
 			function()
 			{
-				$(context).find('.routesProgress').hide().next().show().next().hide();
+				$(context).find('#routes .routesProgress').hide().next().show().next().hide();
 			});
 		},
 		function(workName, error)
 		{
-			$(context).find('.routesProgress').hide().next().hide();
-			$(context).find('.routesMessage').text(error).show();
+			$(context).find('#routes .routesProgress').hide().next().hide();
+			$(context).find('#routes .routesMessage').text(error).show();
 		});
 		
-		formSubmit($(context).find('.routes-form'), function(data)
+		formSubmit($(context).find('#routes .routes-form'), function(data)
 		{
-			$(context).find('.map-message').text('');
+			$(context).find('#routes .map-message').text('');
 			
 			var space = $('#' + _global.hash.space).get(0);
 			data.space_guid = space.item.metadata.guid;
-			data.domain = $(context).find('.routes-select option:selected').text();
+			data.domain = $(context).find('#routes .routes-select option:selected').text();
 			
-			$(context).find('.routes-form input[type="text"]').attr('disabled', '');
-			$(context).find('.routes-form select').attr('disabled', '');
-			$(context).find('.routes-form .map-progress').css('display', 'inline-block').next().hide().next().hide();
+			$(context).find('#routes .routes-form input[type="text"]').attr('disabled', '');
+			$(context).find('#routes .routes-form select').attr('disabled', '');
+			$(context).find('#routes .routes-form .map-progress').css('display', 'inline-block').next().hide().next().hide();
 			
 			CF.async({url : '/v2/routes?q=host:' + data.host + '&q=domain_guid:' + data.domain_guid}, function(result)
 			{
@@ -242,28 +241,28 @@
 						{
 							mapRoute(context, app.metadata.guid, result.resources[0].metadata.guid, data);
 							
-							$(context).find('.routes-form input[type="text"]').removeAttr('disabled');
-							$(context).find('.routes-form select').removeAttr('disabled');
-							$(context).find('.routes-form .map-progress').hide().next().show().next().show();
+							$(context).find('#routes .routes-form input[type="text"]').removeAttr('disabled');
+							$(context).find('#routes .routes-form select').removeAttr('disabled');
+							$(context).find('#routes .routes-form .map-progress').hide().next().show().next().show();
 							
 							return;
 						}
 					}
 					else
 					{
-						$(context).find('.routes-form input[type="text"]').removeAttr('disabled');
-						$(context).find('.routes-form select').removeAttr('disabled');
-						$(context).find('.routes-form .map-progress').hide().next().show().next().show();
-						$(context).find('.map-message').text(result.description ? result.description : JSON.stringify(result.error));
+						$(context).find('#routes .routes-form input[type="text"]').removeAttr('disabled');
+						$(context).find('#routes .routes-form select').removeAttr('disabled');
+						$(context).find('#routes .routes-form .map-progress').hide().next().show().next().show();
+						$(context).find('#routes .map-message').text(result.description ? result.description : JSON.stringify(result.error));
 						return;
 					}
 				}
 				else
 				{
-					$(context).find('.routes-form input[type="text"]').removeAttr('disabled');
-					$(context).find('.routes-form select').removeAttr('disabled');
-					$(context).find('.routes-form .map-progress').hide().next().show().next().show();
-					$(context).find('.map-message').text('Unknown Error');
+					$(context).find('#routes .routes-form input[type="text"]').removeAttr('disabled');
+					$(context).find('#routes .routes-form select').removeAttr('disabled');
+					$(context).find('#routes .routes-form .map-progress').hide().next().show().next().show();
+					$(context).find('#routes .map-message').text('Unknown Error');
 					return;
 				}
 
@@ -280,35 +279,35 @@
 						}
 						else
 						{
-							$(context).find('.map-message').text(result.description ? result.description : JSON.stringify(result.error));
+							$(context).find('#routes .map-message').text(result.description ? result.description : JSON.stringify(result.error));
 						}
 					}
 					else
 					{
-						$(context).find('.map-message').text('Route adding fail.');
+						$(context).find('#routes .map-message').text('Route adding fail.');
 					}
 					
-					$(context).find('.routes-form input[type="text"]').removeAttr('disabled');
-					$(context).find('.routes-form select').removeAttr('disabled');
-					$(context).find('.routes-form .map-progress').hide().next().show().next().show();
+					$(context).find('#routes .routes-form input[type="text"]').removeAttr('disabled');
+					$(context).find('#routes .routes-form select').removeAttr('disabled');
+					$(context).find('#routes .routes-form .map-progress').hide().next().show().next().show();
 				},
 				function(error)
 				{
-					$(context).find('.map-message').text(error);
+					$(context).find('#routes .map-message').text(error);
 					
-					$(context).find('.routes-form input[type="text"]').removeAttr('disabled');
-					$(context).find('.routes-form select').removeAttr('disabled');
-					$(context).find('.routes-form .map-progress').hide().next().show().next().show();
+					$(context).find('#routes .routes-form input[type="text"]').removeAttr('disabled');
+					$(context).find('#routes .routes-form select').removeAttr('disabled');
+					$(context).find('#routes .routes-form .map-progress').hide().next().show().next().show();
 				});
 			},
 			function(error)
 			{
-				$(context).find('.map-message').text(error);
+				$(context).find('#routes .map-message').text(error);
 			});
 		});
 		
 		var space = $('#' + _global.hash.space).get(0);
-		var select = $(context).find('.routes-select').html('');
+		var select = $(context).find('#routes .routes-select').html('');
 		CF.async({url : space.item.organization.entity.domains_url}, function(result)
 		{
 			if(result)
@@ -325,23 +324,23 @@
 				}
 				else
 				{
-					$(context).find('.map-message').text(result.description ? result.description : JSON.stringify(result.error));
+					$(context).find('#routes .map-message').text(result.description ? result.description : JSON.stringify(result.error));
 				}
 			}
 			else
 			{
-				$(context).find('.map-message').text('Domains are not found.');
+				$(context).find('#routes .map-message').text('Domains are not found.');
 			}
 		},
 		function(error)
 		{
-			$(context).find('.map-message').text(error);
+			$(context).find('#routes .map-message').text(error);
 		});
 		
-		$(context).find('.map-cancel').on('click', function()
+		$(context).find('#routes .map-cancel').on('click', function()
 		{
-			$(context).find('.routes-form input[type="text"]').val('');
-			$(context).find('.routes-form select').val('');
+			$(context).find('#routes .routes-form input[type="text"]').val('');
+			$(context).find('#routes .routes-form select').val('');
 		});
 	});
 })();

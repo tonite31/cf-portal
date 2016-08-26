@@ -2,31 +2,31 @@
 {
 	_ee.once('app_detail_about', function(context, app)
 	{
-		$(context).find('.aboutProgress').show().next().hide();
+		$(context).find('#about .aboutProgress').show().next().hide();
 		
-		$(context).find('.aboutProgress .progress-message').text('App information loading...');
+		$(context).find('#about .aboutProgress .progress-message').text('App information loading...');
 		
-		$(context).find('.buildpack').text(app.entity.buildpack ? app.entity.buildpack : app.entity.detected_buildpack);
-		$(context).find('.cmd').text(app.entity.detected_start_command);
+		$(context).find('#about .buildpack').text(app.entity.buildpack ? app.entity.buildpack : app.entity.detected_buildpack);
+		$(context).find('#about .cmd').text(app.entity.detected_start_command);
 		
 		CF.async({url : app.entity.stack_url}, function(stackResult)
 		{
 			if(stackResult && stackResult.entity)
 			{
-				$(context).find('.stack').text(stackResult.entity.name + "(" + stackResult.entity.description + ")");
-				$(context).find('.aboutProgress').next().show();
+				$(context).find('#about .stack').text(stackResult.entity.name + "(" + stackResult.entity.description + ")");
+				$(context).find('#about .aboutProgress').next().show();
 			}
 			else
 			{
-				$(context).find('.aboutMessage').text(stackResult.description ? stackResult.description : JSON.stringify(stackResult.error)).show();
+				$(context).find('#about .aboutMessage').text(stackResult.description ? stackResult.description : JSON.stringify(stackResult.error)).show();
 			}
 			
-			$(context).find('.aboutProgress').hide();
+			$(context).find('#about .aboutProgress').hide();
 			
 		}, function(error)
 		{
-			$(context).find('.aboutProgress').hide();
-			$(context).find('.aboutMessage').text(error).show();
+			$(context).find('#about .aboutProgress').hide();
+			$(context).find('#about .aboutMessage').text(error).show();
 		});
 	});
 })();

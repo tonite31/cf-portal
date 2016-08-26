@@ -6,6 +6,122 @@
 	
 	var selectedAppGuid = null;
 	
+	var checkState = function(app)
+	{
+		var appGuid = app.metadata.guid;
+		var td = $('#appsBody tr[data-guid="' + appGuid + '"] td:first');
+		CF.async({url : '/v2/apps/' + appGuid + '/stats'}, function(result)
+		{
+			if(result)
+			{
+				if(result.description || result.error)
+				{
+					if(result.code == 200003)
+					{
+						td.html('<span class="text-muted glyphicon glyphicon-pause"></span> <span>Stopped</span>');
+					}
+					else
+					{
+						td.html('<span style="color: red; font-size: 10px;">' + result.description ? result.description : JSON.stringify(result.error) + '</span>');
+						
+						setTimeout(function()
+						{
+							td.html('<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>');
+							checkState(app);
+						}, 3000);
+					}
+				}
+				else
+				{
+					var isRunning = true;
+					var runningCount = 0;
+					var startingCount = 0;
+					var totalCount = 0;
+					for(var key in result)
+					{
+						if(result[key].state == 'RUNNING')
+						{
+							runningCount++;
+						}
+						else if(result[key].state == 'STARTING')
+						{
+							startingCount++;
+						}
+						
+						totalCount++;
+					}
+					
+					if(runningCount > 0)
+					{
+						if(startingCount == 0)
+						{
+							//running만 있으니까 완전 시작.
+							td.html('<span class="text-primary glyphicon glyphicon-play"></span> <span>Started</span>');
+						}
+						else
+						{
+							//running도 있고 starting이 있고.
+							td.html('<span class="text-primary glyphicon glyphicon-play"></span> <span>Started (' + runningCount + '/' + totalCount + ')</span>');
+						}
+					}
+					else
+					{
+						if(startingCount == 0)
+						{
+							//running 없고 starting도 없고 down.
+							if(app.entity.state == 'STARTED')
+							{
+								var split = $('#startedAppCount').text().split(' ');
+								if(split && split.length == 2)
+								{
+									var count = new Number(split[0]);
+									$('#startedAppCount').text((--count) + ' Started');
+								}
+							}
+							else if(app.entity.state == 'STOPPED')
+							{
+								var split = $('#stoppedAppCount').text().split(' ');
+								if(split && split.length == 2)
+								{
+									var count = new Number(split[0]);
+									$('#stoppedAppCount').text((--count) + ' Stopped');
+								}
+							}
+							
+							var split = $('#downAppCount').text().split(' ');
+							if(split && split.length == 2)
+							{
+								var count = new Number(split[0]);
+								$('#downAppCount').text((++count) + ' Down');
+							}
+							else
+							{
+								$('#downAppCount').text('1 Down');
+							}
+							
+							app.entity.state = 'DOWN';
+							td.html('<span class="text-danger glyphicon glyphicon-stop"></span> <span>Down</span>');
+						}
+						else
+						{
+							//running 없고 starting 있고.
+							td.append('<span>Starting (' + runningCount + '/' + totalCount + ')</span>');
+						}
+					}
+				}
+			}
+			else
+			{
+				template = template.replace(progressTemplate, '<span class="text-muted glyphicon glyphicon-pause"></span> <span>Stopped</span>');
+			}
+			
+			td.find('span').on('click', function()
+			{
+				
+			});
+		});
+	};
+	
 	var pumpkin = new Pumpkin();
 	pumpkin.addWork('getAppList', function(params)
 	{
@@ -33,16 +149,17 @@
 					}
 					else
 					{
+						var progressTemplate = '<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>';
 						for(var i=0; i<appList.length; i++)
 						{
 							var template = $('#appItemTemplate').html();
 							
-							if(appList[i].entity.state == 'STARTED')
-								template = template.replace('{stateColor}', 'text-primary').replace('{stateIcon}', 'glyphicon-play').replace('{state}', 'Started');
-							else if(appList[i].entity.state == 'STOPPED')
-								template = template.replace('{stateColor}', 'text-muted').replace('{stateIcon}', 'glyphicon-pause').replace('{state}', 'Stopped');
-							else
-								template = template.replace('{stateColor}', 'text-danger').replace('{stateIcon}', 'glyphicon-stop').replace('{state}', 'Down');
+//							if(appList[i].entity.state == 'STARTED')
+//								template = template.replace('{stateColor}', 'text-primary').replace('{stateIcon}', 'glyphicon-play').replace('{state}', 'Started');
+//							else if(appList[i].entity.state == 'STOPPED')
+//								template = template.replace('{stateColor}', 'text-muted').replace('{stateIcon}', 'glyphicon-pause').replace('{state}', 'Stopped');
+//							else
+//								template = template.replace('{stateColor}', 'text-danger').replace('{stateIcon}', 'glyphicon-stop').replace('{state}', 'Down');
 							
 							template = template.replace('{guid}', appList[i].metadata.guid).replace('{name}', appList[i].entity.name).replace(/{disk}/gi, appList[i].entity.disk_quota).replace(/{instance}/gi, appList[i].entity.instances).replace(/{memory}/gi, appList[i].entity.memory);
 							
@@ -51,6 +168,8 @@
 							app.get(0).item = appList[i];
 							
 							$('#appsBody').append(app);
+							
+							checkState(appList[i]);
 						}
 					}
 					
@@ -456,6 +575,7 @@
 				$('head').append('<link data-type="details" href="/modules/main/views/css/organization/app_' + name + '.css" rel="stylesheet">');
 				  
 				_ee.emit('app_detail_' + name, context, app);
+				_ee.emit('app_detail_clicked', name);
 			});
 			
 			// 앱 상태
@@ -558,7 +678,8 @@
 				if(result.entity && result.entity.state == 'STARTED')
 				{
 					app.entity.state = result.entity.state;
-					td.html('<span class="text-primary glyphicon glyphicon-play"></span> <span>Started</span>').css('color', '');
+					checkState(app);
+					td.html('<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>').css('color', '');
 					next();
 				}
 				else
@@ -569,7 +690,7 @@
 			}
 			else
 			{
-				td.text(result.description ? result.description : JSON.stringify(result.error)).css('color', 'Unknown Error.');
+				td.text('Unknown Error.').css('color', 'red');
 				error();
 			}
 		});
@@ -601,7 +722,7 @@
 			}
 			else
 			{
-				td.text(result.description ? result.description : JSON.stringify(result.error)).css('color', 'Unknown Error.');
+				td.text('Unknown Error.').css('color', 'red');
 				error();
 			}
 		});
@@ -707,13 +828,36 @@
 			$(this).hide().prev().hide();
 			$('<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>').insertBefore(this);
 			
-			updateAppState.execute(['stopApp', 'startApp'], function()
+			var td = $('#appsBody tr.selected td:first').html('Restaging...');
+			
+			var app = $('#appsBody tr.selected').get(0).item;
+			CF.async({url : '/v2/apps/' + app.metadata.guid + '/restage', method : 'POST'}, function(result)
 			{
+				if(result)
+				{
+					if(result.entity && result.entity.state == 'STARTED')
+					{
+						app.entity.state = result.entity.state;
+						td.html('<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>').css('color', '');
+						checkState(app);
+					}
+					else
+					{
+						td.text(result.description ? result.description : JSON.stringify(result.error)).css('color', 'red');
+					}
+				}
+				else
+				{
+					td.text('Unknown Error.').css('color', 'red');
+				}
+				
 				$(that).prev().remove();
 				$(that).show().prev().show().prev().hide();
 			},
-			function()
+			function(error)
 			{
+				td.text(JSON.stringify(error)).css('color', 'red');
+				
 				$(that).prev().remove();
 				$(that).show().prev().show().prev().hide();
 			});

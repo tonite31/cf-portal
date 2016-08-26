@@ -12,23 +12,23 @@
 			{
 				if(result.description || result.error)
 				{
-					$(context).find('.status-table tbody').html('');
+					$(context).find('#status .status-table tbody').html('');
 					if(result.code == 200003)
 					{
-						$(context).find('.status-table tbody').append('<tr><td colspan="7" style="text-align: center;">There are no running instances of this app.</td></tr>');
+						$(context).find('#status .status-table tbody').append('<tr><td colspan="7" style="text-align: center;">There are no running instances of this app.</td></tr>');
 						if(error)
 							error('There are no running instances of this app.');
 					}
 					else
 					{
-						$(context).find('.status-table tbody').append('<tr><td colspan="7" style="text-align: center;">' + result.description ? result.description : JSON.stringify(result.error) + '</td></tr>');
+						$(context).find('#status .status-table tbody').append('<tr><td colspan="7" style="text-align: center;">' + result.description ? result.description : JSON.stringify(result.error) + '</td></tr>');
 						if(error)
 							error(result.description ? result.description : JSON.stringify(result.error));
 					}
 				}
 				else
 				{
-					$(context).find('.status-table tbody').html('');
+					$(context).find('#status .status-table tbody').html('');
 					for(var key in result)
 					{
 						var body = '';
@@ -61,7 +61,7 @@
 						
 						body += '</tr>';
 						
-						$(context).find('.status-table tbody').append(body);
+						$(context).find('#status .status-table tbody').append(body);
 					}
 					
 					if(callback)
@@ -70,44 +70,44 @@
 			}
 			else
 			{
-				$(context).find('.status-table tbody').html('');
+				$(context).find('#status .status-table tbody').html('');
 				if(error)
 					error('There are no running instances of this app.');
 				
-				$(context).find('.status-table tbody').append('<tr><td colspan="7" style="text-align: center;">There are no running instances of this app.</td></tr>');
+				$(context).find('#status .status-table tbody').append('<tr><td colspan="7" style="text-align: center;">There are no running instances of this app.</td></tr>');
 			}
 		},
 		function(err)
 		{
-			$(context).find('.status-table tbody').html('');
+			$(context).find('#status .status-table tbody').html('');
 			if(error)
 				error(err);
-			$(context).find('.statusMessage').text(err.stack ? err.stack : err).show();
+			$(context).find('#status .statusMessage').text(err.stack ? err.stack : err).show();
 		});
 	};
 	
 	_ee.once('app_detail_status', function(context, app)
 	{
-		$(context).find('.appInstanceProgress').show().next().hide();
-		$(context).find('.statusMessage').hide();
-		$(context).find('.small-progress').prev().text('');
+		$(context).find('#status .appInstanceProgress').show().next().hide();
+		$(context).find('#status .statusMessage').hide();
+		$(context).find('#status .small-progress').prev().text('');
 		
 		_IntervalTimer.addTimer('app_detail_status', REFRESH_TIME, function(start)
 		{
-			$(context).find('.small-progress').css('animation-name', 'progress').prev().text('');
+			$(context).find('#status .small-progress').css('animation-name', 'progress').prev().text('');
 			getStatus(context, app, function()
 			{
-				$(context).find('.small-progress').css('animation-name', 'none').prev().text('');
+				$(context).find('#status .small-progress').css('animation-name', 'none').prev().text('');
 				start();
 			},
 			function(error)
 			{
-				$(context).find('.small-progress').css('animation-name', 'none').prev().text(error);
+				$(context).find('#status .small-progress').css('animation-name', 'none').prev().text(error);
 			});
 		},
 		function(count)
 		{
-			$(context).find('.small-progress').prev().text('00:0' + count);
+			$(context).find('#status .small-progress').prev().text('00:0' + count);
 		});
 		
 		getStatus(context, app, function()
@@ -115,7 +115,7 @@
 			_IntervalTimer.start('app_detail_status');
 		});
 		
-		$(context).find('.small-progress').on('click', function()
+		$(context).find('#status .small-progress').on('click', function()
 		{
 			_IntervalTimer.end('app_detail_status');
 			

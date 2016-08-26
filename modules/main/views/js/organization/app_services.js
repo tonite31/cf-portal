@@ -263,11 +263,11 @@
 					var length = unbindButton.parent().parent().parent().find('tr').length;
 					unbindButton.parent().parent().remove();
 					
-					$(context).find('.service-select').append('<option value="' + serviceInstance.metadata.guid + '">' + serviceInstance.entity.name + '</option>');
+					$(context).find('#services .service-select').append('<option value="' + serviceInstance.metadata.guid + '">' + serviceInstance.entity.name + '</option>');
 					
 					if(length == 1)
 					{
-						$(context).find('.service-table tbody').html('<tr><td colspan="4" class="center-align">no service bindings</td></tr>');
+						$(context).find('#services .service-table tbody').html('<tr><td colspan="4" class="center-align">no service bindings</td></tr>');
 					}
 				},
 				function(error)
@@ -276,13 +276,13 @@
 				});
 			});
 			
-			$(context).find('.service-table tbody').append(template);
+			$(context).find('#services .service-table tbody').append(template);
 			
 			callback();
 		},
 		function(workName, error)
 		{
-			$(context).find('.service-table tbody').append('<tr><td colspan="4" style="text-align: center;">' + error + '</td></tr>');
+			$(context).find('#services .service-table tbody').append('<tr><td colspan="4" style="text-align: center;">' + error + '</td></tr>');
 		});
 	};
 	
@@ -295,7 +295,7 @@
 		var next = this.next;
 		CF.async({url : this.data.app.entity.service_bindings_url}, function(result)
 		{
-			$(context).find('.service-table tbody').html('');
+			$(context).find('#services .service-table tbody').html('');
 			if(result)
 			{
 				if(result.resources)
@@ -303,7 +303,7 @@
 					var serviceList = result.resources;
 					that.data.serviceList = serviceList;
 					
-					$(context).find('.service-table tbody').html('');
+					$(context).find('#services .service-table tbody').html('');
 					
 					var forEach = new ForEach();
 					forEach.async(serviceList, function(service, index)
@@ -315,7 +315,7 @@
 					{
 						if(serviceList.length == 0)
 						{
-							$(context).find('.service-table tbody').append('<tr><td colspan="4" style="text-align: center;">no service bindings</td></tr>');
+							$(context).find('#services .service-table tbody').append('<tr><td colspan="4" style="text-align: center;">no service bindings</td></tr>');
 						}
 						
 						next();
@@ -323,17 +323,17 @@
 				}
 				else
 				{
-					$(context).find('.servicesMessage').text(result.description ? result.description : JSON.stringify(result.error)).show();
+					$(context).find('#services .servicesMessage').text(result.description ? result.description : JSON.stringify(result.error)).show();
 				}
 			}
 			else
 			{
-				$(context).find('.servicesMessage').text('App services is not found.').show();
+				$(context).find('#services .servicesMessage').text('App services is not found.').show();
 			}
 		},
 		function(error)
 		{
-			$(context).find('.servicesMessage').text(error.stack ? error.stack : error).show();
+			$(context).find('#services .servicesMessage').text(error.stack ? error.stack : error).show();
 		});
 	});
 	
@@ -346,7 +346,7 @@
 		var that = this;
 		var app = this.data.app;
 		
-		var selectElement = $(context).find('.service-select').html('<option value="">Service Instances Loading...</option>');
+		var selectElement = $(context).find('#services .service-select').html('<option value="">Service Instances Loading...</option>');
 		
 		serviceListPumpkin.setData({app : app});
 		serviceListPumpkin.executeAsync(['getServiceInstances', 'getUserProvidedServiceInstances'], function()
@@ -417,21 +417,21 @@
 
 	_ee.once('app_detail_services', function(context, app)
 	{
-		$(context).find('.service-container').hide();
-		$(context).find('.servicesProgress').show();
-		$(context).find('.servicesMessage').hide();
-		$(context).find('.bind-service-message').text('');
+		$(context).find('#services .service-container').hide();
+		$(context).find('#services .servicesProgress').show();
+		$(context).find('#services .servicesMessage').hide();
+		$(context).find('#services .bind-service-message').text('');
 		
 		pumpkin.setData({context : context, app : app});
 		
 		pumpkin.executeAsync(['drawServiceList'], function()
 		{
-			$(context).find('.servicesProgress').hide();
-			$(context).find('.service-container').show();
+			$(context).find('#services .servicesProgress').hide();
+			$(context).find('#services .service-container').show();
 			
 			pumpkin.executeAsync(['getServiceList'], function()
 			{
-				$(context).find('.service-select option:first').text('Select a service').attr('disabled', '').parent().removeAttr('disabled');
+				$(context).find('#services .service-select option:first').text('Select a service').attr('disabled', '').parent().removeAttr('disabled');
 			},
 			function(workName, error)
 			{
@@ -446,9 +446,9 @@
 		formSubmit($('.bind-form'), function(data)
 		{
 			data.app_guid = app.metadata.guid;
-			$(context).find('.bind-progress').css('display', 'inline-block').next().hide().next().hide();
-			$(context).find('.service-select').attr('disabled', '');
-			$(context).find('.bind-service-message').text('');
+			$(context).find('#services .bind-progress').css('display', 'inline-block').next().hide().next().hide();
+			$(context).find('#services .service-select').attr('disabled', '');
+			$(context).find('#services .bind-service-message').text('');
 			
 			CF.async({url : '/v2/service_bindings', method : 'POST', headers : {'Content-Type' : 'application/x-www-form-urlencoded'}, form : data}, function(result)
 			{
@@ -458,35 +458,35 @@
 					{
 						bindingService(context, result, function()
 						{
-							$(context).find('.service-table tbody td[colspan]').parent().remove();
-							$(context).find('.bind-progress').hide().next().show().next().show();
-							$(context).find('.service-select').val('').removeAttr('disabled');
-							$(context).find('.service-select option[value="' + data.service_instance_guid + '"]').remove();
+							$(context).find('#services .service-table tbody td[colspan]').parent().remove();
+							$(context).find('#services .bind-progress').hide().next().show().next().show();
+							$(context).find('#services .service-select').val('').removeAttr('disabled');
+							$(context).find('#services .service-select option[value="' + data.service_instance_guid + '"]').remove();
 						});
 					}
 					else
 					{
-						$(context).find('.bind-progress').hide().next().show().next().show();
-						$(context).find('.service-select').val('').removeAttr('disabled');
-						$(context).find('.bind-service-message').text(result.description ? result.description : JSON.stringify(result.error));
+						$(context).find('#services .bind-progress').hide().next().show().next().show();
+						$(context).find('#services .service-select').val('').removeAttr('disabled');
+						$(context).find('#services .bind-service-message').text(result.description ? result.description : JSON.stringify(result.error));
 					}
 				}
 				else
 				{
-					$(context).find('.bind-progress').hide().next().show().next().show();
-					$(context).find('.service-select').val('').removeAttr('disabled');
-					$(context).find('.bind-service-message').text('Service binding is failed.');
+					$(context).find('#services .bind-progress').hide().next().show().next().show();
+					$(context).find('#services .service-select').val('').removeAttr('disabled');
+					$(context).find('#services .bind-service-message').text('Service binding is failed.');
 				}
 			},
 			function(error)
 			{
-				$(context).find('.bind-progress').hide().next().show().next().show();
-				$(context).find('.service-select').val('').removeAttr('disabled');
-				$(context).find('.bind-service-message').text(error);
+				$(context).find('#services .bind-progress').hide().next().show().next().show();
+				$(context).find('#services .service-select').val('').removeAttr('disabled');
+				$(context).find('#services .bind-service-message').text(error);
 			});
 		});
 		
-		$(context).find('.bind-cancel').on('click', function()
+		$(context).find('#services .bind-cancel').on('click', function()
 		{
 			$(this).prev().prev().prev().val('');
 		});

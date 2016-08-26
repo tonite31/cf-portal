@@ -2,7 +2,7 @@
 {
 	_ee.once('app_detail_events', function(context, app)
 	{
-		$(context).find('.eventsProgress').show().next().hide();
+		$(context).find('#events .eventsProgress').show().next().hide();
 		
 		//최초 한달간의 이벤트들을 불러온다.
 		var today = new Date();
@@ -19,7 +19,7 @@
 			{
 				if(result.resources)
 				{
-					$(context).find('.eventsProgress').hide().next().show().next().hide();
+					$(context).find('#events .eventsProgress').hide().next().show().next().hide();
 					
 					var html = '';
 					var eventList = result.resources;
@@ -37,24 +37,24 @@
 						}
 					}
 					
-					$(context).find('.events-table tbody').html(html);
+					$(context).find('#events .events-table tbody').html(html);
 				}
 				else
 				{
-					$(context).find('.eventsProgress').hide().next().hide().next().text(result.description ? result.description : JSON.stringify(result.error)).show();
+					$(context).find('#events .eventsProgress').hide().next().hide().next().text(result.description ? result.description : JSON.stringify(result.error)).show();
 				}
 			}
 			else
 			{
-				$(context).find('.eventsProgress').hide().next().show().next().hide();
+				$(context).find('#events .eventsProgress').hide().next().show().next().hide();
 			}
 		},
 		function(error)
 		{
-			$(context).find('.eventsProgress').hide().next().hide().next().text(error).show();
+			$(context).find('#events .eventsProgress').hide().next().hide().next().text(error).show();
 		});
 		
-		$(context).find('.more-events').on('click', function()
+		$(context).find('#events .more-events').on('click', function()
 		{
 			today.setMonth(today.getMonth()-1);
 			var year2 = today.getFullYear();
@@ -90,7 +90,7 @@
 							}
 							
 							$(that).show().prev().hide();
-							$(context).find('.events-table tbody').append(html);
+							$(context).find('#events .events-table tbody').append(html);
 						}
 						else
 						{
@@ -103,17 +103,17 @@
 					}
 					else
 					{
-						$(context).find('.events-message').text(result.description ? result.description : JSON.stringify(result.error));
+						$(context).find('#events .events-message').text(result.description ? result.description : JSON.stringify(result.error));
 					}
 				}
 				else
 				{
-					$(context).find('.events-message').text('no more events.');
+					$(context).find('#events .events-message').text('no more events.');
 				}
 			},
 			function(error)
 			{
-				$(context).find('.events-message').text(error);
+				$(context).find('#events .events-message').text(error);
 			});
 		});
 	});

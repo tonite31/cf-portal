@@ -46,7 +46,7 @@
 	
 	var setUserProvided = function(context, app)
 	{
-		$(context).find('.user-provided-container').html('');
+		$(context).find('#env .user-provided-container').html('');
 		for(var key in environment)
 		{
 			var html = '<div class="panel panel-default user-provided" data-key="' + key + '">';
@@ -63,10 +63,10 @@
 			html += '</div>';
 			html += '</div>';
 			
-			$(context).find('.user-provided-container').append(html);
+			$(context).find('#env .user-provided-container').append(html);
 		}
 		
-		$(context).find('.user-provided-container .user-provided').each(function()
+		$(context).find('#env .user-provided-container .user-provided').each(function()
 		{
 			var key = $(this).attr('data-key');
 			
@@ -173,7 +173,7 @@
 	
 	_ee.once('app_detail_env', function(context, app)
 	{
-		$(context).find('.envProgress').show().next().hide();
+		$(context).find('#env .envProgress').show().next().hide();
 		
 		environment = app.entity.environment_json;
 		setUserProvided(context, app, environment);
@@ -182,29 +182,29 @@
 		{
 			if(result)
 			{
-				$(context).find('.envProgress').hide().next().show();
-				$(context).find('.system-provided').html(JSON.stringify(result, null, 4));
+				$(context).find('#env .envProgress').hide().next().show();
+				$(context).find('#env .system-provided').html(JSON.stringify(result, null, 4));
 			}
 			else
 			{
-				$(context).find('.envProgress').hide();
-				$(context).find('.envMessage').text('Environment Variables is not found.').show();
+				$(context).find('#env .envProgress').hide();
+				$(context).find('#env .envMessage').text('Environment Variables is not found.').show();
 			}
 		},
 		function(error)
 		{
-			$(context).find('.envProgress').hide();
-			$(context).find('.envMessage').text(error).show();
+			$(context).find('#env .envProgress').hide();
+			$(context).find('#env .envMessage').text(error).show();
 		});
 		
-		formSubmit($(context).find('.env-form'), function(data)
+		formSubmit($(context).find('#env .env-form'), function(data)
 		{
-			$(context).find('.env-form .env-progress').css('display', 'inline-block').next().hide().next().hide();
+			$(context).find('#env .env-form .env-progress').css('display', 'inline-block').next().hide().next().hide();
 			
 			if(environment.hasOwnProperty(data.key))
 			{
-				$(context).find('.env-form .env-progress').hide().next().show().next().show();
-				$(context).find('.env-service-message').text('Duplicated key');
+				$(context).find('#env .env-form .env-progress').hide().next().show().next().show();
+				$(context).find('#env .env-service-message').text('Duplicated key');
 				return;
 			}
 			
@@ -219,9 +219,9 @@
 			
 			CF.async(param, function(result)
 			{
-				$(context).find('.env-form .env-progress').hide().next().show().next().show();
+				$(context).find('#env .env-form .env-progress').hide().next().show().next().show();
 				
-				$(context).find('.env-form input[name="key"]').val('').parent().next().children('textarea').val('');
+				$(context).find('#env .env-form input[name="key"]').val('').parent().next().children('textarea').val('');
 				
 				if(result)
 				{
@@ -231,25 +231,25 @@
 					}
 					else
 					{
-						$(context).find('.env-service-message').text(result.description ? result.description : JSON.stringify(result.error));
+						$(context).find('#env .env-service-message').text(result.description ? result.description : JSON.stringify(result.error));
 					}
 				}
 				else
 				{
-					$(context).find('.env-service-message').text('Unkown error');
+					$(context).find('#env .env-service-message').text('Unkown error');
 				}
 			},
 			function(error)
 			{
-				$(context).find('.env-form .env-progress').hide().next().show().next().show();
-				$(context).find('.env-service-message').text(error);
+				$(context).find('#env .env-form .env-progress').hide().next().show().next().show();
+				$(context).find('#env .env-service-message').text(error);
 			});
 		});
 		
-		$(context).find('.env-cancel').on('click', function()
+		$(context).find('#env .env-cancel').on('click', function()
 		{
-			$(context).find('.env-form input[name]').val('');
-			$(context).find('.env-form textarea').val('');
+			$(context).find('#env .env-form input[name]').val('');
+			$(context).find('#env .env-form textarea').val('');
 		});
 	});
 })();

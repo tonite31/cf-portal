@@ -26,26 +26,47 @@
 		$('.logs-container pre').append('<p>' + data + '</p>');
 	});
 	
+	_ee.on('show_tail_log', function(params)
+	{
+		$('.logs-container pre').html('');
+		$.ajax({url : '/cf_logs_tail', type : 'post', data : {url : '/tail/?app=' + params.appGuid, socketId : _global.socketId}}).done(function()
+		{
+			params.callback();
+		});
+		$('#logs').find('.small-progress').hide();
+		$('#logs').find('#taillogChecker').get(0).checked = true;
+	});
+	
+	_ee.on('app_detail_clicked', function(name)
+	{
+		if(name != 'logs')
+		{
+			$.ajax({url : '/cf_logs_tail_close', type : 'post', data : {socketId : _global.socketId}}).done();
+			$('#logs').find('.small-progress').show();
+			$('#logs').find('#taillogChecker').get(0).checked = false;
+		}
+	});
+	
 	_ee.once('app_detail_logs', function(context, app)
 	{
-		$(context).find('.logsProgress').show().next().hide();
+		$(context).find('#logs .logsProgress').show().next().hide();
 		
 		getLogs(app, function(logs)
 		{
-			$(context).find('.logsProgress').hide().next().show().find('pre').html(logs);
+			$(context).find('#logs .logsProgress').hide().next().show().find('pre').html(logs);
 		},
 		function(error)
 		{
-			$(context).find('.logsProgress').hide().next().hide().next().text(error).show();
+			$(context).find('#logs .logsProgress').hide().next().hide().next().text(error).show();
 		});
 		
-		$(context).find('.small-progress').on('click', function()
+		$(context).find('#logs .small-progress').on('click', function()
 		{
 			var that = this;
 			$(this).css('animation-name', 'progress').prev().text('Refreshing...');
 			getLogs(app, function(logs)
 			{
-				$(context).find('.logsProgress').hide().next().show().find('pre').html(logs);
+				$(context).find('#logs .logsProgress').hide().next().show().find('pre').html(logs);
 				$(that).css('animation-name', 'none').prev().text('');
 			},
 			function(error)
@@ -54,18 +75,18 @@
 			});
 		});
 		
-		$(context).find('#taillogChecker').on('click', function()
+		$(context).find('#logs #taillogChecker').on('click', function()
 		{
 			if(this.checked)
 			{
 				$('.logs-container pre').html('');
 				$.ajax({url : '/cf_logs_tail', type : 'post', data : {url : '/tail/?app=' + app.metadata.guid, socketId : _global.socketId}}).done();
-				$(context).find('.small-progress').hide();
+				$(context).find('#logs .small-progress').hide();
 			}
 			else
 			{
 				$.ajax({url : '/cf_logs_tail_close', type : 'post', data : {socketId : _global.socketId}}).done();
-				$(context).find('.small-progress').show();
+				$(context).find('#logs .small-progress').show();
 			}
 		});
 	});
