@@ -64,6 +64,9 @@
 			_global.tailLogInterval = null;
 		}
 		
+		$('#logs').find('.small-progress').show();
+		$('#logs').find('#taillogChecker').get(0).checked = false;
+		
 		$(context).find('#logs .logsProgress').show().next().hide();
 		
 		getLogs(app, function(logs)
