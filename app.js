@@ -63,36 +63,12 @@ global._path =
  * create express and imp
  */
 var app = global._app = express();
-var server = app.listen(process.env.PORT || 3000, function()
+var http = require('http').Server(app);
+var server = http.listen(process.env.PORT || 3000, function()
 {
 	console.log('Listening on port %d', server.address().port);
 });
 
-_io = require('socket.io')(server);
-_io.clients = {};
-_io.logSockets = {};
-_io.on('connection', function (socket)
-{
-	_io.clients[socket.id] = socket;
-	socket.emit('welcome', socket.id);
-	socket.on('close_taillog', function()
-	{
-		if(_io.logSockets && _io.logSockets[socket.id])
-		{
-			_io.logSockets[socket.id].close();
-			delete _io.logSockets[socket.id];
-		}
-	});
-	
-	socket.on('disconnect', function()
-	{
-		if(_io.logSockets && _io.logSockets[socket.id])
-		{
-			_io.logSockets[socket.id].close();
-			delete _io.logSockets[socket.id];
-		}
-	});
-});
 
 /**
  * set template engine.
@@ -122,16 +98,17 @@ if(_config.redis && _config.redis.host && _config.redis.port)
 {
 	var RedisStore = require('connect-redis')(session);
 	//var redis = require("redis").createClient({host : '10.250.64.199', port : 6379});
-	var redis = require("redis").createClient(_config.redis);
+	var redis = require("redis");
+	var client = require("redis").createClient(_config.redis);
 	
-	redis.on('connect', function()
+	client.on('connect', function()
 	{
 		console.log('connected to redis!!');
-		global._redis = redis;
+		global._redis = client;
 	});
 	
 	app.use(session({
-	    store: new RedisStore({client: redis}),
+	    store: new RedisStore({client: client}),
 	    secret: 'cf portal',
 	    saveUninitialized: true,
 	    resave: false,

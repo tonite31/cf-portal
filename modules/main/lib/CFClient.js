@@ -448,7 +448,7 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 	}.bind(this));
 };
 
-CFClient.prototype.getTailLog = function(url, socketId, done, error)
+CFClient.prototype.getTailLog = function(url, done, error)
 {
 	try
 	{

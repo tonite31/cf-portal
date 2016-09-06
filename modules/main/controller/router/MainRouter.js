@@ -7,6 +7,7 @@ var CFClient = require('../../lib/CFClient');
 
 module.exports = function(app)
 {
+	var sockets = {};
 	app.post('/create_dashboard_link', function(req, res, next)
 	{
 		var url = _config[req.body.type];
@@ -72,7 +73,6 @@ module.exports = function(app)
 			return;
 		}
 
-		var socketId = req.body.socketId;
 		var url = req.body.url;
 		if(!url)
 		{
@@ -80,9 +80,10 @@ module.exports = function(app)
 			return;
 		}
 		
-		cf.getTailLog(url, socketId, function(socket)
+		cf.getTailLog(url, function(socket)
 		{
-			_io.logSockets[socketId] = socket;
+			var socketId = uuid.v4();
+			sockets[socketId] = {socket : socket, log : []};
 			socket.on('open', function () {
 		        console.log('log socket connected');
 		    });
@@ -90,13 +91,13 @@ module.exports = function(app)
 		        console.log('log socket disconnected');
 		    });
 		    socket.on('message', function (data) {
-		    	_io.to(socketId).emit('taillog', clean(data.toString()));
+		    	sockets[socketId].log.push(clean(data.toString()));
 		    });
 		    socket.on('error', function () {
-		    	_io.to(socketId).emit('taillog', '-- socket error' + JSON.stringify(arguments));
+		    	sockets[socketId].log.push('-- socket error' + JSON.stringify(arguments));
 		    });
 		    
-			res.end();
+			res.end(socketId);
 		}, function(error)
 		{
 			console.log(error);
@@ -104,13 +105,29 @@ module.exports = function(app)
 		});
 	});
 	
+	app.get('/get_cf_logs_tail', function(req, res, next)
+	{
+		var socketId = req.query.socketId;
+	
+		if(sockets[socketId])
+		{
+			var log = sockets[socketId].log;
+			sockets[socketId].log = [];
+			res.send(log);
+		}
+		else
+		{
+			res.end();
+		}
+	});
+	
 	app.post('/cf_logs_tail_close', function(req, res, next)
 	{
 		var socketId = req.body.socketId;
-		if(_io.logSockets && _io.logSockets[socketId])
+		if(sockets && sockets[socketId])
 		{
-			_io.logSockets[socketId].close();
-			delete _io.logSockets[socketId];
+			sockets[socketId].socket.close();
+			delete sockets[socketId];
 		}
 		
 		res.end();
@@ -372,6 +389,7 @@ var rendering = function(req, res)
 		param.loggingEndpoint = req.session.cfdata.endpoint.logging;
 	}
 	
+	param.host = req.headers.host;
 	param.endpoint = _config.endpoint;
 	param.redisDashboard = _config.redisDashboard;
 	param.swiftDashboard = _config.swiftDashboard;

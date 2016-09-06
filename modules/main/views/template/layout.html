@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="@{libs}/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="@{css}/common.css">
 
-<script src="/socket.io/socket.io.js"></script>
 <script src="@{libs}/jquery-2.2.3.min.js"></script>
 <script src="@{libs}/bootstrap/js/bootstrap.min.js"></script>
 <script src="@{libs}/form.js"></script>
@@ -34,17 +33,6 @@ window.onhashchange = function()
 	}
 };
 
-var socket = io('http://localhost:3000');
-socket.on('welcome', function(socketId)
-{
-	_global.socketId = socketId;
-});
-
-socket.on('taillog', function(data)
-{
-	_ee.emit('taillog', data);
-});
-
 $(document).ready(function()
 {
 	$('#signout').on('click', function()
@@ -62,7 +50,7 @@ $(document).ready(function()
 </head>
 
 <body>
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default" style="min-width: 1300px;">
 	<div class="container-fluid">
 		<div class="navbar-header">
 			<a class="navbar-brand" href="/">
@@ -94,7 +82,7 @@ ${#{1}}
 	</div>
 </div>
 <footer class="footer">
-	<span>v2.1.0</span>
+	<span>v2.1.2</span>
 	<span class="divider"></span>
 	<span>API Endpoint : #{endpoint}</span>
 	<span class="divider"></span>

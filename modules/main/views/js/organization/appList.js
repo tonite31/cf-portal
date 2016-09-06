@@ -1,6 +1,6 @@
 (function()
 {
-	var APP_REFRESH_TIME = 60 * 5; //5분에 한 번씩 앱 목록을 갱신한다.
+	var APP_REFRESH_TIME = 60 * 1; //1분에 한 번씩 앱 목록을 갱신한다.
 	var UPDATE_SCALE_SUCCESS_MESSAGE_TIME = 3; //앱의 인스턴스와 메모리 업데이트를 성공적으로 마친경우 메시지 표시 시간.
 	var appRefreshTimer = null;
 	
@@ -875,6 +875,8 @@
 				}
 				else
 				{
+					_ee.emit('deleted_app', app);
+					
 					selectedAppGuid = null;
 					
 					$('.delete-message').text('');

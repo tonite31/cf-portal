@@ -20,12 +20,6 @@
 		}, error, true);
 	};
 	
-	var socketId = null;
-	_ee.on('taillog', function(data)
-	{
-		$('.logs-container pre').append('<p>' + data + '</p>');
-	});
-	
 	_ee.on('show_tail_log', function(params)
 	{
 		$('.logs-container pre').html('');
@@ -41,14 +35,35 @@
 	{
 		if(name != 'logs')
 		{
+			if(_global.tailLogInterval)
+			{
+				clearInterval(_global.tailLogInterval);
+				_global.tailLogInterval = null;
+			}
+			
 			$.ajax({url : '/cf_logs_tail_close', type : 'post', data : {socketId : _global.socketId}}).done();
 			$('#logs').find('.small-progress').show();
 			$('#logs').find('#taillogChecker').get(0).checked = false;
 		}
 	});
 	
+	_ee.on('hashchange', function()
+	{
+		if(_global.tailLogInterval)
+		{
+			clearInterval(_global.tailLogInterval);
+			_global.tailLogInterval = null;
+		}
+	});
+	
 	_ee.once('app_detail_logs', function(context, app)
 	{
+		if(_global.tailLogInterval)
+		{
+			clearInterval(_global.tailLogInterval);
+			_global.tailLogInterval = null;
+		}
+		
 		$(context).find('#logs .logsProgress').show().next().hide();
 		
 		getLogs(app, function(logs)
@@ -79,12 +94,51 @@
 		{
 			if(this.checked)
 			{
+				if(_global.tailLogInterval)
+				{
+					clearInterval(_global.tailLogInterval);
+					_global.tailLogInterval = null;
+				}
+				
 				$('.logs-container pre').html('');
-				$.ajax({url : '/cf_logs_tail', type : 'post', data : {url : '/tail/?app=' + app.metadata.guid, socketId : _global.socketId}}).done();
+				$.ajax({url : '/cf_logs_tail', type : 'post', data : {url : '/tail/?app=' + app.metadata.guid}}).done(function(result)
+				{
+					_global.socketId = result;
+					_global.tailLogInterval = setInterval(function()
+					{
+						$.ajax({url : '/get_cf_logs_tail?socketId=' + _global.socketId, type : 'get'}).done(function(result)
+						{
+							if(result)
+							{
+								if(result.length > 0)
+								{
+									for(var i=0; i<result.length; i++)
+										$('.logs-container pre').append('<p>' + result[i] + '</p>');
+									
+									$('.logs-container pre').scrollTop($('.logs-container pre')[0].scrollHeight);
+								}
+							}
+							else
+							{
+								if(_global.tailLogInterval)
+								{
+									clearInterval(_global.tailLogInterval);
+									_global.tailLogInterval = null;
+								}
+							}
+						});
+					}, 500);
+				});
 				$(context).find('#logs .small-progress').hide();
 			}
 			else
 			{
+				if(_global.tailLogInterval)
+				{
+					clearInterval(_global.tailLogInterval);
+					_global.tailLogInterval = null;
+				}
+				
 				$.ajax({url : '/cf_logs_tail_close', type : 'post', data : {socketId : _global.socketId}}).done();
 				$(context).find('#logs .small-progress').show();
 			}

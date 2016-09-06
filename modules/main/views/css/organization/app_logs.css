@@ -29,6 +29,9 @@
     border-radius: 0 0 2px 2px;
     color: #FFFFFF;
     background-color: #212121;
+    
+    max-height: 1000px;
+    overflow-y: auto;
 }
 
 .logs-date

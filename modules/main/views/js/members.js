@@ -93,6 +93,8 @@
 		var next = this.next;
 		var error = this.error;
 		
+		var progress = $('#orgTable tbody tr:first').show();
+		
 		CF.async({url : '/v2/' + params.dataName + '/' + params.guid + '/' + params.type}, function(result)
 		{
 			if(result)
