@@ -37,6 +37,7 @@
 		{
 			if(_global.tailLogInterval)
 			{
+				console.log("클리어6");
 				clearInterval(_global.tailLogInterval);
 				_global.tailLogInterval = null;
 			}
@@ -51,6 +52,7 @@
 	{
 		if(_global.tailLogInterval)
 		{
+			console.log("클리어5");
 			clearInterval(_global.tailLogInterval);
 			_global.tailLogInterval = null;
 		}
@@ -60,6 +62,7 @@
 	{
 		if(_global.tailLogInterval)
 		{
+			console.log("클리어4");
 			clearInterval(_global.tailLogInterval);
 			_global.tailLogInterval = null;
 		}
@@ -99,6 +102,7 @@
 			{
 				if(_global.tailLogInterval)
 				{
+					console.log("클리어");
 					clearInterval(_global.tailLogInterval);
 					_global.tailLogInterval = null;
 				}
@@ -107,6 +111,7 @@
 				$.ajax({url : '/cf_logs_tail', type : 'post', data : {url : '/tail/?app=' + app.metadata.guid}}).done(function(result)
 				{
 					_global.socketId = result;
+					console.log("소켓 아이디222 : ", _global.socketId);
 					_global.tailLogInterval = setInterval(function()
 					{
 						$.ajax({url : '/get_cf_logs_tail?socketId=' + _global.socketId, type : 'get'}).done(function(result)
@@ -125,12 +130,13 @@
 							{
 								if(_global.tailLogInterval)
 								{
+									console.log("클리어2");
 									clearInterval(_global.tailLogInterval);
 									_global.tailLogInterval = null;
 								}
 							}
 						});
-					}, 500);
+					}, 5000);
 				});
 				$(context).find('#logs .small-progress').hide();
 			}
@@ -138,6 +144,7 @@
 			{
 				if(_global.tailLogInterval)
 				{
+					console.log("클리어3");
 					clearInterval(_global.tailLogInterval);
 					_global.tailLogInterval = null;
 				}

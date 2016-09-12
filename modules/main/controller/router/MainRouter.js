@@ -80,21 +80,31 @@ module.exports = function(app)
 			return;
 		}
 		
+		if(!req.session.tailLogs)
+			req.session.tailLogs = {};
+		
 		cf.getTailLog(url, function(socket)
 		{
 			var socketId = uuid.v4();
-			sockets[socketId] = {socket : socket, log : []};
+			
+			console.log("소켓 아이디 : ", socketId);
+			sockets[socketId] = socket;
+			req.session.tailLogs[socketId] = [];
 			socket.on('open', function () {
 		        console.log('log socket connected');
 		    });
 		    socket.on('close', function () {
 		        console.log('log socket disconnected');
+		        sockets[socketId] = null;
 		    });
 		    socket.on('message', function (data) {
-		    	sockets[socketId].log.push(clean(data.toString()));
+		    	req.session.tailLogs[socketId].push(clean(data.toString()));
+		    	console.log("들어가고 있는데 : ", req.session.tailLogs[socketId]);
 		    });
 		    socket.on('error', function () {
-		    	sockets[socketId].log.push('-- socket error' + JSON.stringify(arguments));
+		    	sockets[socketId] = null;
+		    	req.session.tailLogs[socketId].push('-- socket error' + JSON.stringify(arguments));
+		    	console.log("에러 : ", arguments);
 		    });
 		    
 			res.end(socketId);
@@ -108,11 +118,12 @@ module.exports = function(app)
 	app.get('/get_cf_logs_tail', function(req, res, next)
 	{
 		var socketId = req.query.socketId;
-	
-		if(sockets[socketId])
+		console.log("소켓 아이디 : ", socketId);
+		if(req.session.tailLogs[socketId])
 		{
-			var log = sockets[socketId].log;
-			sockets[socketId].log = [];
+			var log = req.session.tailLogs[socketId];
+			console.log("혹시나 : ", log);
+			req.session.tailLogs[socketId] = [];
 			res.send(log);
 		}
 		else
@@ -126,7 +137,7 @@ module.exports = function(app)
 		var socketId = req.body.socketId;
 		if(sockets && sockets[socketId])
 		{
-			sockets[socketId].socket.close();
+			sockets[socketId].close();
 			delete sockets[socketId];
 		}
 		

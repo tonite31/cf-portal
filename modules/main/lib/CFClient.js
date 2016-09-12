@@ -380,7 +380,7 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 	
 	var param = {};
 	if(url.indexOf('/recent') == 0)
-		param.url = this.endpoint.logging.replace('wss', 'https').replace(':443', '') + url;
+		param.url = this.endpoint.logging.replace('wss', 'https').replace(':443', '').replace(':4443', '') + url;
 	else
 		param.url = this.endpoint.api + url;
 	
