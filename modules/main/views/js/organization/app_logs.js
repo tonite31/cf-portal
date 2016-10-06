@@ -37,14 +37,13 @@
 		{
 			if(_global.tailLogInterval)
 			{
-				console.log("클리어6");
 				clearInterval(_global.tailLogInterval);
 				_global.tailLogInterval = null;
 			}
 			
 			$.ajax({url : '/cf_logs_tail_close', type : 'post', data : {socketId : _global.socketId}}).done();
 			$('#logs').find('.small-progress').show();
-			$('#logs').find('#taillogChecker').get(0).checked = false;
+//			$('#logs').find('#taillogChecker').get(0).checked = false;
 		}
 	});
 	
@@ -52,7 +51,6 @@
 	{
 		if(_global.tailLogInterval)
 		{
-			console.log("클리어5");
 			clearInterval(_global.tailLogInterval);
 			_global.tailLogInterval = null;
 		}
@@ -62,13 +60,12 @@
 	{
 		if(_global.tailLogInterval)
 		{
-			console.log("클리어4");
 			clearInterval(_global.tailLogInterval);
 			_global.tailLogInterval = null;
 		}
 		
 		$('#logs').find('.small-progress').show();
-		$('#logs').find('#taillogChecker').get(0).checked = false;
+//		$('#logs').find('#taillogChecker').get(0).checked = false;
 		
 		$(context).find('#logs .logsProgress').show().next().hide();
 		
@@ -102,7 +99,6 @@
 			{
 				if(_global.tailLogInterval)
 				{
-					console.log("클리어");
 					clearInterval(_global.tailLogInterval);
 					_global.tailLogInterval = null;
 				}
@@ -111,7 +107,6 @@
 				$.ajax({url : '/cf_logs_tail', type : 'post', data : {url : '/tail/?app=' + app.metadata.guid}}).done(function(result)
 				{
 					_global.socketId = result;
-					console.log("소켓 아이디222 : ", _global.socketId);
 					_global.tailLogInterval = setInterval(function()
 					{
 						$.ajax({url : '/get_cf_logs_tail?socketId=' + _global.socketId, type : 'get'}).done(function(result)
@@ -130,7 +125,6 @@
 							{
 								if(_global.tailLogInterval)
 								{
-									console.log("클리어2");
 									clearInterval(_global.tailLogInterval);
 									_global.tailLogInterval = null;
 								}
@@ -144,7 +138,6 @@
 			{
 				if(_global.tailLogInterval)
 				{
-					console.log("클리어3");
 					clearInterval(_global.tailLogInterval);
 					_global.tailLogInterval = null;
 				}

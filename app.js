@@ -113,15 +113,15 @@ if(_config.redis && _config.redis.host && _config.redis.port)
 	    saveUninitialized: true,
 	    resave: false,
 	    cookie: { 
-    	  expires: new Date(Date.now() + 180 * 10000), 
-    	  maxAge: 180*10000
+    	  expires: new Date(Date.now() + 60 * 60 * 2 * 1000), 
+    	  maxAge: 60 * 60 * 2 * 1000
     	}
 	}));
 }
 else
 {
 	global._redis = null;
-	app.use(session({ secret: 'halloween', resave: true, saveUninitialized: true, cookie: {expires: new Date(Date.now() + 180 * 10000), maxAge: 180*10000}}));
+	app.use(session({ secret: 'halloween', resave: true, saveUninitialized: true, cookie: {expires: new Date(Date.now() + 60 * 60 * 2 * 1000), maxAge: 60 * 60 * 2 * 1000}}));
 }
 
 app.use(methodOverride());

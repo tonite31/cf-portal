@@ -737,6 +737,12 @@
 			var space = $('#' + _global.hash.space).get(0);
 			setAppList(space.item.entity.apps_url, function()
 			{
+				if($('#appFilter').val())
+				{
+					$('#appsBody tr').hide();
+					$('#appsBody tr .app-name span:first-child:contains(' + $('#appFilter').val() + ')').parent().parent().show();
+				}
+				
 				$('.refresh-app-list-description').text('');
 				$('#refreshAppList').css('animation-name', 'none').attr('data-state', 'off');
 				start();
@@ -767,6 +773,12 @@
 				{
 					$('.refresh-app-list-description').text('');
 					$('#refreshAppList').css('animation-name', 'none').attr('data-state', 'off');
+					
+					if($('#appFilter').val())
+					{
+						$('#appsBody tr').hide();
+						$('#appsBody tr .app-name span:first-child:contains(' + $('#appFilter').val() + ')').parent().parent().show();
+					}
 							
 					_IntervalTimer.start('refresh_app_list');
 				});

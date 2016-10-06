@@ -33,7 +33,7 @@
 		},
 		function(error)
 		{
-			$('#orgSelect option:first').text(error);
+			$('#orgSelect option:first').text(JSON.stringify(error));
 		});
 	});
 	
@@ -69,7 +69,7 @@
 		},
 		function(error)
 		{
-			$('#spaceSelect option:first').text(error);
+			$('#spaceSelect option:first').text(JSON.stringify(error));
 		});
 	});
 	
@@ -196,7 +196,7 @@
 		function(error)
 		{
 			progress.hide();
-			$('#' + params.tableName + ' tbody').append('<tr><td class="error" colspan="5" style="text-align: center;">' + error + '</td></tr>');
+			$('#' + params.tableName + ' tbody').append('<tr><td class="error" colspan="5" style="text-align: center;">' + JSON.stringify(error) + '</td></tr>');
 			error();
 		});
 	});
@@ -267,7 +267,7 @@
 			},
 			function(error)
 			{
-				var errorTr = $('<tr><td colspan="5" class="error" style="text-align: right;">' + error + ' <span class="glyphicon glyphicon-remove"></span></td></tr>').insertAfter(tr);
+				var errorTr = $('<tr><td colspan="5" class="error" style="text-align: right;">' + JSON.stringify(error) + ' <span class="glyphicon glyphicon-remove"></span></td></tr>').insertAfter(tr);
 				errorTr.find('.glyphicon').on('click', function()
 				{
 					$(this).parent().parent().remove();
@@ -341,7 +341,7 @@
 						},
 						function(workName, error)
 						{
-							var errorTr = $('<tr><td colspan="5" class="error" style="text-align: right;">' + error + ' <span class="glyphicon glyphicon-remove"></span></td></tr>').insertAfter(tr);
+							var errorTr = $('<tr><td colspan="5" class="error" style="text-align: right;">' + JSON.stringify(error) + ' <span class="glyphicon glyphicon-remove"></span></td></tr>').insertAfter(tr);
 							errorTr.find('.glyphicon').on('click', function()
 							{
 								$(this).parent().parent().remove();
@@ -482,9 +482,14 @@
 									function(workName, error)
 									{
 										$(that).prev().remove();
-										$('<span style="color: red;">' + error + '</span>').insertBefore(that);
+										$('<span style="color: red;">' + JSON.stringify(error) + '</span>').insertBefore(that);
 									});
 								});
+								
+								row = $(template);
+								row.get(0).item = user;
+								row.find('input[class="auditors"]').get(0).checked = true;
+								row.find('.glyphicon-remove').each(deleteMember);
 								
 								$('#spaceTable tbody').append(row);
 								$('#spaceTable tbody tr:last input[type="checkbox"]').on('change', function()
@@ -526,7 +531,7 @@
 									function(workName, error)
 									{
 										$(that).prev().remove();
-										$('<span style="color: red;">' + error + '</span>').insertBefore(that);
+										$('<span style="color: red;">' + JSON.stringify(error) + '</span>').insertBefore(that);
 									});
 								});
 //							},
@@ -546,7 +551,8 @@
 			},
 			function(error)
 			{
-				$('#message').text(error);
+				$('.small-progress').hide().next().show().next().show();
+				$('#message').text(JSON.stringify(error));
 			});
 		});
 	});
