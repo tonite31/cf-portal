@@ -30,6 +30,8 @@ if(process.env.REDIS_DASHBOARD)
 	_config.redisDashboard = process.env.REDIS_DASHBOARD;
 if(process.env.SWIFT_DASHBOARD)
 	_config.swiftDashboard = process.env.SWIFT_DASHBOARD;
+if(process.env.AUTOSCALER_DASHBOARD)
+	_config.autoscalerDashboard = process.env.AUTOSCALER_DASHBOARD;
 
 if(!_config.endpoint)
 {

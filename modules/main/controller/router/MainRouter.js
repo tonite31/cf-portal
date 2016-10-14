@@ -10,41 +10,48 @@ module.exports = function(app)
 	var sockets = {};
 	app.post('/create_dashboard_link', function(req, res, next)
 	{
-		var url = _config[req.body.type];
-		if(url.lastIndexOf('/') != url.length-1)
-			url += '/';
-		
-		if(!req.session.tokens)
-			req.session.tokens = {};
-		
-		var secret = uuid.v4();
-		
-		if(req.session.tokens[req.body.credentials.password])
+		if(req.body.type == 'autoscalerDashboard')
 		{
-			secret = req.session.tokens[req.body.credentials.password];
+			res.end(_config.autoscalerDashboard + '?appId=' + req.body.credentials.appId + '&appName=' + req.body.credentials.appName + '&endpoint=' + req.body.credentials.api_url);
 		}
 		else
 		{
-			req.session.tokens[req.body.credentials.password] = {secret : secret};
-		}
-		
-		var param = {};
-		param.url = url + 'token';
-		param.method = 'post';
-		param.form = {secret : secret, credentials : req.body.credentials};
-		
-		request(param, function(err, response, body)
-		{
-			if(err)
+			var url = _config[req.body.type];
+			if(url.lastIndexOf('/') != url.length-1)
+				url += '/';
+			
+			if(!req.session.tokens)
+				req.session.tokens = {};
+			
+			var secret = uuid.v4();
+			
+			if(req.session.tokens[req.body.credentials.password])
 			{
-				
+				secret = req.session.tokens[req.body.credentials.password];
 			}
 			else
 			{
-				var token = body;
-				res.end(url + '?token=' + token);
+				req.session.tokens[req.body.credentials.password] = {secret : secret};
 			}
-		});                                                                                                                                                                                                                                                                                   
+			
+			var param = {};
+			param.url = url + 'token';
+			param.method = 'post';
+			param.form = {secret : secret, credentials : req.body.credentials};
+			
+			request(param, function(err, response, body)
+			{
+				if(err)
+				{
+					
+				}
+				else
+				{
+					var token = body;
+					res.end(url + '?token=' + token);
+				}
+			});  
+		}
 	});
 	
 	var clean = function(data)
