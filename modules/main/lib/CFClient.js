@@ -95,6 +95,10 @@ CFClient.prototype.login = function(done, error)
 							if(error)
 								error(err);
 						}
+						else if(response.statusCode != 200)
+						{
+							error(body);
+						}
 						else
 						{
 							var data = JSON.parse(body);
@@ -106,7 +110,7 @@ CFClient.prototype.login = function(done, error)
 							{
 								this.uaaToken = data;
 								
-								if(_redis)
+								if(_redis != null)
 									_redis.set('cfdata', JSON.stringify(data));
 								done();
 							}
@@ -401,7 +405,11 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 			if(error)
 				error(err);
 		}
-		else
+		else if(response.statusCode == 404)
+		{
+			error(response.statusCode, body);
+		}
+		else if(response.statusCode == 401)
 		{
 			if(body)
 			{
@@ -416,7 +424,11 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 							if(err)
 							{
 								if(error)
-									error(err);
+									error(response.statusCode, err);
+							}
+							else if(response.statusCode == 404)
+							{
+								error(response.statusCode, body);
 							}
 							else
 							{
@@ -436,6 +448,10 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 				}
 			}
 			
+			error(response.statusCode, body);
+		}
+		else
+		{
 			if(url.indexOf('/recent') != -1)
 			{
 				done(body);

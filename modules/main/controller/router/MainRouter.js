@@ -386,9 +386,9 @@ module.exports = function(app)
 				res.status(500).send({error : err});
 			}
 		},
-		function(error)
+		function(code, error)
 		{
-			res.send({error : error});
+			res.status(code).send({error : error});
 		});
 	});
 };

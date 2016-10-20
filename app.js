@@ -35,13 +35,13 @@ if(process.env.AUTOSCALER_DASHBOARD)
 
 if(!_config.endpoint)
 {
-	console.log('API endpoint is not found.');
+	console.log('[Error] API endpoint is not found.');
 	return;
 }
 
 if(!_config.admin.username || !_config.admin.password)
 {
-	console.log('Admin account is not found.');
+	console.log('[Error] Admin account is not found.');
 	return;
 }
 
@@ -54,6 +54,8 @@ global._path =
 	modules : __dirname + "/modules",
 	libs : __dirname + "/libs"
 };
+
+global._redis = null;
 
 //console.log = function(){};
 //console.error = function(){};
