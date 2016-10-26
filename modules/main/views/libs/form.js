@@ -125,7 +125,7 @@ function formSubmit(element, callback)
 				{
 					if(data[key])
 					{
-						if(typeof data[key] == "Array")
+						if(typeof data[key] == "object")
 							data[key].push(value);
 						else
 							data[key] = [data[key], value];
@@ -143,7 +143,17 @@ function formSubmit(element, callback)
 			}
 			else
 			{
-				data[key] = value;
+				if(data[key])
+				{
+					if(typeof data[key] == "object")
+						data[key].push(value);
+					else
+						data[key] = [data[key], value];
+				}
+				else
+				{
+					data[key] = value;
+				}
 			}
 		});
 		

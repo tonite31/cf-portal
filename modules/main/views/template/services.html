@@ -26,10 +26,24 @@
 </tr>
 </script>
 
+<script type="text/template" id="cupsTemplate">
+<div class="form-row">
+	<div class="input-group user-provided-service-key-value">
+		<input type="text" class="form-control" name="key" placeholder="key" value="{key}">
+	</div>
+	<div class="input-group user-provided-service-key-value">
+		<input type="text" class="form-control" name="value" placeholder="value" value="{value}">
+	</div>
+	<div class="button-group">
+		<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-minus"></span></button>
+	</div>
+</div>
+</script>
+
 <div class="container-body">
 <div class="container">
 	<div class="page-header">
-		<h2>Services</h2>
+		<h2>Service Instances</h2>
 	</div>
 	<div>
 		<p><span class="upper-label">Organization</span> <span class="upper-label">Space</span></p>
@@ -39,6 +53,7 @@
 		<select class="select" id="spaceSelect" name="space" disabled>
 			<option value="" disabled selected>Spaces Loading...</option>
 		</select>
+		<button type="button" class="btn btn-primary" style="float: right; position: relative; top: 5px;" id="cups">Create user-provided-service</button>
 	</div>
 	<div>
 		<table class="services-table" id="serviceTable">
@@ -127,7 +142,9 @@
 				<div role="tabpanel" class="tab-pane fade" id="settings">
 					<form>
 						<div class="input-group" style="width: 500px;">
-							<input type="text" class="form-control" name="name" placeholder="Service instance name" required>
+							<input type="text" class="form-control" name="name" placeholder="Service instance name" style="border-radius: 4px;" required>
+						</div>
+						<div id="credentialsGroup" style="display: none;">
 						</div>
 						<div>
 							<span class="glyphicon glyphicon-refresh small-progress"></span>
@@ -148,4 +165,42 @@
 		</div>
 	</div>
 </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="createUserProvidedServiceDialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Create user-provided-service</h4>
+			</div>
+			<form class="modal-form">
+				<div class="modal-body">
+					<div class="form-row">
+						<input type="text" class="form-control" name="name" placeholder="service_instance_name" required>
+					</div>
+					<div>
+						<p class="label-for-input">Credentials</p>
+					</div>
+					<div class="form-row">
+						<div class="input-group user-provided-service-key-value">
+	  						<input type="text" class="form-control" name="key" placeholder="key">
+						</div>
+						<div class="input-group user-provided-service-key-value">
+							<input type="text" class="form-control" name="value" placeholder="value">
+						</div>
+						<div class="button-group">
+							<button type="button" class="btn btn-default" data-id="addCupsKeyValues"><span class="glyphicon glyphicon-plus"></span></button>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<span class="glyphicon glyphicon-refresh small-progress"></span>
+					<span class="message" style="float:left; color: red; font-size: 11px;" id="cupsMessage"></span>
+					<input type="submit" class="btn btn-primary" value="Create">
+					<button type="button" class="btn btn-default" id="cancelCupsDialog">Cancel</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>

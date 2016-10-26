@@ -204,3 +204,28 @@ p.message
 	font-size: 12px;
 	color: red;
 }
+
+.user-provided-service-key-value
+{
+	display: inline-block;
+	margin: 5px 0;
+	vertical-align: middle;
+}
+
+.user-provided-service-key-value input
+{
+	border-radius: 4px !important;
+}
+
+.button-group
+{
+	width: 7%;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.label-for-input
+{
+	margin: 15px 0 5px 0;
+	font-weight: 600;
+}

@@ -286,14 +286,17 @@
 					},
 					function()
 					{
-						if(serviceList.length == 0)
-							clone.find('tbody').append('<tr><td colspan="5" style="text-align:center;">no services</td></tr>');
-						
-						clone.find('tbody tr').show();
-						progress.hide();
-						
-						if(serviceList.length > 0)
-							setDetails();
+						getUserProvidedService(clone, function(list)
+						{
+							if(serviceList.length == 0 && list.length == 0)
+								clone.find('tbody').append('<tr><td colspan="5" style="text-align:center;">no services</td></tr>');
+							
+							clone.find('tbody tr').show();
+							progress.hide();
+							
+							if(serviceList.length > 0 || list.length > 0)
+								setDetails();
+						});
 					});
 				}
 				else
@@ -312,6 +315,72 @@
 		{
 			clone.find('.progress-row').hide();
 			clone.find('tbody').append('<tr><td colspan="5" style="text-align: center; color: red;">' + error + '</td></tr>');
+		});
+	};
+	
+	var getUserProvidedService = function(clone, callback)
+	{
+		var guid = $('#spaceSelect').val();
+		CF.async({url : '/v2/user_provided_service_instances?q=space_guid:' + guid}, function(result)
+		{
+			if(result)
+			{
+				var list = result.resources;
+				if(list)
+				{
+					for(var i=0; i<list.length; i++)
+					{
+						(function(instance)
+						{
+							instance.isCups = true;
+							var template = $('#serviceRowTemplate').html();
+							template = $(template.replace('{description}', 'user-provided-service').replace('{name}', instance.entity.name).replace('{plan}', ''));
+							
+							instance.element = template;
+							
+							CF.async({url : instance.entity.service_bindings_url}, function(result)
+							{
+								var td = $(template).find('td:nth-child(3)');
+								if(result)
+								{
+									var bindings = result.resources;
+									if(bindings)
+									{
+										instance.bindings = bindings;
+										td.html(bindings.length);
+									}
+									else
+									{
+										td.html('<span style="color: red; font-size: 11px;>' + (result.description ? result.description : JSON.stringify(result.error)) + '</span>');
+									}
+								}
+								else
+								{
+									td.html('<span style="color: red; font-size: 11px;>Unknown Error</span>');
+								}
+							});
+							
+							template.get(0).item = instance;
+							
+							template.find('td:last').html('');
+							
+							clone.find('tbody').append(template);
+						})(list[i]);
+					}
+					
+					callback(list);
+				}
+				else
+				{
+					clone.find('.progress-row').hide();
+					clone.find('tbody').append('<tr><td colspan="5" style="text-align: center; color: red;">' + (result.description ? result.description : JSON.stringify(result.error)) + '</td></tr>');
+				}
+			}
+			else
+			{
+				clone.find('.progress-row').hide();
+				clone.find('tbody').html('<tr><td colspan="5" style="text-align: center; color: red;">Unknown Error</td></tr>');
+			}
 		});
 	};
 	
@@ -446,6 +515,12 @@
 		var next = this.next;
 		
 		$('.plans-table tbody').html('');
+		if(!serviceInstance.service)
+		{
+			next();
+			return;
+		}
+		
 		CF.async({url : serviceInstance.service.entity.service_plans_url}, function(result)
 		{
 			if(result)
@@ -551,9 +626,55 @@
 		this.next();
 	});
 	
+	var refreshSettingCredentials = function(serviceInstance)
+	{
+		$('#credentialsGroup').html('<p class="label-for-input">Credentials</p>');
+		if(serviceInstance.isCups)
+		{
+			for(var key in serviceInstance.entity.credentials)
+			{
+				var html = $('#cupsTemplate').html();
+				html = $(html.replace('{key}', key).replace('{value}', serviceInstance.entity.credentials[key]));
+				
+				$(html).find('button').on('click', function()
+				{
+					$(this).parent().parent().remove();
+				});
+				
+				$('#credentialsGroup').append(html);
+			}
+			
+			var html = $('#cupsTemplate').html();
+			html = $(html.replace('{key}', '').replace('{value}', ''));
+			html.find('button').attr('data-id', 'addCupsKeyValues').find('span').attr('class', 'glyphicon glyphicon-plus');
+			
+			$(html).find('button').on('click', function()
+			{
+				var clone = $(this).parent().parent().clone();
+				$(clone).insertBefore($(this).parent().parent());
+				
+				$(clone).find('button').html('<span class="glyphicon glyphicon-minus"></span>').off('click').on('click', function()
+				{
+					$(this).parent().parent().remove();
+				});
+				
+				$(this).parent().parent().find('input').val('');
+			});
+			
+			$('#credentialsGroup').append(html);
+			$('#serviceDetailTab a[href="#plan"]').hide();
+			$('#credentialsGroup').show();
+		}
+		else
+		{
+			$('#serviceDetailTab a[href="#plan"]').show();
+			$('#credentialsGroup').hide();
+		}
+	}
+	
 	var setDetails = function()
 	{
-		$('#serviceTable tbody tr').on('click', function()
+		$('#serviceTable tbody tr').off('click').on('click', function()
 		{
 			$("#settings .message").text('');
 			$('.detailProgress').show();
@@ -566,10 +687,57 @@
 			var serviceInstance = this.item;
 			$('#serviceDetails').show();
 			
+			$('#credentialsGroup').html('<p class="label-for-input">Credentials</p>');
+			if(serviceInstance.isCups)
+			{
+				for(var key in serviceInstance.entity.credentials)
+				{
+					var html = $('#cupsTemplate').html();
+					html = $(html.replace('{key}', key).replace('{value}', serviceInstance.entity.credentials[key]));
+					
+					$(html).find('button').on('click', function()
+					{
+						$(this).parent().parent().remove();
+					});
+					
+					$('#credentialsGroup').append(html);
+				}
+				
+				var html = $('#cupsTemplate').html();
+				html = $(html.replace('{key}', '').replace('{value}', ''));
+				html.find('button').attr('data-id', 'addCupsKeyValues').find('span').attr('class', 'glyphicon glyphicon-plus');
+				
+				$(html).find('button').on('click', function()
+				{
+					var clone = $(this).parent().parent().clone();
+					$(clone).insertBefore($(this).parent().parent());
+					
+					$(clone).find('button').html('<span class="glyphicon glyphicon-minus"></span>').off('click').on('click', function()
+					{
+						$(this).parent().parent().remove();
+					});
+					
+					$(this).parent().parent().find('input').val('');
+				});
+				
+				$('#credentialsGroup').append(html);
+				$('#serviceDetailTab a[href="#plan"]').hide();
+				$('#credentialsGroup').show();
+			}
+			else
+			{
+				$('#serviceDetailTab a[href="#plan"]').show();
+				$('#credentialsGroup').hide();
+			}
+			
 			var workList = [];
 			workList.push({name : 'setBindings', params : serviceInstance});
 			workList.push({name : 'setPlan', params : serviceInstance});
 			workList.push({name : 'setSettings', params : serviceInstance});
+			
+			pumpkin.execute([{name : 'getApps', params : {guid : $('#spaceSelect').val()}}], function()
+			{
+			});
 			
 			setDetailsPumpkin.executeAsync(workList, function()
 			{
@@ -665,7 +833,7 @@
 				else
 				{
 					getServices();
-					
+
 					pumpkin.execute([{name : 'getApps', params : {guid : $('#spaceSelect').val()}}], function()
 					{
 						
@@ -758,12 +926,38 @@
 			$('#settings .small-progress').css('display', 'inline-block');
 			
 			var serviceInstance = $('#settings input[name="name"]').get(0).item;
-			CF.async({url : '/v2/service_instances/' + serviceInstance.metadata.guid, method : 'PUT', headers : {'Content-Type' : 'application/x-www-form-urlencoded'}, form : data}, function(result)
+			
+			if(serviceInstance.isCups)
+			{
+				var credentials = {};
+				if(typeof data.key != 'string')
+				{
+					for(var i=0; i<data.key.length; i++)
+					{
+						if(data.key[i])
+							credentials[data.key[i]] = data.value[i];
+					}
+				}
+				else
+				{
+					if(data.key)
+						credentials[data.key] = data.value;
+				}
+				
+				data.credentials = credentials;
+				delete data.key;
+				delete data.value;
+			}
+			
+			CF.async({url : serviceInstance.metadata.url, method : 'PUT', headers : {'Content-Type' : 'application/x-www-form-urlencoded'}, form : data}, function(result)
 			{
 				if(result)
 				{
 					if(result.entity)
 					{
+						result.isCups = serviceInstance.isCups;
+						refreshSettingCredentials(result);
+						
 						$('#settings .small-progress').hide().next().show().next().show().next().text('Updated.').css('color', '#286090');
 						serviceInstance.element.find('td:nth-child(2)').text(result.entity.name);
 						
@@ -774,17 +968,29 @@
 					}
 					else
 					{
-						$("#settings .message").text(result.description ? result.description : JSON.stringify(result.error));
+						$("#settings .message").text(result.description ? result.description : JSON.stringify(result.error)).prev().prev().prev().hide();
+						setTimeout(function()
+						{
+							$('#settings .message').text('').css('color', '').prev().show().prev().show();
+						}, 3000);
 					}
 				}
 				else
 				{
-					$("#settings .message").text('Unknown Error');
+					$("#settings .message").text('Unknown Error').prev().prev().prev().hide();
+					setTimeout(function()
+					{
+						$('#settings .message').text('').css('color', '').prev().show().prev().show();
+					}, 3000);
 				}
 			},
 			function(error)
 			{
-				$("#settings .message").text(error);
+				$("#settings .message").text(error).prev().prev().prev().hide();
+				setTimeout(function()
+				{
+					$('#settings .message').text('').css('color', '').prev().show().prev().show();
+				}, 3000);
 			});
 		});
 		
@@ -820,6 +1026,96 @@
 				$('#settings input[type="submit"]').show();
 				$("#settings .message").text(error);
 				done();
+			});
+		});
+		
+		$('#cups').on('click', function()
+		{
+			$('#createUserProvidedServiceDialog .modal-body input').val('');
+			var row = $('#createUserProvidedServiceDialog .form-row');
+			for(var i=row.length-1; i>=2; i--)
+			{
+				$(row[i]).remove();
+			}
+			$('#createUserProvidedServiceDialog').modal('show');
+		});
+		
+		$('button[data-id="addCupsKeyValues"]').on('click', function()
+		{
+			var clone = $(this).parent().parent().clone();
+			$(clone).insertBefore($(this).parent().parent());
+			
+			$(clone).find('button').html('<span class="glyphicon glyphicon-minus"></span>').off('click').on('click', function()
+			{
+				$(this).parent().parent().remove();
+			});
+			
+			$(this).parent().parent().find('input').val('');
+		});
+		
+		$('#cancelCupsDialog').on('click', function()
+		{
+			$('#createUserProvidedServiceDialog').modal('hide');
+		});
+		
+		formSubmit('#createUserProvidedServiceDialog form', function(data)
+		{
+			var credentials = {};
+			if(typeof data.key != 'string')
+			{
+				for(var i=0; i<data.key.length; i++)
+				{
+					if(data.key[i])
+						credentials[data.key[i]] = data.value[i];
+				}
+			}
+			else
+			{
+				if(data.key)
+					credentials[data.key] = data.value;
+			}
+			
+			var form = {};
+			form.name = data.name;
+			form.credentials = credentials;
+			form.space_guid = $('#spaceSelect').val();
+			
+			$('#cupsMessage').prev().css('display', 'inline-block');
+			$('#cupsMessage').next().hide().next().hide();
+			
+			CF.async({url : '/v2/user_provided_service_instances', method : 'POST', form : form}, function(result)
+			{
+				if(result)
+				{
+					if(result.entity)
+					{
+						result.isCups = true;
+						result.bindings = [];
+						var template = $('#serviceRowTemplate').html();
+						template = $(template.replace('{description}', 'user-provided-service').replace('{name}', result.entity.name).replace('{plan}', '').replace('{boundApps}', '0'));
+						
+						result.element = template;
+						template.get(0).item = result;
+						template.find('td:last').html('');
+						
+						$('#serviceTable tbody').append(template);
+						
+						setDetails();
+						$('#cupsMessage').text('').prev().hide();
+						$('#cupsMessage').next().show().next().show();
+						$('#createUserProvidedServiceDialog').modal('hide');
+					}
+					else
+					{
+						$('#cupsMessage').text(JSON.stringify(result)).prev().hide();
+						$('#cupsMessage').next().hide().next().hide();
+					}
+				}
+				else
+				{
+					$('#cupsMessage').text('Unknown Error').prev().hide();
+					$('#cupsMessage').next().hide().next().hide();
+				}
 			});
 		});
 	});
