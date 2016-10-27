@@ -228,7 +228,7 @@
 					});
 					result.fail(function(error)
 					{
-						$('<span style="color: red; font-size: 12px;">' + error + '</span>').insertAfter(that);
+						$('<span style="color: red; font-size: 12px;">' + JSON.stringify(error) + '</span>').insertAfter(that);
 						setTimeout(function()
 						{
 							$(that).prev().remove();

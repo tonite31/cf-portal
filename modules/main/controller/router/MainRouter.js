@@ -17,6 +17,12 @@ module.exports = function(app)
 		else
 		{
 			var url = _config[req.body.type];
+			if(!url)
+			{
+				res.status(404).end('dashboard_url not found.');
+				return;
+			}
+			
 			if(url.lastIndexOf('/') != url.length-1)
 				url += '/';
 			
@@ -47,8 +53,15 @@ module.exports = function(app)
 				}
 				else
 				{
-					var token = body;
-					res.end(url + '?token=' + token);
+					if(response.statusCode != 200)
+					{
+						res.status(response.statusCode).end('Cannnot found /token');
+					}
+					else
+					{
+						var token = body;
+						res.end(url + '?token=' + token);
+					}
 				}
 			});  
 		}
