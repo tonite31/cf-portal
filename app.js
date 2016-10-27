@@ -23,11 +23,9 @@ if(vcapServices)
 		_config.redis.password = credentials.password;
 	}
 }
-else
-{
-	_config.isLocal = true;
-}
 
+if(process.env.USE_HTTPS)
+	_config.usehttps = process.env.USE_HTTPS;
 if(process.env.CF_ENDPOINT)
 	_config.endpoint = process.env.CF_ENDPOINT;
 if(process.env.REDIS_DASHBOARD)
@@ -99,7 +97,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(function(req, res, next)
 {
-	if(!_config.isLocal && req.protocol == 'http')
+	if(_config.usehttps && req.protocol == 'http')
 		res.redirect('https://' + req.headers.host);
 	else
 		next();
