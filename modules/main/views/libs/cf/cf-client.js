@@ -54,7 +54,7 @@ var CF = {};
 	{
 		var xmlhttp=new XMLHttpRequest();
 		xmlhttp.open("POST", "/cf" + (this.url ? this.url : ''));
-		xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+		xmlhttp.setRequestHeader("Content-Type", "application/json;charset=utf-8");
 		xmlhttp.onreadystatechange = function() {
 		    if (xmlhttp.readyState == XMLHttpRequest.DONE) {
 		        if(xmlhttp.status == 200)

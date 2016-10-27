@@ -23,6 +23,10 @@ if(vcapServices)
 		_config.redis.password = credentials.password;
 	}
 }
+else
+{
+	_config.isLocal = true;
+}
 
 if(process.env.CF_ENDPOINT)
 	_config.endpoint = process.env.CF_ENDPOINT;
@@ -73,7 +77,6 @@ var server = http.listen(process.env.PORT || 3000, function()
 	console.log('Listening on port %d', server.address().port);
 });
 
-
 /**
  * set template engine.
  */
@@ -94,6 +97,13 @@ app.use('/modules', express.static(_path.modules));
  */
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(function(req, res, next)
+{
+	if(!_config.isLocal && req.protocol == 'http')
+		res.redirect('https://' + req.headers.host);
+	else
+		next();
+});
 
 /**
  * set RedisStore

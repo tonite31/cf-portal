@@ -949,7 +949,7 @@
 				delete data.value;
 			}
 			
-			CF.async({url : serviceInstance.metadata.url, method : 'PUT', headers : {'Content-Type' : 'application/x-www-form-urlencoded'}, form : data}, function(result)
+			CF.async({url : serviceInstance.metadata.url, method : 'PUT', headers : {'Content-Type' : 'application/json'}, form : data}, function(result)
 			{
 				if(result)
 				{
@@ -1083,8 +1083,10 @@
 			$('#cupsMessage').prev().css('display', 'inline-block');
 			$('#cupsMessage').next().hide().next().hide();
 			
-			CF.async({url : '/v2/user_provided_service_instances', method : 'POST', form : form}, function(result)
+			CF.async({url : '/v2/user_provided_service_instances', method : 'POST', headers : {'Content-Type' : 'application/json'}, form : form}, function(result)
 			{
+				$('#cupsMessage').next().show().next().show();
+				
 				if(result)
 				{
 					if(result.entity)
@@ -1102,19 +1104,16 @@
 						
 						setDetails();
 						$('#cupsMessage').text('').prev().hide();
-						$('#cupsMessage').next().show().next().show();
 						$('#createUserProvidedServiceDialog').modal('hide');
 					}
 					else
 					{
 						$('#cupsMessage').text(JSON.stringify(result)).prev().hide();
-						$('#cupsMessage').next().hide().next().hide();
 					}
 				}
 				else
 				{
 					$('#cupsMessage').text('Unknown Error').prev().hide();
-					$('#cupsMessage').next().hide().next().hide();
 				}
 			});
 		});

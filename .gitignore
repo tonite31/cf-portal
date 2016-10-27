@@ -4,3 +4,6 @@
 /test.js
 /config_stg.json
 /config_local.json
+/server.crt
+/server.key.txt
+/server.key

@@ -395,7 +395,9 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 		param.headers[key] = headers[key];
 	
 	param.headers.Authorization = this.uaaToken.token_type + ' ' + this.uaaToken.access_token;
-	if(data)
+	if(param.headers['Content-Type'] && param.headers['Content-Type'].indexOf('application/json') != -1)
+		param.json = data;
+	else if(data)
 		param.form = JSON.stringify(data);
 	
 	request(param, function(err, response, body)
@@ -405,7 +407,7 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 			if(error)
 				error(err);
 		}
-		else if(response.statusCode == 404)
+		else if(response.statusCode == 404 || response.statusCode == 500)
 		{
 			error(response.statusCode, body);
 		}
@@ -458,7 +460,10 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 			}
 			else
 			{
-				done(body ? JSON.parse(body) : '');
+				if(typeof body == 'string')
+					done(body ? JSON.parse(body) : '');
+				else
+					done(body);
 			}
 		}
 	}.bind(this));
