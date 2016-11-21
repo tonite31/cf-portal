@@ -12,7 +12,7 @@ module.exports = function(app)
 	{
 		if(req.body.type == 'autoscalerDashboard')
 		{
-			res.end(_config.autoscalerDashboard + '?appId=' + req.body.credentials.appId + '&appName=' + req.body.credentials.appName + '&endpoint=' + req.body.credentials.api_url);
+			res.end(_config.autoscalerDashboard + '?appId=' + req.body.credentials.appId + '&appName=' + req.body.credentials.appName + '&endpoint=' + req.body.credentials.api_url + '&username=' + req.session.cfdata.username);
 		}
 		else
 		{
