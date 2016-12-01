@@ -2,21 +2,30 @@
 {
 	var getLogs = function(app, callback, error)
 	{
-		CF.async({url : "/recent?app=" + app.metadata.guid, headers : {'Content-type' : 'text/plain; charset=utf-8'}}, function(result)
+		CF.async({url : "/recent?app=" + app.metadata.guid, headers : {'Content-type' : 'text/plain; charset=utf-8'}}, function(data)
 		{
-			var split = result.split("\n");
-			
-			var logs = '';
-			for(var i=0; i<split.length; i++)
+			try
 			{
-				if(split[i].match(/\[[0-9\/\:\.\s\+]*\]/gi))
-				{
-					split[i] = split[i].split('[')[1];
-					logs += '<span class="logs-date">[' + split[i].replace(']', ']</span>') + '\n\n';
-				}
+				data = data.split('\n\n');
+		        if (data.length > 1) {
+		            data.splice(0, 1);
+		        }
+		        var length = data.length;
+		        for (var i = 0; i < length; i++) {
+		            var value = data[i];
+		            value = value.substr(1, value.length - 1);
+		            var end = value.indexOf(String.fromCharCode(16));
+		            data[i] = value.substr(0, end);
+		        }
+		        
+		        data = data.join('\n');
+		        
+				callback(data);
 			}
-			
-			callback(logs);
+			catch(err)
+			{
+				console.error(err.stack);
+			}
 		}, error, true);
 	};
 	
