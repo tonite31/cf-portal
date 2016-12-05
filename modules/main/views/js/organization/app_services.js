@@ -159,7 +159,6 @@
 			{
 				try
 				{
-					console.log(service.entity.label, credentials);
 					if(service.entity.label.indexOf('redis') != -1)
 					{
 						template = template.replace('{dashboard}', '<a target="_blank" data-dashboard="redisDashboard" href="#"><span class="glyphicon glyphicon-link"></span> Dashboard</a>');
@@ -396,9 +395,10 @@
 					var list = this.data.userProvidedServices.resources;
 					if(list)
 					{
+						var space = $('#' + _global.hash.space).get(0);
 						for(var i=0; i<list.length; i++)
 						{
-							if(alreadyBindings[list[i].metadata.guid])
+							if(alreadyBindings[list[i].metadata.guid] || list[i].entity.space_guid != space.id)
 								continue;
 							
 							var option = $('<option value="' + list[i].metadata.guid + '">' + list[i].entity.name + '</option>');

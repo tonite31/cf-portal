@@ -321,7 +321,7 @@
 	var getUserProvidedService = function(clone, callback)
 	{
 		var guid = $('#spaceSelect').val();
-		CF.async({url : '/v2/user_provided_service_instances?q=space_guid:' + guid}, function(result)
+		CF.async({url : '/v2/user_provided_service_instances'}, function(result)
 		{
 			if(result)
 			{
@@ -330,6 +330,9 @@
 				{
 					for(var i=0; i<list.length; i++)
 					{
+						if(list[i].entity.space_guid != guid)
+							continue;
+						
 						(function(instance)
 						{
 							instance.isCups = true;
