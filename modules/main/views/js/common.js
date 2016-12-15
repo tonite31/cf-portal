@@ -122,17 +122,17 @@ var confirmButton = function(selector, callback)
 		}
 		else
 		{
-			this.origin = $(this).text() ? $(this).text() : $(this).val();
+			this.origin = $(this).html() ? $(this).html() : $(this).val();
 			$(this).css('opacity', '0');
 			setTimeout(function()
 			{
 				that.isConfirm = true;
-				$(that).css('opacity', '1').text('Confirm');
+				$(that).css('opacity', '1').html('Confirm');
 				
 				setTimeout(function()
 				{
 					that.isConfirm = false;
-					$(that).text(that.origin).val(that.origin);
+					$(that).html(that.origin).val(that.origin);
 				}, 3000);
 			}, 300);
 		}

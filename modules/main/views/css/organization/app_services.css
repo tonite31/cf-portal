@@ -18,9 +18,10 @@
 	font-size: 12px;
 }
 
-#services table tr td:nth-child(2)
+#services table tr td:nth-child(1)
 {
 	text-align: left;
+	padding-left: 50px;
 }
 
 #services table th, #services table tr td:nth-child(3) a

@@ -108,6 +108,19 @@
 							td.append('<span>Starting (' + runningCount + '/' + totalCount + ')</span>');
 						}
 					}
+					
+					if(app.entity.state == 'STARTED')
+					{
+						$('#startApp').hide();
+						$('#stopApp').show();
+						$('#restartApp').show();
+					}
+					else
+					{
+						$('#startApp').show();
+						$('#stopApp').hide();
+						$('#restartApp').hide();
+					}
 				}
 			}
 			else
@@ -418,7 +431,7 @@
 							selectedApp = $('#appsProgress').parent().parent().next();
 						}
 					}
-
+					
 					selectedApp.click();
 					selectedAppGuid = selectedApp.get(0).item.metadata.guid;
 				}
@@ -592,6 +605,8 @@
 				$('#stopApp').hide();
 				$('#restartApp').hide();
 			}
+			
+			checkState(app);
 		});
 	};
 	
@@ -789,7 +804,8 @@
 			}
 		});
 		
-		$('#startApp').on('click', function()
+		
+		confirmButton('#startApp', function()
 		{
 			var that = this;
 			
@@ -798,19 +814,47 @@
 			
 			updateAppState.execute(['startApp'], function()
 			{
-				$(that).prev().remove();
-				$(that).next().show().next().show();
+				var app = $('#appsBody tr.selected').get(0).item;
+				if(app.entity.state == 'STARTED')
+				{
+					$('#startApp').hide();
+					$('#stopApp').show();
+					$('#restartApp').show();
+				}
+				else
+				{
+					$('#startApp').show();
+					$('#stopApp').hide();
+					$('#restartApp').hide();
+				}
+				
+//				$(that).prev().remove();
+//				$(that).next().show().next().show();
 				
 				_ee.emit('setAppList_done', $('#appsBody').get(0).item);
 			},
 			function()
 			{
-				$(that).prev().remove();
-				$(that).show().next().hide().next().hide();
+				var app = $('#appsBody tr.selected').get(0).item;
+				if(app.entity.state == 'STARTED')
+				{
+					$('#startApp').hide();
+					$('#stopApp').show();
+					$('#restartApp').show();
+				}
+				else
+				{
+					$('#startApp').show();
+					$('#stopApp').hide();
+					$('#restartApp').hide();
+				}
+				
+//				$(that).prev().remove();
+//				$(that).show().next().hide().next().hide();
 			});
 		});
 		
-		$('#stopApp').on('click', function()
+		confirmButton('#stopApp', function()
 		{
 			var that = this;
 			
@@ -819,21 +863,49 @@
 			
 			updateAppState.execute(['stopApp'], function()
 			{
-				$(that).prev().remove();
-				$(that).prev().show();
-				$(that).next().hide();
+//				$(that).prev().remove();
+//				$(that).prev().show();
+//				$(that).next().hide();
+				
+				var app = $('#appsBody tr.selected').get(0).item;
+				if(app.entity.state == 'STARTED')
+				{
+					$('#startApp').hide();
+					$('#stopApp').show();
+					$('#restartApp').show();
+				}
+				else
+				{
+					$('#startApp').show();
+					$('#stopApp').hide();
+					$('#restartApp').hide();
+				}
 				
 				_ee.emit('setAppList_done', $('#appsBody').get(0).item);
 			},
 			function()
 			{
-				$(that).prev().remove();
-				$(that).show().next().show();
-				$(that).prev().hide();
+//				$(that).prev().remove();
+//				$(that).show().next().show();
+//				$(that).prev().hide();
+				
+				var app = $('#appsBody tr.selected').get(0).item;
+				if(app.entity.state == 'STARTED')
+				{
+					$('#startApp').hide();
+					$('#stopApp').show();
+					$('#restartApp').show();
+				}
+				else
+				{
+					$('#startApp').show();
+					$('#stopApp').hide();
+					$('#restartApp').hide();
+				}
 			});
 		});
 		
-		$('#restartApp').on('click', function()
+		confirmButton('#restartApp', function()
 		{
 			var that = this;
 			
