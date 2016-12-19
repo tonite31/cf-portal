@@ -805,13 +805,9 @@
 		});
 		
 		
-		confirmButton('#startApp', function()
+		confirmButton('#startApp', function(done)
 		{
 			var that = this;
-			
-			$('<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>').insertBefore(this);
-			$(this).hide();
-			
 			updateAppState.execute(['startApp'], function()
 			{
 				var app = $('#appsBody tr.selected').get(0).item;
@@ -827,6 +823,8 @@
 					$('#stopApp').hide();
 					$('#restartApp').hide();
 				}
+				
+				done();
 				
 //				$(that).prev().remove();
 //				$(that).next().show().next().show();
@@ -849,18 +847,16 @@
 					$('#restartApp').hide();
 				}
 				
+				done();
+				
 //				$(that).prev().remove();
 //				$(that).show().next().hide().next().hide();
 			});
 		});
 		
-		confirmButton('#stopApp', function()
+		confirmButton('#stopApp', function(done)
 		{
 			var that = this;
-			
-			$('<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>').insertBefore(this);
-			$(this).hide().next().hide();
-			
 			updateAppState.execute(['stopApp'], function()
 			{
 //				$(that).prev().remove();
@@ -882,6 +878,8 @@
 				}
 				
 				_ee.emit('setAppList_done', $('#appsBody').get(0).item);
+				
+				done();
 			},
 			function()
 			{
@@ -902,16 +900,14 @@
 					$('#stopApp').hide();
 					$('#restartApp').hide();
 				}
+				
+				done();
 			});
 		});
 		
-		confirmButton('#restartApp', function()
+		confirmButton('#restartApp', function(done)
 		{
 			var that = this;
-			
-			$(this).hide().prev().hide();
-			$('<span class="glyphicon glyphicon-refresh small-progress" style="display: inline-block;"></span>').insertBefore(this);
-			
 			var td = $('#appsBody tr.selected td:first').html('Restaging...');
 			
 			var app = $('#appsBody tr.selected').get(0).item;
@@ -937,6 +933,8 @@
 				
 				$(that).prev().remove();
 				$(that).show().prev().show().prev().hide();
+				
+				done();
 			},
 			function(error)
 			{
@@ -944,6 +942,8 @@
 				
 				$(that).prev().remove();
 				$(that).show().prev().show().prev().hide();
+				
+				done();
 			});
 		});
 		
