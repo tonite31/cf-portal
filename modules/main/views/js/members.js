@@ -431,7 +431,7 @@
 							if($('#orgTable td:contains(' + user.entity.username + ')').length > 0)
 								return;
 								
-//							var params = {dataName : 'organizations', guid : data.org, type : 'auditors', username : user.entity.username, method : 'PUT'};
+							var params = {dataName : 'organizations', guid : data.org, type : 'auditors', username : user.entity.username, method : 'PUT'};
 //							updateMemberAssociation.execute([{name : 'update', params : params}], function()
 //							{
 								var template = $('#userRowTemplate').html();
@@ -446,7 +446,7 @@
 								$('#orgTable tbody tr:last input[type="checkbox"]').on('change', function()
 								{
 									var userGuid = $(this).parent().parent().get(0).item.entity.username;
-									params.username = username;
+									params.username = username; //undefined error
 									
 									if(this.checked == true)
 										params.method = 'PUT';
@@ -534,6 +534,18 @@
 										$('<span style="color: red;">' + JSON.stringify(error) + '</span>').insertBefore(that);
 									});
 								});
+								
+								if($("#spaceSelect").val())
+								{
+									updateMemberAssociation.execute([{name : 'update', params : {dataName : 'spaces', guid : $("#spaceSelect").val(), type : 'auditors', username : user.entity.username, method : 'PUT'}}], function()
+									{
+									},
+									function(workName, error)
+									{
+										$(that).prev().remove();
+										$('<span style="color: red;">' + JSON.stringify(error) + '</span>').insertBefore(that);
+									});
+								}
 //							},
 //							function(workName, error)
 //							{

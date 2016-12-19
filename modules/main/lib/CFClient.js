@@ -259,14 +259,9 @@ CFClient.prototype.createUser = function(email, password, done, error)
 	param.headers = {};
 	param.headers.Authorization = this.uaaToken.token_type + ' ' + this.uaaToken.access_token;
 	param.json = {
-		    'externalId':'',
 		    'userName':email,
 		    'emails':[],
-		    'active':true,
-		    'verified':false,
-		    'origin':'uaa',
-		    'password':password,
-		    'schemas':['urn:scim:schemas:core:1.0']};
+		    'password':password};
 	
 	param.json.emails.push({value : email});
 	
@@ -400,6 +395,7 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 	else if(data)
 		param.form = JSON.stringify(data);
 	
+	console.log('request to cc : ', param);
 	request(param, function(err, response, body)
 	{
 		if(err)
