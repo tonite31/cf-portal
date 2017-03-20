@@ -4,28 +4,38 @@
 	{
 		CF.async({url : "/recent?app=" + app.metadata.guid, headers : {'Content-type' : 'text/plain; charset=utf-8'}}, function(data)
 		{
-			try
+			data = JSON.parse(data);
+			if(data.code == 200)
 			{
-				data = data.split('\n\n');
-		        if (data.length > 1) {
-		            data.splice(0, 1);
-		        }
-		        var length = data.length;
-		        for (var i = 0; i < length; i++) {
-		            var value = data[i];
-		            value = value.substr(1, value.length - 1);
-		            var end = value.indexOf(String.fromCharCode(16));
-		            data[i] = value.substr(0, end);
-		        }
-		        
-		        data = data.join('\n');
-		        
-				callback(data);
+				data = data.body;
+				try
+				{
+					data = data.split('\n\n');
+			        if (data.length > 1) {
+			            data.splice(0, 1);
+			        }
+			        var length = data.length;
+			        for (var i = 0; i < length; i++) {
+			            var value = data[i];
+			            value = value.substr(1, value.length - 1);
+			            var end = value.indexOf(String.fromCharCode(16));
+			            data[i] = value.substr(0, end);
+			        }
+			        
+			        data = data.join('\n');
+			        
+					callback(data);
+				}
+				catch(err)
+				{
+					console.error(err.stack);
+				}
 			}
-			catch(err)
+			else
 			{
-				console.error(err.stack);
+				callback(data.body);
 			}
+			
 		}, error, true);
 	};
 	

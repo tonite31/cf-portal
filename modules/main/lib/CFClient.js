@@ -395,7 +395,6 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 	else if(data)
 		param.form = JSON.stringify(data);
 	
-	console.log('request to cc : ', param);
 	request(param, function(err, response, body)
 	{
 		if(err)
@@ -451,9 +450,7 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 		else
 		{
 			if(url.indexOf('/recent') != -1)
-			{
-				done(body);
-			}
+				done({code : response.statusCode, body : body});
 			else
 			{
 				if(typeof body == 'string')

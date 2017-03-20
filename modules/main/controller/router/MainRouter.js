@@ -107,7 +107,6 @@ module.exports = function(app)
 		{
 			var socketId = uuid.v4();
 			
-			console.log("소켓 아이디 : ", socketId);
 			sockets[socketId] = socket;
 			req.session.tailLogs[socketId] = [];
 			socket.on('open', function () {

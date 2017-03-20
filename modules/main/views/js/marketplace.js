@@ -229,7 +229,7 @@
 							
 							var description = service.entity.description;
 							var html = $('#serviceRowTemplate').html();
-							html = html.replace('{imageUrl}', img).replace('{name}', name).replace('{label}', description).replace('{description}', longDescription);
+							html = html.replace('{imageUrl}', img).replace('{name}', name).replace('{label}', description).replace('{description}', longDescription || description);
 							
 							var target = $(html);
 							$('#serviceList').append(target);

@@ -412,6 +412,19 @@
 		formSubmit($('#membersForm'), function(data)
 		{
 			$('.small-progress').css('display', 'inline-block').next().hide().next().hide();
+
+			var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+			var list = data.emails.split(',');
+			for(var i=0; i<list.length; i++)
+			{
+				if(!re.test(list[i]))
+				{
+					$('#message').text(list[i] + ' must be email pattern.');
+					$('.small-progress').hide().next().show().next().show();
+					return;
+				}
+			}
+			
 			CF.users('invite', {target : data.emails, orgId : data.org}, function(result)
 			{
 				$('.small-progress').hide().next().show().next().show();
