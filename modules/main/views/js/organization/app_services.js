@@ -163,11 +163,11 @@
 					{
 						template = template.replace('{dashboard}', '<a target="_blank" data-dashboard="redisDashboard" href="#"><span class="glyphicon glyphicon-link"></span> Dashboard</a>');
 					}
-					else if(service.entity.label.toLowerCase().indexOf('Object-Storage') != -1)
+					else if(service.entity.label.toLowerCase().indexOf('object-storage') != -1)
 					{
 						template = template.replace('{dashboard}', '<a target="_blank" data-dashboard="swiftDashboard" href="#"><span class="glyphicon glyphicon-link"></span> Dashboard</a>');
 					}
-					else if(service.entity.label.toLowerCase().indexOf('CF-AutoScaler') != -1)
+					else if(service.entity.label.toLowerCase().indexOf('cf-autoscaler') != -1)
 					{
 						credentials.appId = $('#appsBody tr.selected').attr('data-guid');
 						credentials.appName = $('#appsBody tr.selected td.app-name').text();
