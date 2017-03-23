@@ -71,7 +71,7 @@ CFClient.prototype.login = function(done, error)
 				{
 					var info = JSON.parse(body);
 					this.endpoint.authorization = info.authorization_endpoint;
-					this.endpoint.logging = info.logging_endpoint;
+					this.endpoint.logging = info.doppler_logging_endpoint;
 					this.endpoint.routing = info.routing_endpoint;
 					
 					param = {};
@@ -378,8 +378,8 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 	}
 	
 	var param = {};
-	if(url.indexOf('/recent') == 0)
-		param.url = this.endpoint.logging.replace('wss', 'https').replace(':443', '').replace(':4443', '') + url;
+	if(url.indexOf('/stream') != -1 || url.indexOf('/recentlogs') != -1)
+		param.url = this.endpoint.logging.replace('wss', 'https').replace(':4443', '') + url;
 	else
 		param.url = this.endpoint.api + url;
 	
@@ -421,7 +421,7 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 							if(err)
 							{
 								if(error)
-									error(response.statusCode, err);
+									error(response.statusCode || 500, err);
 							}
 							else if(response.statusCode == 404)
 							{
@@ -449,8 +449,11 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 		}
 		else
 		{
-			if(url.indexOf('/recent') != -1)
+			
+			if(url.indexOf('/stream') != -1 || url.indexOf('/recentlogs') != -1)
+			{
 				done({code : response.statusCode, body : body});
+			}
 			else
 			{
 				if(typeof body == 'string')

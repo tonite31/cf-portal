@@ -2,7 +2,7 @@
 {
 	var getLogs = function(app, callback, error)
 	{
-		CF.async({url : "/recent?app=" + app.metadata.guid, headers : {'Content-type' : 'text/plain; charset=utf-8'}}, function(data)
+		CF.async({url : '/apps/' + app.metadata.guid + '/recentlogs'}, function(data)
 		{
 			data = JSON.parse(data);
 			if(data.code == 200)
@@ -10,7 +10,7 @@
 				data = data.body;
 				try
 				{
-					data = data.split('\n\n');
+					data = data.split('\r\n\r\n\n\bgorouter');
 			        if (data.length > 1) {
 			            data.splice(0, 1);
 			        }
@@ -18,8 +18,11 @@
 			        for (var i = 0; i < length; i++) {
 			            var value = data[i];
 			            value = value.substr(1, value.length - 1);
-			            var end = value.indexOf(String.fromCharCode(16));
-			            data[i] = value.substr(0, end);
+		            	value = value.substr(value.indexOf(String.fromCharCode(3)) + 1);
+			            value = value.substr(0, value.indexOf(String.fromCharCode(16)));
+		            	value = value.substr(value.indexOf(String.fromCharCode(2)) + 1, value.length-1);
+			            
+			            data[i] = value;
 			        }
 			        
 			        data = data.join('\n');
