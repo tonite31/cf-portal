@@ -18,9 +18,16 @@
 			        for (var i = 0; i < length; i++) {
 			            var value = data[i];
 			            value = value.substr(1, value.length - 1);
-		            	value = value.substr(value.indexOf(String.fromCharCode(3)) + 1);
+
 			            value = value.substr(0, value.indexOf(String.fromCharCode(16)));
-		            	value = value.substr(value.indexOf(String.fromCharCode(2)) + 1, value.length-1);
+			            while(value.indexOf(String.fromCharCode(3)) != -1)
+			            	value = value.substr(value.indexOf(String.fromCharCode(3)) + 1);
+			            while(value.lastIndexOf(String.fromCharCode(5)) != -1)
+			            	value = value.substr(value.lastIndexOf(String.fromCharCode(5)) + 1);
+			            while(value.indexOf(String.fromCharCode(4)) != -1)
+			            	value = value.substr(value.lastIndexOf(String.fromCharCode(4)) + 1);
+			            if(value.indexOf(String.fromCharCode(2)) != -1)
+			            	value = value.substr(value.indexOf(String.fromCharCode(2)) + 1, value.length-1);
 			            
 			            data[i] = value;
 			        }
