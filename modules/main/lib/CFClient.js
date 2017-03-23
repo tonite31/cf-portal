@@ -379,7 +379,7 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 	
 	var param = {};
 	if(url.indexOf('/stream') != -1 || url.indexOf('/recentlogs') != -1)
-		param.url = this.endpoint.logging.replace('wss', 'https').replace(':4443', '') + url;
+		param.url = this.endpoint.logging.replace('wss', 'https') + url;
 	else
 		param.url = this.endpoint.api + url;
 	
@@ -408,44 +408,45 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 		}
 		else if(response.statusCode == 401)
 		{
-			if(body)
+			if((url.indexOf('/stream') != -1 || url.indexOf('/recentlogs') != -1) || (body && body.indexOf && (body.indexOf('CF-InvalidAuthToken') != -1 || body.indexOf('Invalid authorization') != -1)))
 			{
-				if(body.indexOf && (body.indexOf('CF-InvalidAuthToken') != -1 || body.indexOf('Invalid authorization') != -1))
+				//login이 풀린것.
+				this.login(function()
 				{
-					//login이 풀린것.
-					this.login(function()
+					console.log("로긴 : ", this.uaaToken);
+					param.headers.Authorization = this.uaaToken.token_type + ' ' + this.uaaToken.access_token;
+					request(param, function(err, response, body)
 					{
-						param.headers.Authorization = this.uaaToken.token_type + ' ' + this.uaaToken.access_token;
-						request(param, function(err, response, body)
+						if(err)
 						{
-							if(err)
+							if(error)
+								error(response.statusCode || 500, err);
+						}
+						else if(response.statusCode == 404)
+						{
+							error(response.statusCode, body);
+						}
+						else
+						{
+							if(url.indexOf('/stream') != -1 || url.indexOf('/recentlogs') != -1)
 							{
-								if(error)
-									error(response.statusCode || 500, err);
-							}
-							else if(response.statusCode == 404)
-							{
-								error(response.statusCode, body);
+								done({code : response.statusCode, body : body});
 							}
 							else
 							{
-								if(url.indexOf('/stream') != -1 || url.indexOf('/recentlogs') != -1)
-								{
-									done({code : response.statusCode, body : body});
-								}
-								else
-								{
-									done(body ? JSON.parse(body) : '');
-								}
+								done(body ? JSON.parse(body) : '');
 							}
-						});
-					}.bind(this), error);
-					
-					return;
-				}
+						}
+					});
+				}.bind(this), error);
+				
+				return;
 			}
-			
-			error(response.statusCode, body);
+			else
+			{
+				console.log("냠냠401 : ", body);
+				error(response.statusCode, body);
+			}
 		}
 		else
 		{
