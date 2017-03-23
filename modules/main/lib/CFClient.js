@@ -429,9 +429,9 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 							}
 							else
 							{
-								if(url.indexOf('/recent') != -1)
+								if(url.indexOf('/stream') != -1 || url.indexOf('/recentlogs') != -1)
 								{
-									done(body);
+									done({code : response.statusCode, body : body});
 								}
 								else
 								{

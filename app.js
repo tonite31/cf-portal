@@ -14,7 +14,7 @@ var vcapServices = process.env.VCAP_SERVICES;
 if(vcapServices)
 {
 	vcapServices = JSON.parse(vcapServices);
-	var redisService = vcapServices['redis-service'];
+	var redisService = vcapServices[process.env.REDIS_SERVICE_NAME];
 	if(redisService)
 	{
 		var credentials = redisService[0].credentials;
