@@ -662,12 +662,12 @@ module.exports = function(app)
 			},
 			function(err)
 			{
-				res.status(500).send({error : err});
+				res.status(500).end(err);
 			});
 		},
 		function(err)
 		{
-			res.status(500).send({error : err});
+			res.status(500).end(err);
 		});
 	});
 	
