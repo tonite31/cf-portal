@@ -6,5 +6,12 @@ applications:
   env:
     CF_STAGING_TIMEOUT: 25
     CF_STARTUP_TIMEOUT: 15
+    SWIFT_DASHBOARD: http://swift-dashboard.paas.sk.com
+    REDIS_DASHBOARD: http://redis-dashboard.paas.sk.com
+    AUTOSCALER_DASHBOARD: http://cf-autoscaler-dashboard.paas.sk.com
+    REDIS_SERVICE_NAME: Redis
+#    CF_ENDPOINT: 
+#    ADMIN_USERNAME: 
+#    ADMIN_PASSWORD: 
   services:
     - redis-portal

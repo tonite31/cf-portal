@@ -8,7 +8,14 @@ var bodyParser = require("body-parser");
 var methodOverride = require('method-override');
 var session = require('express-session');
 
-global._config = require('./config');
+global._config = {
+	endpoint: '',
+	admin : {
+		username : '',
+		password : '',
+	},
+	redis : {}
+};
 
 var vcapServices = process.env.VCAP_SERVICES;
 if(vcapServices)
@@ -34,16 +41,24 @@ if(process.env.SWIFT_DASHBOARD)
 	_config.swiftDashboard = process.env.SWIFT_DASHBOARD;
 if(process.env.AUTOSCALER_DASHBOARD)
 	_config.autoscalerDashboard = process.env.AUTOSCALER_DASHBOARD;
+if(process.env.ADMIN_USERNAME)
+	_config.admin.username = process.env.ADMIN_USERNAME;
+if(process.env.ADMIN_PASSWORD)
+	_config.admin.password = process.env.ADMIN_PASSWORD;
 
 if(!_config.endpoint)
 {
+	console.log('============ portal configuration exception ============');
 	console.log('[Error] API endpoint is not found.');
+	console.log('========================================================');
 	return;
 }
 
 if(!_config.admin.username || !_config.admin.password)
 {
+	console.log('============ portal configuration exception ============');
 	console.log('[Error] Admin account is not found.');
+	console.log('========================================================');
 	return;
 }
 
