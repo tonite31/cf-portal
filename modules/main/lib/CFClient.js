@@ -413,7 +413,6 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 				//login이 풀린것.
 				this.login(function()
 				{
-					console.log("로긴 : ", this.uaaToken);
 					param.headers.Authorization = this.uaaToken.token_type + ' ' + this.uaaToken.access_token;
 					request(param, function(err, response, body)
 					{
@@ -444,7 +443,6 @@ CFClient.prototype.request = function(url, method, headers, data, done, error)
 			}
 			else
 			{
-				console.log("냠냠401 : ", body);
 				error(response.statusCode, body);
 			}
 		}

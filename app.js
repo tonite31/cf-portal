@@ -14,7 +14,8 @@ global._config = {
 		username : '',
 		password : '',
 	},
-	redis : {}
+	redis : {},
+	smtps : {}
 };
 
 var vcapServices = process.env.VCAP_SERVICES;
@@ -45,6 +46,15 @@ if(process.env.ADMIN_USERNAME)
 	_config.admin.username = process.env.ADMIN_USERNAME;
 if(process.env.ADMIN_PASSWORD)
 	_config.admin.password = process.env.ADMIN_PASSWORD;
+
+if(process.env.SMTP_USERNAME)
+	_config.smtps.username = process.env.SMTP_USERNAME;
+if(process.env.SMTP_PASSWORD)
+	_config.smtps.password = process.env.SMTP_PASSWORD;
+if(process.env.SMTP_HOST)
+	_config.smtps.host = process.env.SMTP_HOST;
+if(process.env.SMTP_SUBJECT)
+	_config.smtps.subject = process.env.SMTP_SUBJECT;
 
 if(!_config.endpoint)
 {

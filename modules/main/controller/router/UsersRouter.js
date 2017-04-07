@@ -351,19 +351,30 @@ pumpkin.addWork('deleteAllOrgRole', function(params)
 
 pumpkin.addWork('sendInviteMail', function(params)
 {
-	var transporter = nodemailer.createTransport('smtps://' + _config.smtps.username + ':' + _config.smtps.password + '@' + _config.smtps.host);
-
-	var mailOptions = {
-		from: '"Administrator@ghama.io"', // sender address
-		to: params.target, // list of receivers
-		subject: 'Invite to ghama', // Subject line
-		html: '<p>Invite you to ghama. Your first password is "1111". </p><p><a target="_blank" href="' + params.hostname + '/signin">Sign in to ghama.</a></p><p>To decline this invitation ignore this message.</p>' // html body
-	};
-
-	transporter.sendMail(mailOptions, function(error, info)
+	if(_config.smtps && _config.smtps.username && _config.smtps.password && _config.smtps.host)
 	{
-		this.next(info);
-	}.bind(this));
+		var transporter = nodemailer.createTransport('smtps://' + _config.smtps.username + ':' + _config.smtps.password + '@' + _config.smtps.host);
+
+		var mailOptions = {
+			from: '"Administrator"', // sender address
+			to: params.target, // list of receivers
+			subject: _config.smtps.subject, // Subject line
+			html: '<p>Invite you to paas. Your first password is "1111". </p><p><a target="_blank" href="' + params.hostname + '/signin">Sign in to paas portal.</a></p><p>To decline this invitation ignore this message.</p>' // html body
+		};
+
+		transporter.sendMail(mailOptions, function(error, info)
+		{
+			if(error)
+				console.log('메일 : ', error);
+			else
+				console.log('메일 결과 : ', info);
+			this.next(info);
+		}.bind(this));
+	}
+	else
+	{
+		this.next();
+	}
 });
 
 
@@ -542,12 +553,12 @@ module.exports = function(app)
 									},
 									function(name, error)
 									{
-										res.status(500).send({error : error});
+										res.status(500).send({error : error, msg : name + ' ' + error});
 									});
 								},
 								function(error)
 								{
-									res.status(500).send({error : error});
+									res.status(500).send({error : error, msg : 'getUser error'});
 								});
 							},
 							function()
@@ -562,7 +573,7 @@ module.exports = function(app)
 					}
 					else
 					{
-						res.status(500).send({error : (result.description ? result.description : JSON.stringify(result.error))});
+						res.status(500).send({error : (result.description ? result.description : JSON.stringify(result.error)), msg : 'resources is not found.'});
 					}
 				}
 				else
@@ -572,11 +583,11 @@ module.exports = function(app)
 			},
 			function(err)
 			{
-				res.status(500).send({error : err});
+				res.status(500).send({error : err, msg : 'managers error'});
 			});
 		}, function(error)
 		{
-			res.status(500).send({error : error});
+			res.status(500).send({error : error, msg: 'login error'});
 		});
 	});
 	
